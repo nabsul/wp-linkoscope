@@ -8,7 +8,7 @@
 namespace app\commands;
 
 use yii\console\Controller;
-use HttpRequest;
+use GuzzleHttp\Client;
 
 /**
  * This command tests interaction with the WordPress APIs
@@ -33,13 +33,32 @@ class WpApiController extends Controller
     public function actionOrg()
     {
         $url = 'http://localhost/auto';
-        $req = new HttpRequest();
-        $req->setUrl($url);
-        $req->setMethod(HTTP_METH_HEAD);
-        $req->send();
+        $client = new Client();
+        $req = $client->request('HEAD', $url);
 
-        $message = $req->getResponseMessage();
+        $status = $req->getStatusCode();
+        echo "HEAD request status: $status\n";
+        if (200 != $status)
+        {
+            echo "Did not get a valid response for HEAD request";
+            return;
+        }
 
-        print_r($message);
+        $baseUrl = null;
+        foreach ($req->getHeader('Link') as $h)
+        {
+            if (1 == preg_match('/^<(http.*)>.*https:\/\/github.com\/WP-API\/WP-API/', $h, $matches))
+            {
+                $baseUrl = $matches[1];
+                echo "BaseUrl found: $baseUrl\n";
+                break;
+            }
+        }
+
+        if (null == $baseUrl)
+        {
+            echo "Base URL not found";
+            return;
+        }
     }
 }
