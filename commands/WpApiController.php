@@ -29,6 +29,9 @@ class WpApiController extends Controller
 
     /**
      * This command tries to connect to the website via .org methods
+ID: 24
+Key: H0LzFuk95DvY
+Secret: cnTCuCoiZyC9a2eZa3RHJrP0w550b1eDgruGLYnPcQXKNFyK
      */
     public function actionOrg()
     {
