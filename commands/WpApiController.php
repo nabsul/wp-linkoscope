@@ -63,5 +63,10 @@ Secret: cnTCuCoiZyC9a2eZa3RHJrP0w550b1eDgruGLYnPcQXKNFyK
             echo "Base URL not found";
             return;
         }
+
+        $baseUrl = $baseUrl . "wp/v2/";
+        $client = new Client(['base_uri' => $baseUrl]);
+        $req = $client->request('GET', 'users', ['auth'=>['nabeel', 'nabeel']]);
+        echo $req->getBody()->getContents();
     }
 }
