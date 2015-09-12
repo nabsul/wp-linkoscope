@@ -9,6 +9,9 @@ namespace app\commands;
 
 use yii\console\Controller;
 use GuzzleHttp\Client;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Subscriber\Oauth\Oauth1;
+use GuzzleHttp\Exception\ClientException;
 
 /**
  * This command tests interaction with the WordPress APIs
@@ -64,9 +67,43 @@ Secret: cnTCuCoiZyC9a2eZa3RHJrP0w550b1eDgruGLYnPcQXKNFyK
             return;
         }
 
+        echo "\ntrying basic auth\n";
         $baseUrl = $baseUrl . "wp/v2/";
         $client = new Client(['base_uri' => $baseUrl]);
         $req = $client->request('GET', 'users', ['auth'=>['nabeel', 'nabeel']]);
         echo $req->getBody()->getContents();
+
+        echo "\ntrying oauth\n";
+        $stack = HandlerStack::create();
+        $middleware = new Oauth1([
+            'consumer_key'    => 'H0LzFuk95DvY',
+            'consumer_secret' => 'cnTCuCoiZyC9a2eZa3RHJrP0w550b1eDgruGLYnPcQXKNFyK',
+            'token'           => null,//'my_token',
+            'token_secret'    => null,//'my_token_secret'
+            'request_method'  => Oauth1::REQUEST_METHOD_QUERY,
+        ]);
+        $stack->push($middleware);
+        $client = new Client([
+            'base_uri' => 'http://localhost/auto/',
+            'handler' => $stack
+        ]);
+
+        // Set the "auth" request option to "oauth" to sign using oauth
+        try
+        {
+            $res = $client->get('oauth1/request', ['auth' => 'oauth']);
+            $body = $res->getBody()->getContents();
+        }
+        catch (ClientException $ex)
+        {
+            echo $ex->getMessage();
+            echo "\n";
+            return;
+        }
+
+        parse_str($body, $pars);
+        $token = $pars['oauth_token'];
+        $secret = $pars['oauth_token_secret'];
+        echo "\nOauth request worked.\ntoken: $token\nsecret: $secret";
     }
 }
