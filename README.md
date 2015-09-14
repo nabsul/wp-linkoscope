@@ -12,16 +12,16 @@ REQUIREMENTS
 
 The minimum requirement by this project template that your Web server supports PHP 5.4.0.
 
-You should also have composer installed.
+You should also have composer installed. If you do not have [Composer](http://getcomposer.org/), 
+you may install it by following the instructions 
+at [getcomposer.org](http://getcomposer.org/doc/00-intro.md#installation-nix).
+
 
 
 INSTALLATION
 ------------
 
-If you do not have [Composer](http://getcomposer.org/), you may install it by following the instructions
-at [getcomposer.org](http://getcomposer.org/doc/00-intro.md#installation-nix).
-
-After you get the code, you can then setup this app by typing:
+Download or check out the code, then set up the requirements by typing:
 
 ~~~
 composer global require "fxp/composer-asset-plugin:~1.0.0"
