@@ -28,4 +28,7 @@ return [
         'db' => $db,
     ],
     'params' => $params,
+    'aliases' => [
+        '@automattic' => '@vendor/automattic',
+    ],
 ];
