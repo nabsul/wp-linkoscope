@@ -6,9 +6,7 @@
  * Time: 9:25 AM
  */
 
-namespace Automattic\Rest;
-
+namespace automattic\Rest;
 
 interface iWpApi {
-
 }
