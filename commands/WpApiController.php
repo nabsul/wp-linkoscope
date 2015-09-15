@@ -12,6 +12,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Subscriber\Oauth\Oauth1;
 use GuzzleHttp\Exception\ClientException;
+use automattic\Rest\Org\OrgWpApi;
 
 /**
  * This command tests interaction with the WordPress APIs
@@ -74,24 +75,10 @@ Secret: cnTCuCoiZyC9a2eZa3RHJrP0w550b1eDgruGLYnPcQXKNFyK
         echo $req->getBody()->getContents();
 
         echo "\ntrying oauth\n";
-        $stack = HandlerStack::create();
-        $middleware = new Oauth1([
-            'consumer_key'    => 'H0LzFuk95DvY',
-            'consumer_secret' => 'cnTCuCoiZyC9a2eZa3RHJrP0w550b1eDgruGLYnPcQXKNFyK',
-            'token'           => null,//'my_token',
-            'token_secret'    => null,//'my_token_secret'
-            'request_method'  => Oauth1::REQUEST_METHOD_QUERY,
-        ]);
-        $stack->push($middleware);
-        $client = new Client([
-            'base_uri' => 'http://localhost/auto/',
-            'handler' => $stack
-        ]);
-
-        // Set the "auth" request option to "oauth" to sign using oauth
+        $api = new OrgWpApi();
         try
         {
-            $res = $client->get('oauth1/request', ['auth' => 'oauth']);
+            $res = $api->authorize('');
             $body = $res->getBody()->getContents();
         }
         catch (ClientException $ex)
@@ -105,5 +92,17 @@ Secret: cnTCuCoiZyC9a2eZa3RHJrP0w550b1eDgruGLYnPcQXKNFyK
         $token = $pars['oauth_token'];
         $secret = $pars['oauth_token_secret'];
         echo "\nOauth request worked.\ntoken: $token\nsecret: $secret";
+    }
+
+    /**
+     * Tests out the ability to create a post via the Org API.
+     */
+    public function actionPostOrg()
+    {
+        $baseUrl = 'http://localhost/auto/wp-json/wp/v2/';
+        echo "\ntrying basic auth\n";
+        $client = new Client(['base_uri' => $baseUrl]);
+        $req = $client->request('GET', 'users', ['auth'=>['nabeel', 'nabeel']]);
+        echo $req->getBody()->getContents();
     }
 }
