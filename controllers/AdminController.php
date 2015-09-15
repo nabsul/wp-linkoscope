@@ -2,6 +2,10 @@
 
 namespace app\controllers;
 
+use automattic\Rest\Org\OrgWpApi;
+use yii\helpers\Url;
+use Yii;
+
 class AdminController extends \yii\web\Controller
 {
     public function actionConnect()
@@ -19,9 +23,33 @@ class AdminController extends \yii\web\Controller
         return $this->render('wp-com');
     }
 
-    public function actionWpOrg()
+    public function actionWpOrg($oauth_token = null, $oauth_verifier = null, $wp_scope = null)
     {
-        return $this->render('wp-org');
-    }
+        if ($oauth_token == null)
+        {
+            $return = Url::to('', true);
+            $api = new OrgWpApi();
+            $redirect = $api->authorize($return);
+            return $this->redirect($redirect);
+        }
 
+        $result = "Yay!\n$oauth_token\n$oauth_verifier\n$wp_scope";
+
+        $api = new OrgWpApi();
+
+        $tok = $api->access($oauth_token, $oauth_verifier);
+        $result .= "\n" . $tok->token;
+
+        $types = $api->getTypes($tok);
+        if (false === array_search('linkoscope', array_keys($types)))
+        {
+            $result .= "\ntype not found";
+        }
+        else
+        {
+            $result .= "\ntype is found";
+        }
+        
+        return $this->render('wp-org', ['result' => $result]);
+    }
 }
