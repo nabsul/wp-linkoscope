@@ -11,8 +11,10 @@ namespace automattic\Rest\Org;
 use automattic\Rest\iWpApi;
 use yii\authclient\OAuth1;
 use yii\authclient\OAuthToken;
+use automattic\Rest\Models\Link;
+use yii\base\Object;
 
-class OrgWpApi implements  iWpApi
+class OrgWpApi extends Object implements  iWpApi
 {
     public $consumerKey = 'H0LzFuk95DvY';
     public $consumerSecret = 'cnTCuCoiZyC9a2eZa3RHJrP0w550b1eDgruGLYnPcQXKNFyK';
@@ -20,17 +22,12 @@ class OrgWpApi implements  iWpApi
     public $requestUrl = 'http://localhost/auto/oauth1/request';
     public $authorizeUrl = 'http://localhost/auto/oauth1/authorize';
     public $accessUrl = 'http://localhost/auto/oauth1/access';
-    public $postUrl = 'http://localhost/auto/wp-json/wp/v2/posts';
+    public $postUrl = 'http://localhost/auto/wp-json/wp/v2/linkolink';
     public $typeUrl = 'http://localhost/auto/wp-json/wp/v2/types';
 
     public $token = null;
     public $secret = null;
     public $verifier = null;
-
-    /**
-     * @var Client
-     */
-    private $_client = null;
 
     /**
      * Gets an initial authorization token and returns the URL to go to get user consent
@@ -60,7 +57,18 @@ class OrgWpApi implements  iWpApi
 
     public function getLinks($tok)
     {
-        return $this->get($this->postUrl, $tok);
+        return array_map(
+            function($item){
+                return new Link([
+                    'id' => $item['id'],
+                    'title' => $item['title']['rendered'],
+                    'url' => $item['excerpt']['rendered'],
+                    'summary' => $item['content']['rendered'],
+                    'votes' => $item['menu_order'],
+                ]);
+            },
+            $this->get($this->postUrl, $tok)
+        );
     }
 
     public function getTypes($tok)
