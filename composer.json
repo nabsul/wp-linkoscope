@@ -18,8 +18,6 @@
         "yiisoft/yii2": ">=2.0.5",
         "yiisoft/yii2-bootstrap": "*",
         "yiisoft/yii2-swiftmailer": "*",
-        "guzzlehttp/guzzle": "^6.1",
-        "guzzlehttp/oauth-subscriber": "^0.3.0",
         "yiisoft/yii2-authclient": "^2.0"
     },
     "require-dev": {
