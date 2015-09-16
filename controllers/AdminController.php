@@ -41,7 +41,7 @@ class AdminController extends \yii\web\Controller
         $result .= "\n" . $tok->token;
 
         $types = $api->getTypes($tok);
-        if (false === array_search('linkoscope', array_keys($types)))
+        if (false === array_search('linkoscope_link', array_keys($types)))
         {
             $result .= "\ntype not found";
         }
@@ -49,7 +49,10 @@ class AdminController extends \yii\web\Controller
         {
             $result .= "\ntype is found";
         }
-        
+
+        Yii::$app->session->set('token', $tok->token);
+        Yii::$app->session->set('secret', $tok->tokenSecret);
+        $result .= "\nToken saved in session";
         return $this->render('wp-org', ['result' => $result]);
     }
 }
