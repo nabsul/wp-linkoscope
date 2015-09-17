@@ -19,15 +19,24 @@ class OrgWpApi extends Object implements  iWpApi
     public $consumerKey = 'H0LzFuk95DvY';
     public $consumerSecret = 'cnTCuCoiZyC9a2eZa3RHJrP0w550b1eDgruGLYnPcQXKNFyK';
     public $blogUrl = 'http://localhost/auto';
-    public $requestUrl = 'http://localhost/auto/oauth1/request';
-    public $authorizeUrl = 'http://localhost/auto/oauth1/authorize';
-    public $accessUrl = 'http://localhost/auto/oauth1/access';
-    public $postUrl = 'http://localhost/auto/wp-json/wp/v2/linkolink';
-    public $typeUrl = 'http://localhost/auto/wp-json/wp/v2/types';
-
     public $token = null;
-    public $secret = null;
-    public $verifier = null;
+
+    private $requestUrl = '/oauth1/request';
+    private $authorizeUrl = '/oauth1/authorize';
+    private $accessUrl = '/oauth1/access';
+    private $postUrl = '/wp-json/wp/v2/linkolink';
+    private $typeUrl = '/wp-json/wp/v2/types';
+
+
+    public function getConfig()
+    {
+        return [
+            'type' => 'org',
+            'consumerKey' => $this->consumerKey,
+            'consumerSecret' => $this->consumerSecret,
+            'blogUrl' => $this->blogUrl,
+        ];
+    }
 
     /**
      * Gets an initial authorization token and returns the URL to go to get user consent
@@ -55,44 +64,44 @@ class OrgWpApi extends Object implements  iWpApi
         return $client->fetchAccessToken(new OAuthToken(['token' => $token]), $verifier);
     }
 
-    public function getLinks($tok)
+    public function getLinks()
     {
-        return array_map(
-            function($item){
-                return new Link([
-                    'id' => $item['id'],
-                    'title' => $item['title']['rendered'],
-                    'url' => $item['excerpt']['rendered'],
-                    'summary' => $item['content']['rendered'],
-                    'votes' => $item['menu_order'],
-                ]);
-            },
-            $this->get($this->postUrl, $tok)
-        );
+        $links = $this->get($this->postUrl, $this->token);
+        $convert = function($item){
+            return new Link([
+                'id' => $item['id'],
+                'title' => $item['title']['rendered'],
+                'url' => $item['excerpt']['rendered'],
+                'summary' => $item['content']['rendered'],
+                'votes' => $item['menu_order'],
+            ]);
+        };
+
+        return array_map($convert, $links);
     }
 
-    public function getTypes($tok)
+    public function getTypes()
     {
-        return $this->get($this->typeUrl, $tok);
+        return $this->get($this->typeUrl);
     }
 
-    private function get($url, $tok)
+    private function get($url)
     {
-        $oauthClient = $this->getAuthClient();
-        $oauthClient->accessToken = $tok;
-        $result = $oauthClient->api($url, 'GET', []);
-        return $result;
+        $url = $this->blogUrl . $url;
+        return $this->getAuthClient()->api($url, 'GET', []);
     }
 
     private function getAuthClient()
     {
-        return new OAuth1([
+        $client = new OAuth1([
             'consumerKey' => $this->consumerKey,
             'consumerSecret' => $this->consumerSecret,
-            'authUrl' => $this->authorizeUrl,
-            'requestTokenUrl' => $this->requestUrl,
-            'accessTokenUrl' => $this->accessUrl,
+            'authUrl' => $this->blogUrl . $this->authorizeUrl,
+            'requestTokenUrl' => $this->blogUrl . $this->requestUrl,
+            'accessTokenUrl' => $this->blogUrl . $this->accessUrl,
         ]);
-
+        if ($this->token != null)
+            $client->accessToken = $this->token;
+        return $client;
     }
 }

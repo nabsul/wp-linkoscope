@@ -6,7 +6,7 @@ use automattic\Rest\Org\OrgWpApi;
 use yii\helpers\Url;
 use Yii;
 
-class AdminController extends \yii\web\Controller
+class AdminController extends BaseController
 {
     public function actionConnect()
     {
@@ -15,7 +15,14 @@ class AdminController extends \yii\web\Controller
 
     public function actionIndex()
     {
+        if ($this->getApi() != null)
+            return $this->redirect(['config']);
         return $this->render('index');
+    }
+
+    public function actionConfig()
+    {
+        return $this->render('config', ['config' => $this->getApi()->getConfig()]);
     }
 
     public function actionWpCom()
@@ -27,32 +34,32 @@ class AdminController extends \yii\web\Controller
     {
         if ($oauth_token == null)
         {
-            $return = Url::to('', true);
-            $api = new OrgWpApi();
-            $redirect = $api->authorize($return);
-            return $this->redirect($redirect);
+            if (Yii::$app->request->isPost) {
+                $cfg = Yii::$app->request->post();
+                $cfg = array_intersect_key($cfg, ['blogUrl' => 0,'consumerKey' => 0, 'consumerSecret' => 0]);
+                $api = new OrgWpApi($cfg);
+                $this->saveConfig($api);
+
+                $here = Url::to( '', true );
+                $redirect = $api->authorize( $here );
+                return $this->redirect( $redirect );
+            }
+
+            return $this->render('wp-org');
         }
 
-        $result = "Yay!\n$oauth_token\n$oauth_verifier\n$wp_scope";
-
         $api = new OrgWpApi();
-
         $tok = $api->access($oauth_token, $oauth_verifier);
-        $result .= "\n" . $tok->token;
+        Yii::$app->session->set('token', $tok->token);
+        Yii::$app->session->set('secret', $tok->tokenSecret);
 
         $types = $api->getTypes($tok);
         if (false === array_search('linkoscope_link', array_keys($types)))
         {
-            $result .= "\ntype not found";
-        }
-        else
-        {
-            $result .= "\ntype is found";
+            Yii::$app->session->setFlash('error', 'Site does not support linkoscope post type.');
+            return $this->redirect('index');
         }
 
-        Yii::$app->session->set('token', $tok->token);
-        Yii::$app->session->set('secret', $tok->tokenSecret);
-        $result .= "\nToken saved in session";
-        return $this->render('wp-org', ['result' => $result]);
+        return $this->redirect(['link/index']);
     }
 }
