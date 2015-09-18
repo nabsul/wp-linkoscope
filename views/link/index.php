@@ -18,11 +18,30 @@ use yii\helpers\Url;
         'title',
         'url',
         'summary',
-        'buttons' => [
+        'actions' => [
             'class' => ActionColumn::className(),
+            'template' => '{view} {update} {delete} {up} {down}',
             'urlCreator' => function($c, $m, $k, $i){
                 return Url::to([$c, 'id' => $m->id]);
-            }
+            },
+            'buttons' => [
+                'up' => function ($url, $model, $key) {
+                    $options = array_merge([
+                        'title' => Yii::t('yii', 'Up'),
+                        'aria-label' => Yii::t('yii', 'Up'),
+                        'data-pjax' => '0',
+                    ]);
+                    return Html::a('<span class="glyphicon glyphicon-arrow-up"></span>', $url, $options);
+                },
+                'down' => function ($url, $model, $key) {
+                    $options = array_merge([
+                        'title' => Yii::t('yii', 'Dn'),
+                        'aria-label' => Yii::t('yii', 'Dn'),
+                        'data-pjax' => '0',
+                    ]);
+                    return Html::a('<span class="glyphicon glyphicon-arrow-down"></span>', $url, $options);
+                },
+            ],
         ],
     ]
 ]); ?>

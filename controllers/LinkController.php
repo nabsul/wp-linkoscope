@@ -6,16 +6,14 @@ use automattic\Rest\Org\OrgWpApi;
 use yii\authclient\OAuthToken;
 use yii\data\ArrayDataProvider;
 use Yii;
+use app\controllers\BaseController;
 
-class LinkController extends \yii\web\Controller
+class LinkController extends BaseController
 {
     public function actionIndex()
     {
-        $api = new OrgWpApi();
-        $token = Yii::$app->session->get('token');
-        $secret = Yii::$app->session->get('secret');
-        $tok = new OAuthToken(['token' => $token, 'tokenSecret' => $secret]);
-        $result = $api->getLinks($tok);
+        $api = $this->getApi();
+        $result = $api->getLinks();
         $data = new ArrayDataProvider(['allModels' => $result]);
         return $this->render('index', [
             'data' => $data,
@@ -23,38 +21,31 @@ class LinkController extends \yii\web\Controller
         ]);
     }
 
-    public function actionVote()
-    {
-        return $this->render('vote');
-    }
-
     public function actionView($id)
     {
-        $api = new OrgWpApi();
-        $token = Yii::$app->session->get('token');
-        $secret = Yii::$app->session->get('secret');
-        $tok = new OAuthToken(['token' => $token, 'tokenSecret' => $secret]);
-        //$api->deleteLink($tok);
-        return $this->redirect(['index']);
+        $link = $this->getApi()->getLink($id);
+        return $this->render('view', ['link' => $link]);
     }
 
     public function actionUpdate($id)
     {
-        $api = new OrgWpApi();
-        $token = \Yii::$app->session->get('token');
-        $secret = \Yii::$app->session->get('secret');
-        $tok = new OAuthToken(['token' => $token, 'tokenSecret' => $secret]);
-        //$api->deleteLink($tok);
-        return $this->redirect(['index']);
+        $link = $this->getApi()->getLink($id);
+        return $this->render('update', ['link' => $link]);
     }
 
     public function actionDelete($id)
     {
-        $api = new OrgWpApi();
-        $token = \Yii::$app->session->get('token');
-        $secret = \Yii::$app->session->get('secret');
-        $tok = new OAuthToken(['token' => $token, 'tokenSecret' => $secret]);
-        //$api->deleteLink($tok);
+        $this->getApi()->deleteLink($id);
         return $this->redirect(['index']);
+    }
+
+    public function actionUp($id)
+    {
+
+    }
+
+    public function actionDown($id)
+    {
+
     }
 }
