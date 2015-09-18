@@ -15,7 +15,7 @@ $this->title = 'My Yii Application';
     <div class="body-content">
 
         <p>
-            This program is a clone of Hacker News that uses WordPress APIs for its back-end storage.
+            This WebApp is a clone of Hacker News that uses WordPress APIs for its back-end storage.
             It can be configured to use the WordPress.com API or the API provided through WP-API.
         </p>
 

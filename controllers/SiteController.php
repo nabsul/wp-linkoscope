@@ -2,14 +2,15 @@
 
 namespace app\controllers;
 
+use app\models\User;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
-use app\models\LoginForm;
-use app\models\ContactForm;
+use app\controllers\BaseController;
+use yii\helpers\Url;
 
-class SiteController extends Controller
+class SiteController extends BaseController
 {
     public function behaviors()
     {
@@ -52,25 +53,39 @@ class SiteController extends Controller
         return $this->render('index');
     }
 
-    public function actionLogin()
-    {
-        if (!\Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
-
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
-        }
-        return $this->render('login', [
-            'model' => $model,
-        ]);
-    }
-
     public function actionLogout()
     {
         Yii::$app->user->logout();
-
         return $this->goHome();
+    }
+
+    public function actionLogin($oauth_token = null, $oauth_verifier = null, $wp_scope = null)
+    {
+        $api = $this->getApi();
+        if ($api == null) {
+            Yii::$app->session->setFlash('error', 'The site is not configured yet.');
+            $this->redirect(['admin/login']);
+        }
+
+        if ($oauth_token == null) {
+            $here = Url::to('', true);
+            $redirect = $api->authorize($here);
+            return $this->redirect($redirect);
+        }
+
+        $tok = $api->access($oauth_token, $oauth_verifier);
+        $user = $api->getAccount();
+
+        $u = new User([
+            'id' => $user['name'],
+            'username' => $user['name'],
+            'token' => $tok->token,
+            'secret' => $tok->tokenSecret,
+        ]);
+
+        $u->saveSessionAccount();
+        Yii::$app->user->login($u);
+
+        return $this->redirect(['link/index']);
     }
 }

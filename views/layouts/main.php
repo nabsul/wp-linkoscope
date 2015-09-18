@@ -27,25 +27,27 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => 'My Company',
+        'brandLabel' => 'LinkoScope',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
+    $isGuest = Yii::$app->user->isGuest;
+    $userId = Yii::$app->user->id;
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
             ['label' => 'Home', 'url' => ['/site/index']],
             ['label' => 'Links', 'url' => ['/link']],
+            ['label' => 'Login', 'url' => ['/site/login'], 'visible' => $isGuest],
             ['label' => 'Admin', 'url' => ['/admin']],
-            Yii::$app->user->isGuest ?
-                ['label' => 'Login', 'url' => ['/site/login']] :
-                [
-                    'label' => 'Logout (' . Yii::$app->user->identity->username . ')',
-                    'url' => ['/site/logout'],
-                    'linkOptions' => ['data-method' => 'post']
-                ],
+            [
+                'label' => "Logout ($userId)",
+                'url' => ['/site/logout'],
+                'linkOptions' => ['data-method' => 'post'],
+                'visible' => !$isGuest,
+            ]
         ],
     ]);
     NavBar::end();
@@ -55,6 +57,11 @@ AppAsset::register($this);
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
+        <?php if (Yii::$app->session->hasFlash('error')) : ?>
+            <p style="color:red;">
+                Error: <?= Yii::$app->session->getFlash('error'); ?>
+            </p>
+        <?php endif ?>
         <?= $content ?>
     </div>
 </div>
