@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\LinkForm;
 use automattic\Rest\Org\OrgWpApi;
 use yii\authclient\OAuthToken;
 use yii\data\ArrayDataProvider;
@@ -19,6 +20,12 @@ class LinkController extends BaseController
             'data' => $data,
             'result' => $result,
         ]);
+    }
+
+    public function actionNew()
+    {
+        $form = new LinkForm();
+        return $this->render('new', ['model' => $form]);
     }
 
     public function actionView($id)

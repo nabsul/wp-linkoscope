@@ -46,3 +46,6 @@ use yii\helpers\Url;
     ]
 ]); ?>
 
+<?= Html::a('Add New', ['new'], ['class' => 'btn btn-default btn-success']); ?>
+
+
