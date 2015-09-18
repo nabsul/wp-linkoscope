@@ -9,6 +9,6 @@ use yii\widgets\DetailView;
 <?= DetailView::widget([
     'model' => $link,
     'attributes' => [
-        'id', 'votes', 'title', 'url', 'summary'
+        'id', 'votes', 'title', 'url'
     ],
 ]); ?>

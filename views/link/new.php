@@ -26,8 +26,6 @@ $this->title = 'Submit Link';
 
 <?= $form->field($model, 'url') ?>
 
-<?= $form->field($model, 'summary')->textarea() ?>
-
 <div class="form-group">
     <div class="col-lg-offset-1 col-lg-11">
         <?= Html::submitButton('Submit', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>

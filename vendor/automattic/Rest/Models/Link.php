@@ -9,6 +9,5 @@ class Link extends Object
 	public $id;
 	public $title;
 	public $url;
-	public $summary;
 	public $votes;
 }

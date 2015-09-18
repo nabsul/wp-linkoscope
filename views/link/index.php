@@ -17,7 +17,6 @@ use yii\helpers\Url;
         'votes',
         'title',
         'url',
-        'summary',
         'actions' => [
             'class' => ActionColumn::className(),
             'template' => '{view} {update} {delete} {up} {down}',

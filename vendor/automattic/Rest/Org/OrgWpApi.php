@@ -74,7 +74,6 @@ class OrgWpApi extends Object implements  iWpApi
                 'id' => $item['id'],
                 'title' => $item['title']['rendered'],
                 'url' => $item['excerpt']['rendered'],
-                'summary' => $item['content']['rendered'],
                 'votes' => $item['menu_order'],
             ]);
         };
@@ -89,7 +88,6 @@ class OrgWpApi extends Object implements  iWpApi
                 'id' => $link['id'],
                 'title' => $link['title']['rendered'],
                 'url' => $link['excerpt']['rendered'],
-                'summary' => $link['content']['rendered'],
                 'votes' => $link['menu_order'],
             ]);
     }

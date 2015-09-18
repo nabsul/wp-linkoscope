@@ -14,12 +14,11 @@ class LinkForm extends Model
 {
     public $title;
     public $url;
-    public $summary;
 
     public function rules()
     {
         return [
-            [['title', 'url', ], 'required'],
+            [['title', 'url'], 'required'],
             ['url', 'url'],
         ];
 
