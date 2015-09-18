@@ -2,12 +2,37 @@
 
 namespace app\controllers;
 
+use app\models\WpOrgConfigForm;
 use automattic\Rest\Org\OrgWpApi;
+use yii\base\InlineAction;
+use yii\filters\AccessControl;
 use yii\helpers\Url;
 use Yii;
+use app\models\LoginForm;
 
 class AdminController extends BaseController
 {
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'except' => ['login'],
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'matchCallback' => function($r, $a){
+                            return !Yii::$app->user->isGuest && Yii::$app->user->id == 'admin';
+                        },
+                    ],
+                ],
+                'denyCallback' => function($r, InlineAction $a){
+                    $a->controller->redirect(['admin/login']);
+                }
+            ],
+        ];
+    }
+
     public function actionConnect()
     {
         return $this->render('connect');
@@ -15,9 +40,7 @@ class AdminController extends BaseController
 
     public function actionIndex()
     {
-        if ($this->getApi() != null)
-            return $this->redirect(['config']);
-        return $this->render('index');
+        return $this->render('index',['api'=>$this->getApi()]);
     }
 
     public function actionConfig()
@@ -34,10 +57,9 @@ class AdminController extends BaseController
     {
         if ($oauth_token == null)
         {
-            if (Yii::$app->request->isPost) {
-                $cfg = Yii::$app->request->post();
-                $cfg = array_intersect_key($cfg, ['blogUrl' => 0,'consumerKey' => 0, 'consumerSecret' => 0]);
-                $api = new OrgWpApi($cfg);
+            $form = new WpOrgConfigForm();
+            if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+                $api = new OrgWpApi($form->getConfig());
                 $this->saveConfig($api);
 
                 $here = Url::to( '', true );
@@ -61,5 +83,20 @@ class AdminController extends BaseController
         }
 
         return $this->redirect(['link/index']);
+    }
+
+    public function actionLogin()
+    {
+        if (!\Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $model = new LoginForm();
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            return $this->goBack();
+        }
+        return $this->render('login', [
+            'model' => $model,
+        ]);
     }
 }
