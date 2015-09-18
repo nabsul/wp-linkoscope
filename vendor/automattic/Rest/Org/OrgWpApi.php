@@ -16,6 +16,7 @@ use yii\base\Object;
 
 class OrgWpApi extends Object implements  iWpApi
 {
+    public $type;
     public $consumerKey = 'H0LzFuk95DvY';
     public $consumerSecret = 'cnTCuCoiZyC9a2eZa3RHJrP0w550b1eDgruGLYnPcQXKNFyK';
     public $blogUrl = 'http://localhost/auto';
@@ -26,6 +27,7 @@ class OrgWpApi extends Object implements  iWpApi
     private $accessUrl = '/oauth1/access';
     private $postUrl = '/wp-json/wp/v2/linkolink';
     private $typeUrl = '/wp-json/wp/v2/types';
+    private $selfUrl = '/wp-json/wp/v2/users/me';
 
 
     public function getConfig()
@@ -80,15 +82,62 @@ class OrgWpApi extends Object implements  iWpApi
         return array_map($convert, $links);
     }
 
+    public function getLink($id)
+    {
+        $link = $this->get($this->postUrl . "/$id", $this->token);
+        return new Link([
+                'id' => $link['id'],
+                'title' => $link['title']['rendered'],
+                'url' => $link['excerpt']['rendered'],
+                'summary' => $link['content']['rendered'],
+                'votes' => $link['menu_order'],
+            ]);
+    }
+
+    public function updateLink($link)
+    {
+
+    }
+
+    public function deleteLink($id)
+    {
+        return $this->delete($this->postUrl . "/$id");
+    }
+
     public function getTypes()
     {
         return $this->get($this->typeUrl);
     }
 
+    public function getAccount()
+    {
+        return $this->get($this->selfUrl);
+    }
+
     private function get($url)
     {
+        return $this->send('GET', $url);
+    }
+
+    private function post($url)
+    {
+        return $this->send('POST', $url);
+    }
+
+    private function delete($url)
+    {
+        return $this->send('DELETE', $url);
+    }
+
+    private function put($url)
+    {
+        return $this->send('PUT', $url);
+    }
+
+    private function send($method, $url)
+    {
         $url = $this->blogUrl . $url;
-        return $this->getAuthClient()->api($url, 'GET', []);
+        return $this->getAuthClient()->api($url, $method, []);
     }
 
     private function getAuthClient()
@@ -99,6 +148,9 @@ class OrgWpApi extends Object implements  iWpApi
             'authUrl' => $this->blogUrl . $this->authorizeUrl,
             'requestTokenUrl' => $this->blogUrl . $this->requestUrl,
             'accessTokenUrl' => $this->blogUrl . $this->accessUrl,
+            'curlOptions' => [
+                CURLOPT_FOLLOWLOCATION => true,
+            ],
         ]);
         if ($this->token != null)
             $client->accessToken = $this->token;
