@@ -2,37 +2,38 @@
 
 namespace app\models;
 
-class User extends \yii\base\Object implements \yii\web\IdentityInterface
+use Yii;
+use yii\web\IdentityInterface;
+use yii\base\Object;
+
+/**
+ * Class User
+ * @package app\models
+ *
+ * @param adminAccount User
+ */
+class User extends Object implements IdentityInterface
 {
     public $id;
     public $username;
     public $password;
     public $authKey;
     public $accessToken;
-
-    private static $users = [
-        '100' => [
-            'id' => '100',
-            'username' => 'admin',
-            'password' => 'admin',
-            'authKey' => 'test100key',
-            'accessToken' => '100-token',
-        ],
-        '101' => [
-            'id' => '101',
-            'username' => 'demo',
-            'password' => 'demo',
-            'authKey' => 'test101key',
-            'accessToken' => '101-token',
-        ],
-    ];
+    public $token;
+    public $secret;
 
     /**
      * @inheritdoc
      */
     public static function findIdentity($id)
     {
-        return isset(self::$users[$id]) ? new static(self::$users[$id]) : null;
+        foreach (self::getBothAccounts() as $acc) {
+            if ( $acc != null && $acc->id == $id ) {
+                return $acc;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -40,12 +41,6 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        foreach (self::$users as $user) {
-            if ($user['accessToken'] === $token) {
-                return new static($user);
-            }
-        }
-
         return null;
     }
 
@@ -57,9 +52,10 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface
      */
     public static function findByUsername($username)
     {
-        foreach (self::$users as $user) {
-            if (strcasecmp($user['username'], $username) === 0) {
-                return new static($user);
+        $accounts = self::getBothAccounts();
+        foreach ($accounts as $acc) {
+            if ( $acc != null && $acc->username == $username ) {
+                return $acc;
             }
         }
 
@@ -99,5 +95,42 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface
     public function validatePassword($password)
     {
         return $this->password === $password;
+    }
+
+    private static function getAdminAccount()
+    {
+        return new User([
+            'id' => 'admin',
+            'username' => 'admin',
+            'password' => Yii::$app->params['adminPassword'],
+        ]);
+    }
+
+    private static function getSessionAccount()
+    {
+        $session = Yii::$app->session;
+        if (!$session->has('wp_rest_user'))
+            return null;
+
+        return new User([
+            'id' => $session->get('wp_rest_id'),
+            'username' => $session->get('wp_rest_user'),
+            'token' => $session->get('wp_rest_token'),
+            'secret' => $session->get('wp_rest_secret'),
+        ]);
+    }
+
+    public function saveSessionAccount()
+    {
+        $session = Yii::$app->session;
+        $session->set('wp_rest_id', $this->id);
+        $session->set('wp_rest_user', $this->username);
+        $session->set('wp_rest_token', $this->token);
+        $session->set('wp_rest_secret', $this->secret);
+    }
+
+    private static function getBothAccounts()
+    {
+        return [self::getAdminAccount(), self::getSessionAccount()];
     }
 }
