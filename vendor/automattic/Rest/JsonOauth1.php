@@ -11,6 +11,7 @@
 namespace automattic\Rest;
 
 use yii\authclient\OAuth1;
+use yii\base\InvalidParamException;
 
 class JsonOauth1 extends OAuth1
 {
@@ -40,29 +41,15 @@ class JsonOauth1 extends OAuth1
         $oauthFields = array_flip(self::$oauthFields);
         $curlOptions = [];
         switch ($method) {
-            case 'GET': {
+            case 'GET':
+            case 'HEAD':
+            case 'DELETE':
+                $curlOptions[CURLOPT_CUSTOMREQUEST] = $method;
                 $curlOptions[CURLOPT_URL] = $this->composeUrl($url, $params);
                 break;
-            }
-            case 'DELETE': {
-                $curlOptions[CURLOPT_CUSTOMREQUEST] = 'DELETE';
-                $curlOptions[CURLOPT_URL] = $this->composeUrl($url, $params);
-                break;
-            }
-            case 'POST': {
-                $curlOptions[CURLOPT_POST] = true;
-                $curlOptions[CURLOPT_HTTPHEADER] = ['Content-type: application/x-www-form-urlencoded'];
-                if (!empty($params)) {
-                    $curlOptions[CURLOPT_POSTFIELDS] = http_build_query($params, '', '&', PHP_QUERY_RFC3986);
-                }
-                $authorizationHeader = $this->composeAuthorizationHeader($params);
-                if (!empty($authorizationHeader)) {
-                    $curlOptions[CURLOPT_HTTPHEADER][] = $authorizationHeader;
-                }
-                break;
-            }
-            case 'PUT': {
-                $curlOptions[CURLOPT_CUSTOMREQUEST] = 'PUT';
+           case 'POST':
+            case 'PUT':
+                $curlOptions[CURLOPT_CUSTOMREQUEST] = $method;
                 $curlOptions[CURLOPT_POST] = true;
                 $curlOptions[CURLOPT_HTTPHEADER] = ['Content-type: application/json'];
                 if (!empty($params)) {
@@ -74,20 +61,8 @@ class JsonOauth1 extends OAuth1
                     $curlOptions[CURLOPT_HTTPHEADER][] = $authorizationHeader;
                 }
                 break;
-            }
-            case 'HEAD': {
-                $curlOptions[CURLOPT_CUSTOMREQUEST] = $method;
-                if (!empty($params)) {
-                    $curlOptions[CURLOPT_URL] = $this->composeUrl($url, $params);
-                }
-                break;
-            }
-            default: {
-                $curlOptions[CURLOPT_CUSTOMREQUEST] = $method;
-                if (!empty($params)) {
-                    $curlOptions[CURLOPT_POSTFIELDS] = http_build_query($params, '', '&', PHP_QUERY_RFC3986);
-                }
-            }
+            default:
+                throw new InvalidParamException("Unknown http method: $method");
         }
 
         return $curlOptions;

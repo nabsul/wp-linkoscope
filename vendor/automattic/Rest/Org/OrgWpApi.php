@@ -137,7 +137,7 @@ class OrgWpApi extends Object implements  iWpApi
 
     private function post($url, $body)
     {
-        return $this->send('POST', $url, $body);
+        return $this->send('POST', $url, ['body' => $body]);
     }
 
     private function delete($url)
@@ -147,7 +147,7 @@ class OrgWpApi extends Object implements  iWpApi
 
     private function put($url, $body)
     {
-        return $this->send('PUT', $url, ['body' => $body], ['content-type' => 'application/json']);
+        return $this->send('PUT', $url, ['body' => $body]);
     }
 
     private function send($method, $url, $params = [], $headers = [])
