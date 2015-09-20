@@ -34,7 +34,7 @@ AppAsset::register($this);
         ],
     ]);
     $isGuest = Yii::$app->user->isGuest;
-    $userId = Yii::$app->user->id;
+    $userId = $isGuest ? '' : Yii::$app->user->getIdentity()->username;
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [

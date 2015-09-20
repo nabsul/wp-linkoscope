@@ -77,7 +77,7 @@ class SiteController extends BaseController
         $user = $api->getAccount();
 
         $u = new User([
-            'id' => $user['name'],
+            'id' => $user['id'],
             'username' => $user['name'],
             'token' => $tok->token,
             'secret' => $tok->tokenSecret,
