@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\LinkForm;
+use automattic\Rest\Models\Link;
 use automattic\Rest\Org\OrgWpApi;
 use yii\authclient\OAuthToken;
 use yii\data\ArrayDataProvider;
@@ -25,6 +26,16 @@ class LinkController extends BaseController
     public function actionNew()
     {
         $form = new LinkForm();
+        if ($form->load(Yii::$app->request->post()) && $form->validate())
+        {
+            $link = new Link([
+                'title' => $form->title,
+                'url' => $form->url,
+            ]);
+
+            $this->getApi()->addLink($link);
+            return $this->redirect(['index']);
+        }
         return $this->render('new', ['model' => $form]);
     }
 
@@ -48,11 +59,19 @@ class LinkController extends BaseController
 
     public function actionUp($id)
     {
-
+        $api = $this->getApi();
+        $link = $api->getLink($id);
+        $link->votes++;
+        $api->updateLink($link);
+        return $this->redirect(['index']);
     }
 
     public function actionDown($id)
     {
-
+        $api = $this->getApi();
+        $link = $api->getLink($id);
+        $link->votes--;
+        $api->updateLink($link);
+        return $this->redirect(['index']);
     }
 }
