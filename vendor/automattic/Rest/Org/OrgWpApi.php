@@ -8,8 +8,8 @@
 
 namespace automattic\Rest\Org;
 
+use automattic\Rest\JsonOauth1;
 use automattic\Rest\iWpApi;
-use yii\authclient\OAuth1;
 use yii\authclient\OAuthToken;
 use automattic\Rest\Models\Link;
 use yii\base\Object;
@@ -92,9 +92,27 @@ class OrgWpApi extends Object implements  iWpApi
             ]);
     }
 
-    public function updateLink($link)
+    public function addLink(Link $link)
     {
+        $body = [
+            'title' => $link->title,
+            'excerpt' => $link->url,
+            'menu_order' => 0,
+            'status' => 'publish',
+        ];
+        return $this->post($this->postUrl, $body);
+    }
 
+    public function updateLink(Link $link)
+    {
+        $body = [
+            'title' => $link->title,
+            'excerpt' => $link->url,
+            'menu_order' => $link->votes,
+            'status' => 'publish',
+        ];
+
+        return $this->put($this->postUrl . "/{$link->id}", $body);
     }
 
     public function deleteLink($id)
@@ -117,9 +135,9 @@ class OrgWpApi extends Object implements  iWpApi
         return $this->send('GET', $url);
     }
 
-    private function post($url)
+    private function post($url, $body)
     {
-        return $this->send('POST', $url);
+        return $this->send('POST', $url, $body);
     }
 
     private function delete($url)
@@ -127,20 +145,20 @@ class OrgWpApi extends Object implements  iWpApi
         return $this->send('DELETE', $url);
     }
 
-    private function put($url)
+    private function put($url, $body)
     {
-        return $this->send('PUT', $url);
+        return $this->send('PUT', $url, ['body' => $body], ['content-type' => 'application/json']);
     }
 
-    private function send($method, $url)
+    private function send($method, $url, $params = [], $headers = [])
     {
         $url = $this->blogUrl . $url;
-        return $this->getAuthClient()->api($url, $method, []);
+        return $this->getAuthClient()->api($url, $method, $params, $headers);
     }
 
     private function getAuthClient()
     {
-        $client = new OAuth1([
+        $client = new JsonOauth1 ([
             'consumerKey' => $this->consumerKey,
             'consumerSecret' => $this->consumerSecret,
             'authUrl' => $this->blogUrl . $this->authorizeUrl,
