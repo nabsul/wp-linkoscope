@@ -8,8 +8,7 @@
  * This class extends the Yii framework Oauth1 class to better support JSON REST APIs
  */
 
-namespace app\vendor\automattic\Rest;
-
+namespace automattic\Rest;
 
 use yii\authclient\OAuth1;
 
@@ -22,7 +21,10 @@ class JsonOauth1 extends OAuth1
         'oauth_nonce',
         'oauth_timestamp',
         'oauth_signature_method',
-        'oauth_signature'
+        'oauth_signature',
+        'oauth_consumer_key',
+        'oauth_callback',
+
     ];
 
     /**
@@ -43,7 +45,7 @@ class JsonOauth1 extends OAuth1
                 break;
             }
             case 'DELETE': {
-                $curlOptions[CURLOPT_CUSTOMREQUEST] = 'PUT';
+                $curlOptions[CURLOPT_CUSTOMREQUEST] = 'DELETE';
                 $curlOptions[CURLOPT_URL] = $this->composeUrl($url, $params);
                 break;
             }
