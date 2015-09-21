@@ -13,6 +13,8 @@ use automattic\Rest\iWpApi;
 use yii\authclient\OAuthToken;
 use automattic\Rest\Models\Link;
 use yii\base\Object;
+use automattic\Rest\Models\Comment;
+use Yii;
 
 class OrgWpApi extends Object implements  iWpApi
 {
@@ -22,12 +24,13 @@ class OrgWpApi extends Object implements  iWpApi
     public $blogUrl = 'http://localhost/auto';
     public $token = null;
 
-    private $requestUrl = '/oauth1/request';
+    private $requestUrl =   '/oauth1/request';
     private $authorizeUrl = '/oauth1/authorize';
-    private $accessUrl = '/oauth1/access';
-    private $postUrl = '/wp-json/wp/v2/linkolink';
-    private $typeUrl = '/wp-json/wp/v2/types';
-    private $selfUrl = '/wp-json/wp/v2/users/me';
+    private $accessUrl =    '/oauth1/access';
+    private $postUrl =      '/wp-json/wp/v2/linkolink';
+    private $typeUrl =      '/wp-json/wp/v2/types';
+    private $selfUrl =      '/wp-json/wp/v2/users/me';
+    private $commentsUrl =  '/wp-json/wp/v2/comments';
 
 
     public function getConfig()
@@ -68,7 +71,7 @@ class OrgWpApi extends Object implements  iWpApi
 
     public function getLinks()
     {
-        $links = $this->get($this->postUrl, $this->token);
+        $links = $this->get($this->postUrl);
         $convert = function($item){
             return new Link([
                 'id' => $item['id'],
@@ -83,7 +86,7 @@ class OrgWpApi extends Object implements  iWpApi
 
     public function getLink($id)
     {
-        $link = $this->get($this->postUrl . "/$id", $this->token);
+        $link = $this->get($this->postUrl . "/$id");
         return new Link([
                 'id' => $link['id'],
                 'title' => $link['title']['rendered'],
@@ -130,9 +133,26 @@ class OrgWpApi extends Object implements  iWpApi
         return $this->get($this->selfUrl);
     }
 
-    private function get($url)
+    public function getComments($postId)
     {
-        return $this->send('GET', $url);
+        return $this->get($this->commentsUrl, ['post' => $postId]);
+    }
+
+    public function addComment(Comment $comment)
+    {
+        $body = [
+            'post' => $comment->postId,
+            'content' => $comment->content,
+            'author' => Yii::$app->user->id,
+            'author_name' => Yii::$app->user->getIdentity()->username,
+        ];
+
+        return $this->post($this->commentsUrl, $body);
+    }
+
+    private function get($url, $params = [])
+    {
+        return $this->send('GET', $url, $params);
     }
 
     private function post($url, $body)
