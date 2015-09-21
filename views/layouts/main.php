@@ -58,8 +58,13 @@ AppAsset::register($this);
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
         <?php if (Yii::$app->session->hasFlash('error')) : ?>
-            <p style="color:red;">
+            <p style="background-color:red;">
                 Error: <?= Yii::$app->session->getFlash('error'); ?>
+            </p>
+        <?php endif ?>
+        <?php if (Yii::$app->session->hasFlash('info')) : ?>
+            <p style="background-color:green;">
+                Info: <?= Yii::$app->session->getFlash('info'); ?>
             </p>
         <?php endif ?>
         <?= $content ?>
