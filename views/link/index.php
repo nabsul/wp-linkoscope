@@ -21,7 +21,7 @@ use yii\helpers\Url;
             'class' => ActionColumn::className(),
             'template' => '{view} {update} {delete} {up} {down}',
             'urlCreator' => function($c, $m, $k, $i){
-                return Url::to([$c, 'id' => $m->id]);
+                return Url::to([$c, 'link' => $m->id]);
             },
             'buttons' => [
                 'up' => function ($url, $model, $key) {

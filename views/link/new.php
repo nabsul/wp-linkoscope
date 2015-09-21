@@ -14,7 +14,7 @@ $this->title = 'Submit Link';
     <h1><?= Html::encode($this->title) ?></h1>
 
 <?php $form = ActiveForm::begin([
-    'id' => 'login-form',
+    'id' => 'new-link-form',
     'options' => ['class' => 'form-horizontal'],
     'fieldConfig' => [
         'template' => "{label}\n<div class=\"col-lg-3\">{input}</div>\n<div class=\"col-lg-8\">{error}</div>",
