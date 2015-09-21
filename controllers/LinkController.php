@@ -2,13 +2,12 @@
 
 namespace app\controllers;
 
+use app\models\CommentForm;
 use app\models\LinkForm;
+use automattic\Rest\Models\Comment;
 use automattic\Rest\Models\Link;
-use automattic\Rest\Org\OrgWpApi;
-use yii\authclient\OAuthToken;
 use yii\data\ArrayDataProvider;
 use Yii;
-use app\controllers\BaseController;
 
 class LinkController extends BaseController
 {
@@ -41,35 +40,55 @@ class LinkController extends BaseController
 
     public function actionView($id)
     {
-        $link = $this->getApi()->getLink($id);
-        return $this->render('view', ['link' => $link]);
+        $api = $this->getApi();
+
+        $form = new CommentForm();
+        if ($form->load(Yii::$app->request->post()) && $form->validate())
+        {
+            $comment = new Comment([
+                'postId' => $id,
+                'content' => $form->comment,
+            ]);
+            $api->addComment($comment);
+            Yii::$app->session->setFlash('info', 'Your comment was added.');
+            $this->redirect(['view', 'id'=>$id]);
+        }
+
+        $link = $api->getLink($id);
+        $comments = $api->getComments($id);
+
+        return $this->render('view', [
+            'link' => $link,
+            'comments' => new ArrayDataProvider(['allModels' => $comments]),
+            'commentForm' => $form,
+        ]);
     }
 
-    public function actionUpdate($id)
+    public function actionUpdate($link = null)
     {
-        $link = $this->getApi()->getLink($id);
+        $link = $this->getApi()->getLink($link);
         return $this->render('update', ['link' => $link]);
     }
 
-    public function actionDelete($id)
+    public function actionDelete($link = null, $comment = null)
     {
-        $this->getApi()->deleteLink($id);
+        $this->getApi()->deleteLink($link);
         return $this->redirect(['index']);
     }
 
-    public function actionUp($id)
+    public function actionUp($link = null, $comment = null)
     {
         $api = $this->getApi();
-        $link = $api->getLink($id);
+        $link = $api->getLink($link);
         $link->votes++;
         $api->updateLink($link);
         return $this->redirect(['index']);
     }
 
-    public function actionDown($id)
+    public function actionDown($link = null, $comment = null)
     {
         $api = $this->getApi();
-        $link = $api->getLink($id);
+        $link = $api->getLink($link);
         $link->votes--;
         $api->updateLink($link);
         return $this->redirect(['index']);
