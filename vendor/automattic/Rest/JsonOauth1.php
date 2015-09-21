@@ -15,19 +15,6 @@ use yii\base\InvalidParamException;
 
 class JsonOauth1 extends OAuth1
 {
-    private static $oauthFields = [
-        'oauth_consumer_key',
-        'oauth_token',
-        'oauth_version',
-        'oauth_nonce',
-        'oauth_timestamp',
-        'oauth_signature_method',
-        'oauth_signature',
-        'oauth_consumer_key',
-        'oauth_callback',
-
-    ];
-
     /**
      * Composes HTTP request CUrl options, which will be merged with the default ones.
      * @param string $method request type.
@@ -38,7 +25,6 @@ class JsonOauth1 extends OAuth1
      */
     protected function composeRequestCurlOptions($method, $url, array $params)
     {
-        $oauthFields = array_flip(self::$oauthFields);
         $curlOptions = [];
         switch ($method) {
             case 'GET':
@@ -53,7 +39,7 @@ class JsonOauth1 extends OAuth1
                 $curlOptions[CURLOPT_POST] = true;
                 $curlOptions[CURLOPT_HTTPHEADER] = ['Content-type: application/json'];
                 if (!empty($params)) {
-                    $curlOptions[CURLOPT_URL] = $this->composeUrl($url, array_intersect_key($params, $oauthFields));
+                    $curlOptions[CURLOPT_URL] = $this->composeUrl($url, array_diff_key($params, ['body' => 1]));
                     $curlOptions[CURLOPT_POSTFIELDS] = json_encode($params['body']);
                 }
                 $authorizationHeader = $this->composeAuthorizationHeader($params);
@@ -79,8 +65,8 @@ class JsonOauth1 extends OAuth1
     {
         $signatureMethod = $this->getSignatureMethod();
         $params['oauth_signature_method'] = $signatureMethod->getName();
-        $filter = array_flip(self::$oauthFields);
-        $signatureBaseString = $this->composeSignatureBaseString($method, $url, array_intersect_key($params, $filter));
+
+        $signatureBaseString = $this->composeSignatureBaseString($method, $url, array_diff_key($params, ['body' => 1]));
         $signatureKey = $this->composeSignatureKey();
         $params['oauth_signature'] = $signatureMethod->generateSignature($signatureBaseString, $signatureKey);
 
