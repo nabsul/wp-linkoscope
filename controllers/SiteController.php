@@ -9,6 +9,7 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use app\controllers\BaseController;
 use yii\helpers\Url;
+use yii\web\HttpException;
 
 class SiteController extends BaseController
 {
@@ -59,7 +60,71 @@ class SiteController extends BaseController
         return $this->goHome();
     }
 
-    public function actionLogin($oauth_token = null, $oauth_verifier = null, $wp_scope = null)
+    public function actionLogin($code = null, $error = null, $oauth_token = null,
+                                $oauth_verifier = null, $wp_scope = null)
+    {
+        $api = $this->getApi();
+        if ($api == null) {
+            Yii::$app->session->setFlash('error', 'The site is not configured yet.');
+            $this->redirect(['admin/login']);
+        }
+
+        switch ($api->type)
+        {
+            case 'com':
+                return $this->loginCom($code, $error);
+            case 'org':
+                return $this->loginOrg($oauth_token, $oauth_verifier, $wp_scope);
+            default:
+                throw new HttpException(500, "Invalid API config.");
+        }
+    }
+
+    private function loginCom($code = null, $error = null)
+    {
+        if ($error != null) {
+            throw new HttpException(301, "Error: $error");
+        }
+
+        if ($code == null) {
+            return $this->redirect($this->getApi()->authorize());
+        }
+
+        $api = $this->getApi();
+        $auth = $api->token($code);
+
+        if (is_string($auth))
+        {
+            throw new HttpException(301, "Failed to get token with error: $auth");
+        }
+
+        $redirect = Yii::$app->session->get('login-com', false);
+        if ($redirect !== false) {
+            $api->blogId = $auth->blog_id;
+            $api->blogUrl = $auth->blog_url;
+            $this->saveConfig($api);
+            Yii::$app->session->setFlash('info', 'Successfully completed WP.com config for: ' . $api->blogUrl);
+            return $this->redirect([$redirect]);
+        }
+
+        $api->token = $auth->access_token;
+        $account = $api->getAccount();
+
+        $u = new User([
+            'id' => $account->ID,
+            'username' => $account->display_name,
+            'token' => $auth->access_token,
+        ]);
+
+        $u->saveSessionAccount();
+        Yii::$app->user->login($u);
+
+        return $this->redirect(['link/index']);
+
+        return json_encode($account);
+    }
+
+    private function loginOrg($oauth_token = null, $oauth_verifier = null, $wp_scope = null)
     {
         $api = $this->getApi();
         if ($api == null) {

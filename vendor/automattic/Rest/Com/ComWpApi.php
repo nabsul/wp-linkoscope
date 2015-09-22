@@ -14,6 +14,7 @@ use yii\base\Object;
 use automattic\Rest\Models\Link;
 use automattic\Rest\Models\Comment;
 use yii\authclient\OAuth2;
+use yii\web\HttpException;
 
 class ComWpApi extends Object implements  iWpApi {
     public $type;
@@ -40,9 +41,11 @@ class ComWpApi extends Object implements  iWpApi {
         ];
     }
 
-    public function authorize($returnUrl){
-        return $this->authorizeUrl .
-            "?client_id=$this->clientId&redirect_uri=$returnUrl&response_type=code";
+    public function authorize($returnUrl = null){
+        return
+            $this->authorizeUrl .
+            "?client_id=$this->clientId&redirect_uri=$this->redirectUrl&response_type=code" .
+            ($this->blogId !== null ? "&blog=$this->blogId" : '');
     }
 
     public function token($code)
@@ -66,10 +69,7 @@ class ComWpApi extends Object implements  iWpApi {
         }
 
         $secret = json_decode($auth);
-        $this->blogId = $secret->blog_id;
-        $this->blogUrl = $secret->blog_url;
-        $this->token = $secret->access_token;
-        return true;
+        return $secret;
     }
 
     public function access($token, $verifier){}
@@ -79,7 +79,30 @@ class ComWpApi extends Object implements  iWpApi {
     public function updateLink(Link $link){}
     public function deleteLink($id){}
     public function getTypes(){}
-    public function getAccount(){}
+
+    public function getAccount(){
+        return $this->get('me');
+    }
+
     public function getComments($postId){}
     public function addComment(Comment $comment){}
+
+    private function get($url)
+    {
+        return $this->send('GET', $url);
+    }
+
+    private function send($method, $url, $body = null)
+    {
+        $curl = curl_init( 'https://public-api.wordpress.com/rest/v1/' . $url );
+        curl_setopt( $curl, CURLOPT_HTTPHEADER, array( 'Authorization: Bearer ' . $this->token ) );
+        curl_setopt( $curl, CURLOPT_CUSTOMREQUEST, $method);
+        curl_setopt( $curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt( $curl, CURLOPT_SSL_VERIFYPEER, false);
+        $result = curl_exec( $curl );
+        if ($result === false)
+            throw new HttpException(500, "API call failed with error: " . curl_error($curl));
+
+        return json_decode($result);
+    }
 }
