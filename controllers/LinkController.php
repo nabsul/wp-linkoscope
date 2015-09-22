@@ -32,8 +32,7 @@ class LinkController extends BaseController
                 'url' => $form->url,
             ]);
 
-            $result = $this->getApi()->addLink($link);
-            return json_encode($result);
+            $this->getApi()->addLink($link);
             return $this->redirect(['index']);
         }
         return $this->render('new', ['model' => $form]);
