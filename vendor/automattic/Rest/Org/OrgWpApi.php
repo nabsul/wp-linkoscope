@@ -149,7 +149,19 @@ class OrgWpApi extends Object implements  iWpApi
 
     public function getComments($postId)
     {
-        return $this->get($this->commentsUrl, ['post' => $postId]);
+        $results = $this->get($this->commentsUrl, ['post' => $postId]);
+        $ret = [];
+        foreach ($results as $c)
+        {
+            $ret[] = new Comment([
+                'id' => $c['id'],
+                'postId' => $c['post'],
+                'content' => $c['content']['rendered'],
+                'votes' => 0,
+                'author' => $c['author_name'],
+            ]);
+        }
+        return $ret;
     }
 
     public function addComment(Comment $comment)
@@ -162,6 +174,21 @@ class OrgWpApi extends Object implements  iWpApi
         ];
 
         return $this->post($this->commentsUrl, $body);
+    }
+
+    public function upVoteComment($id)
+    {
+
+    }
+
+    public function downVoteComment($id)
+    {
+
+    }
+
+    public function deleteComment($id)
+    {
+        return $this->delete($this->commentsUrl . "/$id");
     }
 
     private function get($url, $params = [])
