@@ -1,19 +1,32 @@
 <?php
 
 use yii\helpers\Html;
+use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 ?>
 <h1>WP Org Api Setup</h1>
 
-<?= Html::beginForm(); ?>
+<?php $form = ActiveForm::begin([
+    'id' => 'new-link-form',
+    'options' => ['class' => 'form-horizontal'],
+    'fieldConfig' => [
+        'template' => "{label}\n<div class=\"col-lg-3\">{input}</div>\n<div class=\"col-lg-8\">{error}</div>",
+        'labelOptions' => ['class' => 'col-lg-1 control-label'],
+    ],
+]); ?>
 
-Blog URL: <?= Html::textInput('blogUrl'); ?>
+<?= $form->field($model, 'blogUrl') ?>
 
-Consumer Key: <?= Html::textInput('consumerKey'); ?>
+<?= $form->field($model, 'consumerKey') ?>
 
-Consumer Secret: <?= Html::textInput('consumerSecret'); ?>
+<?= $form->field($model, 'consumerSecret') ?>
 
-<?= html::submitButton(); ?>
+<div class="form-group">
+    <div class="col-lg-offset-1 col-lg-11">
+        <?= Html::submitButton('Submit', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
+    </div>
+</div>
 
-<?= Html::endForm(); ?>
+<?php ActiveForm::end(); ?>
+</div>

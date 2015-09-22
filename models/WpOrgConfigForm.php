@@ -20,7 +20,6 @@ class WpOrgConfigForm extends Model
     {
         return [
             [['blogUrl', 'consumerKey', 'consumerSecret'], 'required'],
-            ['blogUrl', 'url'],
         ];
     }
 
