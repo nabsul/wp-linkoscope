@@ -73,8 +73,20 @@ class ComWpApi extends Object implements  iWpApi {
     }
 
     public function access($token, $verifier){}
-    public function getLinks(){}
-    public function getLink($id){}
+
+    public function getLinks(){
+        $result = $this->get("sites/$this->blogId/posts");
+        if (!isset($result->posts))
+            return [];
+
+        return array_map(function($p){return $this->convertPost($p);}, $result->posts);
+    }
+
+    public function getLink($id){
+        $result = $this->get("sites/$this->blogId/posts/$id");
+        return $this->convertPost($result);
+    }
+
     public function addLink(Link $link){}
     public function updateLink(Link $link){}
     public function deleteLink($id){}
@@ -92,17 +104,51 @@ class ComWpApi extends Object implements  iWpApi {
         return $this->send('GET', $url);
     }
 
+    private function delete($url)
+    {
+        return $this->send('DELETE', $url);
+    }
+
+    private function post($url, $body)
+    {
+        return $this->send('POST', $url, $body);
+    }
+
+    private function put($url, $body)
+    {
+        return $this->send('PUT', $url, $body);
+    }
+
     private function send($method, $url, $body = null)
     {
         $curl = curl_init( 'https://public-api.wordpress.com/rest/v1/' . $url );
-        curl_setopt( $curl, CURLOPT_HTTPHEADER, array( 'Authorization: Bearer ' . $this->token ) );
+        $header = ['Authorization: Bearer ' . $this->token];
         curl_setopt( $curl, CURLOPT_CUSTOMREQUEST, $method);
         curl_setopt( $curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt( $curl, CURLOPT_SSL_VERIFYPEER, false);
+
+        if ($body !== null)
+        {
+            $header[] = 'Content-type: application/json';
+            curl_setopt( $curl, CURLOPT_POST, true);
+            curl_setopt( $curl, CURLOPT_POSTFIELDS, json_encode($body));
+        }
+
+        curl_setopt( $curl, CURLOPT_HTTPHEADER, $header);
         $result = curl_exec( $curl );
         if ($result === false)
             throw new HttpException(500, "API call failed with error: " . curl_error($curl));
 
         return json_decode($result);
+    }
+
+    private function convertPost($p)
+    {
+        return new Link([
+            'id' => $p->ID,
+            'title' => $p->title,
+            'url' => '',
+            'votes' => 0,
+        ]);
     }
 }
