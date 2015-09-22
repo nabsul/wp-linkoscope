@@ -38,7 +38,7 @@ class LinkController extends BaseController
         return $this->render('new', ['model' => $form]);
     }
 
-    public function actionView($id)
+    public function actionView($link)
     {
         $api = $this->getApi();
 
@@ -46,16 +46,16 @@ class LinkController extends BaseController
         if ($form->load(Yii::$app->request->post()) && $form->validate())
         {
             $comment = new Comment([
-                'postId' => $id,
+                'postId' => $link,
                 'content' => $form->comment,
             ]);
             $api->addComment($comment);
             Yii::$app->session->setFlash('info', 'Your comment was added.');
-            $this->redirect(['view', 'id'=>$id]);
+            $this->redirect(['view', 'link'=>$link]);
         }
 
-        $link = $api->getLink($id);
-        $comments = $api->getComments($id);
+        $link = $api->getLink($link);
+        $comments = $api->getComments($link);
 
         return $this->render('view', [
             'link' => $link,
