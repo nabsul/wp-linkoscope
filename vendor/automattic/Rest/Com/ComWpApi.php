@@ -79,25 +79,81 @@ class ComWpApi extends Object implements  iWpApi {
         if (!isset($result->posts))
             return [];
 
-        return array_map(function($p){return $this->convertPost($p);}, $result->posts);
+        return ($this->convertPosts($result->posts));
     }
 
     public function getLink($id){
         $result = $this->get("sites/$this->blogId/posts/$id");
-        return $this->convertPost($result);
+        return $this->convertPosts([$result])[0];
     }
 
-    public function addLink(Link $link){}
-    public function updateLink(Link $link){}
-    public function deleteLink($id){}
+    public function addLink(Link $link){
+        return $this->post("sites/$this->blogId/posts/new",
+            [
+                'title' => $link->title,
+                'content' => $link->url,
+            ]
+        );
+    }
+
+    public function updateLink(Link $link){
+        return $this->put("sites/$this->blogId/posts/$link->id",
+            [
+                'title' => $link->title,
+                'content' => $link->url,
+            ]
+        );
+    }
+
+    public function upVoteLink($id)
+    {
+        return $this->post("sites/$this->blogId/posts/$id/likes/new");
+    }
+
+    public function downVoteLink($id)
+    {
+        return $this->post("sites/$this->blogId/posts/$id/likes/mine/delete");
+    }
+
+    public function upVoteComment($id)
+    {
+        return $this->post("sites/$this->blogId/comments/$id/likes/new");
+    }
+
+    public function downVoteComment($id)
+    {
+        return $this->post("sites/$this->blogId/comments/$id/likes/mine/delete");
+    }
+
+    public function deleteLink($id){
+        return $this->post("sites/$this->blogId/posts/$id/delete");
+    }
+
     public function getTypes(){}
 
     public function getAccount(){
         return $this->get('me');
     }
 
-    public function getComments($postId){}
-    public function addComment(Comment $comment){}
+    public function getComments($postId){
+        $result = $this->get("sites/$this->blogId/posts/$postId/replies/");
+        if (!isset($result->comments))
+            return [];
+        return $this->convertComments($result->comments);
+    }
+
+    public function addComment(Comment $comment) {
+        return $this->post("sites/$this->blogId/posts/$comment->postId/replies/new",
+            [
+                'content' => $comment->content,
+            ]
+        );
+    }
+
+    public function deleteComment($id)
+    {
+        return $this->post("sites/$this->blogId/comments/$id/delete");
+    }
 
     private function get($url)
     {
@@ -109,19 +165,19 @@ class ComWpApi extends Object implements  iWpApi {
         return $this->send('DELETE', $url);
     }
 
-    private function post($url, $body)
+    private function post($url, $body = null)
     {
         return $this->send('POST', $url, $body);
     }
 
-    private function put($url, $body)
+    private function put($url, $body = null)
     {
         return $this->send('PUT', $url, $body);
     }
 
     private function send($method, $url, $body = null)
     {
-        $curl = curl_init( 'https://public-api.wordpress.com/rest/v1/' . $url );
+        $curl = curl_init( 'https://public-api.wordpress.com/rest/v1.1/' . $url );
         $header = ['Authorization: Bearer ' . $this->token];
         curl_setopt( $curl, CURLOPT_CUSTOMREQUEST, $method);
         curl_setopt( $curl, CURLOPT_RETURNTRANSFER, 1);
@@ -142,13 +198,34 @@ class ComWpApi extends Object implements  iWpApi {
         return json_decode($result);
     }
 
-    private function convertPost($p)
+    private function convertPosts($posts)
     {
-        return new Link([
-            'id' => $p->ID,
-            'title' => $p->title,
-            'url' => '',
-            'votes' => 0,
-        ]);
+        $result = [];
+        foreach ($posts as $p)
+        {
+            $result[] = new Link([
+                'id' => $p->ID,
+                'title' => $p->title,
+                'url' => $p->content,
+                'votes' => $p->like_count,
+            ]);
+        }
+        return $result;
+    }
+
+    private function convertComments($comments)
+    {
+        $result = [];
+        foreach ($comments as $c)
+        {
+            $result[] = new Comment([
+                'id' => $c->ID,
+                'postId' => $c->post->ID,
+                'content' => $c->content,
+                'author' => $c->author->name,
+                'votes' => $c->like_count,
+            ]);
+        }
+        return $result;
     }
 }

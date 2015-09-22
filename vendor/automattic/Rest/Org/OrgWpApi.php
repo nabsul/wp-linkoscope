@@ -118,6 +118,20 @@ class OrgWpApi extends Object implements  iWpApi
         return $this->put($this->postUrl . "/{$link->id}", $body);
     }
 
+    public function upVoteLink($id)
+    {
+        $link = $this->getLink($id);
+        $link->votes++;
+        return $this->updateLink($link);
+    }
+
+    public function downVoteLink($id)
+    {
+        $link = $this->getLink($id);
+        $link->votes--;
+        return $this->updateLink($link);
+    }
+
     public function deleteLink($id)
     {
         return $this->delete($this->postUrl . "/$id");

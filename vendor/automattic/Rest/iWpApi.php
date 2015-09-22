@@ -19,7 +19,12 @@ interface iWpApi {
     public function getLink($id);
     public function addLink(Link $link);
     public function updateLink(Link $link);
+    public function upVoteLink($id);
+    public function downVoteLink($id);
+    public function upVoteComment($id);
+    public function downVoteComment($id);
     public function deleteLink($id);
+    public function deleteComment($id);
     public function getTypes();
     public function getAccount();
     public function getComments($postId);

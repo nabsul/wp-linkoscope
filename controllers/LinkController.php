@@ -32,13 +32,14 @@ class LinkController extends BaseController
                 'url' => $form->url,
             ]);
 
-            $this->getApi()->addLink($link);
+            $result = $this->getApi()->addLink($link);
+            return json_encode($result);
             return $this->redirect(['index']);
         }
         return $this->render('new', ['model' => $form]);
     }
 
-    public function actionView($link)
+    public function actionView($id)
     {
         $api = $this->getApi();
 
@@ -46,51 +47,64 @@ class LinkController extends BaseController
         if ($form->load(Yii::$app->request->post()) && $form->validate())
         {
             $comment = new Comment([
-                'postId' => $link,
+                'postId' => $id,
                 'content' => $form->comment,
             ]);
+
             $api->addComment($comment);
             Yii::$app->session->setFlash('info', 'Your comment was added.');
-            $this->redirect(['view', 'link'=>$link]);
+            $this->redirect(['view', 'id'=>$id]);
         }
 
-        $link = $api->getLink($link);
-        $comments = $api->getComments($link);
+        $linkObject = $api->getLink($id);
+        $comments = $api->getComments($id);
 
         return $this->render('view', [
-            'link' => $link,
+            'link' => $linkObject,
             'comments' => new ArrayDataProvider(['allModels' => $comments]),
             'commentForm' => $form,
         ]);
     }
 
-    public function actionUpdate($link = null)
+    public function actionUpdate($id)
     {
-        $link = $this->getApi()->getLink($link);
-        return $this->render('update', ['link' => $link]);
+        $this->getApi()->getLink($id);
+        return $this->render('update', ['id' => $id]);
     }
 
-    public function actionDelete($link = null, $comment = null)
+    public function actionDelete($id)
     {
-        $this->getApi()->deleteLink($link);
+        $this->getApi()->deleteLink($id);
         return $this->redirect(['index']);
     }
 
-    public function actionUp($link = null, $comment = null)
+    public function actionUp($id)
     {
-        $api = $this->getApi();
-        $link = $api->getLink($link);
-        $link->votes++;
-        $api->updateLink($link);
+        $this->getApi()->upVoteLink($id);
         return $this->redirect(['index']);
     }
 
-    public function actionDown($link = null, $comment = null)
+    public function actionDown($id)
     {
-        $api = $this->getApi();
-        $link = $api->getLink($link);
-        $link->votes--;
-        $api->updateLink($link);
+        $this->getApi()->downVoteLink($id);
         return $this->redirect(['index']);
+    }
+
+    public function actionUpComment($post, $id)
+    {
+        $this->getApi()->upVoteComment($id);
+        return $this->redirect(['view', 'id' => $post]);
+    }
+
+    public function actionDownComment($post, $id)
+    {
+        $this->getApi()->downVoteComment($id);
+        return $this->redirect(['view', 'id' => $post]);
+    }
+
+    public function actionDeleteComment($post, $id)
+    {
+        $this->getApi()->deleteComment($id);
+        return $this->redirect(['view', 'id' => $post]);
     }
 }

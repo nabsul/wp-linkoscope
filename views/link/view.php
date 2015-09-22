@@ -5,6 +5,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\grid\ActionColumn;
 use yii\helpers\Url;
+use automattic\Rest\Models\Comment;
 
 /** var $this yii\web\View */
 
@@ -20,15 +21,23 @@ use yii\helpers\Url;
 <?= \yii\grid\GridView::widget([
     'dataProvider' => $comments,
     'columns' => [
-        'id', 'author', 'author_name', 'content.rendered',
+        'id', 'votes', 'author', 'content',
         'actions' => [
             'class' => ActionColumn::className(),
-            'template' => '{delete} {up} {down}',
-            'urlCreator' => function($c, $m, $k, $i){
-                return Url::to([$c, 'comment' => $m['id']]);
+            'template' => '{delete-comment} {up-comment} {down-comment}',
+            'urlCreator' => function($c, Comment $m, $k, $i){
+                return Url::to([$c, 'post' => $m->postId, 'id' => $m->id]);
             },
             'buttons' => [
-                'up' => function ($url, $model, $key) {
+                'delete-comment' => function ($url, $model, $key) {
+                    $options = array_merge([
+                        'title' => Yii::t('yii', 'Up'),
+                        'aria-label' => Yii::t('yii', 'Up'),
+                        'data-pjax' => '0',
+                    ]);
+                    return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, $options);
+                },
+                'up-comment' => function ($url, $model, $key) {
                     $options = array_merge([
                         'title' => Yii::t('yii', 'Up'),
                         'aria-label' => Yii::t('yii', 'Up'),
@@ -36,7 +45,7 @@ use yii\helpers\Url;
                     ]);
                     return Html::a('<span class="glyphicon glyphicon-arrow-up"></span>', $url, $options);
                 },
-                'down' => function ($url, $model, $key) {
+                'down-comment' => function ($url, $model, $key) {
                     $options = array_merge([
                         'title' => Yii::t('yii', 'Dn'),
                         'aria-label' => Yii::t('yii', 'Dn'),

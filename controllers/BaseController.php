@@ -26,6 +26,8 @@ class BaseController extends Controller
 			case 'org':
 				return new OrgWpApi($cfg);
 			case 'com':
+				if (!Yii::$app->user->isGuest)
+					$cfg->token = Yii::$app->user->identity->token;
 				return new ComWpApi($cfg);
 			default:
 				throw new \InvalidArgumentException('invalid API type: ' . $cfg['type']);
