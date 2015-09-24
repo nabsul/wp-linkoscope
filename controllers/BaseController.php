@@ -2,8 +2,8 @@
 
 namespace app\controllers;
 
-use automattic\Rest\Org\OrgWpApi;
-use automattic\Rest\Com\ComWpApi;
+use automattic\Rest\OrgWpApi;
+use automattic\Rest\ComWpApi;
 use Yii;
 use yii\web\Controller;
 use yii\helpers\FileHelper;

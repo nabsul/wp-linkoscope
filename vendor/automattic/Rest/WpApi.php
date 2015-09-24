@@ -9,8 +9,6 @@
 namespace automattic\Rest;
 
 use yii\helpers\FileHelper;
-use automattic\Rest\Org\OrgWpApi;
-use automattic\Rest\Com\ComWpApi;
 
 class WpApi
 {

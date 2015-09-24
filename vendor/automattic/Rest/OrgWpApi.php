@@ -6,7 +6,7 @@
  * Time: 9:26 AM
  */
 
-namespace automattic\Rest\Org;
+namespace automattic\Rest;
 
 use automattic\Rest\JsonOauth1;
 use automattic\Rest\iWpApi;

@@ -4,8 +4,8 @@ namespace app\controllers;
 
 use app\models\WpOrgConfigForm;
 use app\models\WpComConfigForm;
-use automattic\Rest\Com\ComWpApi;
-use automattic\Rest\Org\OrgWpApi;
+use automattic\Rest\ComWpApi;
+use automattic\Rest\OrgWpApi;
 use yii\base\InlineAction;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
