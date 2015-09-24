@@ -19,9 +19,9 @@ use Yii;
 class OrgWpApi extends Object implements  iWpApi
 {
     public $type;
-    public $consumerKey = 'H0LzFuk95DvY';
-    public $consumerSecret = 'cnTCuCoiZyC9a2eZa3RHJrP0w550b1eDgruGLYnPcQXKNFyK';
-    public $blogUrl = 'http://localhost/auto';
+    public $consumerKey;
+    public $consumerSecret;
+    public $blogUrl;
     public $token = null;
 
     private $requestUrl =   '/oauth1/request';
@@ -118,14 +118,14 @@ class OrgWpApi extends Object implements  iWpApi
         return $this->put($this->postUrl . "/{$link->id}", $body);
     }
 
-    public function upVoteLink($id)
+    public function likeLink($id)
     {
         $link = $this->getLink($id);
         $link->votes++;
         return $this->updateLink($link);
     }
 
-    public function downVoteLink($id)
+    public function unlikeLink($id)
     {
         $link = $this->getLink($id);
         $link->votes--;
@@ -176,12 +176,12 @@ class OrgWpApi extends Object implements  iWpApi
         return $this->post($this->commentsUrl, $body);
     }
 
-    public function upVoteComment($id)
+    public function likeComment($id)
     {
 
     }
 
-    public function downVoteComment($id)
+    public function unlikeComment($id)
     {
 
     }

@@ -79,25 +79,25 @@ class LinkController extends BaseController
 
     public function actionUp($id)
     {
-        $this->getApi()->upVoteLink($id);
+        $this->getApi()->likeLink($id);
         return $this->redirect(['index']);
     }
 
     public function actionDown($id)
     {
-        $this->getApi()->downVoteLink($id);
+        $this->getApi()->unlikeLink($id);
         return $this->redirect(['index']);
     }
 
     public function actionUpComment($post, $id)
     {
-        $this->getApi()->upVoteComment($id);
+        $this->getApi()->likeComment($id);
         return $this->redirect(['view', 'id' => $post]);
     }
 
     public function actionDownComment($post, $id)
     {
-        $this->getApi()->downVoteComment($id);
+        $this->getApi()->unlikeComment($id);
         return $this->redirect(['view', 'id' => $post]);
     }
 

@@ -13,20 +13,25 @@ use automattic\Rest\Models\Comment;
 
 interface iWpApi {
     public function getConfig();
+
     public function authorize($returnUrl);
     public function access($token, $verifier);
-    public function getLinks();
+    public function getAccount();
+    public function getTypes();
+
     public function getLink($id);
+    public function getLinks();
     public function addLink(Link $link);
     public function updateLink(Link $link);
-    public function upVoteLink($id);
-    public function downVoteLink($id);
-    public function upVoteComment($id);
-    public function downVoteComment($id);
     public function deleteLink($id);
-    public function deleteComment($id);
-    public function getTypes();
-    public function getAccount();
+
+    public function likeLink($id);
+    public function unlikeLink($id);
+
     public function getComments($postId);
     public function addComment(Comment $comment);
+    public function deleteComment($id);
+
+    public function likeComment($id);
+    public function unlikeComment($id);
 }

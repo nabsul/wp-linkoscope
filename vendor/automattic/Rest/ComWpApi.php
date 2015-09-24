@@ -105,22 +105,22 @@ class ComWpApi extends Object implements  iWpApi {
         );
     }
 
-    public function upVoteLink($id)
+    public function likeLink($id)
     {
         return $this->post("sites/$this->blogId/posts/$id/likes/new");
     }
 
-    public function downVoteLink($id)
+    public function unlikeLink($id)
     {
         return $this->post("sites/$this->blogId/posts/$id/likes/mine/delete");
     }
 
-    public function upVoteComment($id)
+    public function likeComment($id)
     {
         return $this->post("sites/$this->blogId/comments/$id/likes/new");
     }
 
-    public function downVoteComment($id)
+    public function unlikeComment($id)
     {
         return $this->post("sites/$this->blogId/comments/$id/likes/mine/delete");
     }
