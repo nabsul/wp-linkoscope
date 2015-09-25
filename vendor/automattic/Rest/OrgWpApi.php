@@ -10,6 +10,7 @@ namespace automattic\Rest;
 
 use automattic\Rest\JsonOauth1;
 use automattic\Rest\iWpApi;
+use Faker\Provider\zh_TW\DateTime;
 use yii\authclient\OAuthToken;
 use automattic\Rest\Models\Link;
 use yii\base\Object;
@@ -71,28 +72,31 @@ class OrgWpApi extends Object implements  iWpApi
 
     public function getLinks()
     {
-        $links = $this->get($this->postUrl);
-        $convert = function($item){
-            return new Link([
-                'id' => $item['id'],
-                'title' => $item['title']['rendered'],
-                'url' => $item['excerpt']['rendered'],
-                'votes' => $item['menu_order'],
-            ]);
-        };
-
-        return array_map($convert, $links);
+        $links = $this->get($this->postUrl,[
+            'meta_key' => 'linkoscope_score',
+            'filter' => [
+                'order' => 'DESC',
+                'orderby' => 'meta_value_num',
+            ],
+        ]);
+        return array_map(function($i){return $this->convertLink($i);}, $links);
     }
 
     public function getLink($id)
     {
         $link = $this->get($this->postUrl . "/$id");
+        return $this->convertLink($link);
+    }
+
+    private function convertLink($item)
+    {
         return new Link([
-                'id' => $link['id'],
-                'title' => $link['title']['rendered'],
-                'url' => $link['excerpt']['rendered'],
-                'votes' => $link['menu_order'],
-            ]);
+            'id' => $item['id'],
+            'title' => $item['title']['rendered'],
+            'url' => $item['excerpt']['rendered'],
+            'votes' => count($item['linkoscope_likes']) > 0 ? count(explode(';', $item['linkoscope_likes'][0])) : 0,
+            'score' => count($item['linkoscope_score']) > 0 ? $item['linkoscope_score'][0] : 0,
+        ]);
     }
 
     public function addLink(Link $link)
@@ -118,11 +122,21 @@ class OrgWpApi extends Object implements  iWpApi
         return $this->put($this->postUrl . "/{$link->id}", $body);
     }
 
-    public function likeLink($id)
+    public function likeLink($id, $userId)
     {
-        $link = $this->getLink($id);
-        $link->votes++;
-        return $this->updateLink($link);
+        $key = 'linkoscope_likes';
+        $url = $this->postUrl . "/$id";
+        $link = $this->get($url);
+        $likes = count($link[$key]) == 0 ? [] : explode(';', $link[$key][0]);
+        $likes[] = $userId;
+
+        //TODO: Uncomment this when testing is complete
+        //$likes = array_unique($likes);
+
+        return $this->put($url, [
+            'linkoscope_likes' => implode(';', $likes),
+            'linkoscope_score' => strtotime($link['date']) + 24 * 60 * 60 * count($likes),
+        ]);
     }
 
     public function unlikeLink($id)

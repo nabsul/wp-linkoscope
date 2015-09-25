@@ -105,7 +105,7 @@ class ComWpApi extends Object implements  iWpApi {
         );
     }
 
-    public function likeLink($id)
+    public function likeLink($id, $userId = null)
     {
         return $this->post("sites/$this->blogId/posts/$id/likes/new");
     }

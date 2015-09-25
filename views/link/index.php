@@ -15,6 +15,7 @@ use yii\helpers\Url;
     'columns' => [
         'id',
         'votes',
+        'score',
         'title',
         'url',
         'actions' => [

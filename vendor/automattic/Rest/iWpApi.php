@@ -25,7 +25,7 @@ interface iWpApi {
     public function updateLink(Link $link);
     public function deleteLink($id);
 
-    public function likeLink($id);
+    public function likeLink($id, $userId);
     public function unlikeLink($id);
 
     public function getComments($postId);

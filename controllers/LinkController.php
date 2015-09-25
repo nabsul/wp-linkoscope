@@ -79,7 +79,7 @@ class LinkController extends BaseController
 
     public function actionUp($id)
     {
-        $this->getApi()->likeLink($id);
+        $this->getApi()->likeLink($id, Yii::$app->user->id);
         return $this->redirect(['index']);
     }
 
