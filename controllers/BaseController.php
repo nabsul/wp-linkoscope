@@ -4,12 +4,16 @@ namespace app\controllers;
 
 use automattic\Rest\OrgWpApi;
 use automattic\Rest\ComWpApi;
+use automattic\Rest\iWpApi;
 use Yii;
 use yii\web\Controller;
 use yii\helpers\FileHelper;
 
 class BaseController extends Controller
 {
+	/**
+	 * @return iWmApi
+     */
 	protected function getApi()
 	{
 		$files = FileHelper::findFiles(Yii::$app->runtimePath, [
