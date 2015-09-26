@@ -14,7 +14,7 @@ use automattic\Rest\Models\Comment;
 <?= DetailView::widget([
     'model' => $link,
     'attributes' => [
-        'id', 'votes', 'title', 'url'
+        'id', 'score', 'votes', 'title', 'url'
     ],
 ]); ?>
 
