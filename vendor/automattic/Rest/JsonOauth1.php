@@ -12,6 +12,8 @@ namespace automattic\Rest;
 
 use yii\authclient\OAuth1;
 use yii\base\InvalidParamException;
+use Yii;
+use yii\log\Logger;
 
 class JsonOauth1 extends OAuth1
 {
@@ -65,12 +67,6 @@ class JsonOauth1 extends OAuth1
     {
         $signatureMethod = $this->getSignatureMethod();
         $params['oauth_signature_method'] = $signatureMethod->getName();
-        if (isset($params['filter']))
-        {
-            $params = array_merge($params, $params['filter']);
-            unset($params['filter']);
-        }
-
         $signatureBaseString = $this->composeSignatureBaseString($method, $url, array_diff_key($params, ['body' => 1]));
         $signatureKey = $this->composeSignatureKey();
         $params['oauth_signature'] = $signatureMethod->generateSignature($signatureBaseString, $signatureKey);
