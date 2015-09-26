@@ -73,8 +73,8 @@ class OrgWpApi extends Object implements  iWpApi
     public function getLinks()
     {
         $links = $this->get($this->postUrl,[
-            'meta_key' => 'linkoscope_score',
             'filter' => [
+                'meta_key' => 'linkoscope_score',
                 'order' => 'DESC',
                 'orderby' => 'meta_value_num',
             ],
@@ -92,8 +92,8 @@ class OrgWpApi extends Object implements  iWpApi
     {
         return new Link([
             'id' => $item['id'],
-            'title' => $item['title']['rendered'],
-            'url' => $item['excerpt']['rendered'],
+            'title' => $item['title']['raw'],
+            'url' => $item['content']['raw'],
             'votes' => count($item['linkoscope_likes']) > 0 ? count(explode(';', $item['linkoscope_likes'][0])) : 0,
             'score' => count($item['linkoscope_score']) > 0 ? $item['linkoscope_score'][0] : 0,
         ]);
@@ -103,9 +103,9 @@ class OrgWpApi extends Object implements  iWpApi
     {
         $body = [
             'title' => $link->title,
-            'excerpt' => $link->url,
-            'menu_order' => 0,
+            'content' => $link->url,
             'status' => 'publish',
+            'linkoscope_score' => time(),
         ];
         return $this->post($this->postUrl, $body);
     }
@@ -114,9 +114,7 @@ class OrgWpApi extends Object implements  iWpApi
     {
         $body = [
             'title' => $link->title,
-            'excerpt' => $link->url,
-            'menu_order' => $link->votes,
-            'status' => 'publish',
+            'content' => $link->url,
         ];
 
         return $this->put($this->postUrl . "/{$link->id}", $body);
