@@ -85,7 +85,7 @@ class AdminController extends BaseController
             return $this->render('wp-org', ['model' => $form]);
         }
 
-        $api = new OrgWpApi();
+        $api = $this->getApi();
         $tok = $api->access($oauth_token, $oauth_verifier);
 
         $types = $api->getTypes($tok);
