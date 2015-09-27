@@ -1,6 +1,6 @@
 <?php
 
-namespace automattic\Rest\Models;
+namespace automattic\LinkoScope\Models;
 
 use yii\base\Object;
 

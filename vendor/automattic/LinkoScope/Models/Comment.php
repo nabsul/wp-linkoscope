@@ -6,7 +6,7 @@
  * Time: 8:45 AM
  */
 
-namespace automattic\Rest\Models;
+namespace automattic\LinkoScope\Models;
 
 
 use yii\base\Object;

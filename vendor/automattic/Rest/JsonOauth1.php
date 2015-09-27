@@ -65,6 +65,7 @@ class JsonOauth1 extends OAuth1
      */
     protected function signRequest($method, $url, array $params)
     {
+        Yii::getLogger()->log('sign params: ' . json_encode($params), Logger::LEVEL_INFO);
         $signatureMethod = $this->getSignatureMethod();
         $params['oauth_signature_method'] = $signatureMethod->getName();
         $signatureBaseString = $this->composeSignatureBaseString($method, $url, array_diff_key($params, ['body' => 1]));
@@ -72,5 +73,28 @@ class JsonOauth1 extends OAuth1
         $params['oauth_signature'] = $signatureMethod->generateSignature($signatureBaseString, $signatureKey);
 
         return $params;
+    }
+
+    /**
+     * Creates signature base string, which will be signed by [[signatureMethod]].
+     * @param string $method request method.
+     * @param string $url request URL.
+     * @param array $params request params.
+     * @return string base signature string.
+     */
+    protected function composeSignatureBaseString($method, $url, array $params)
+    {
+        unset($params['oauth_signature']);
+        uksort($params, 'strcmp'); // Parameters are sorted by name, using lexicographical byte value ordering. Ref: Spec: 9.1.1
+        $parts = [
+            strtoupper($method),
+            $url,
+            http_build_query($params, '', '&', PHP_QUERY_RFC3986)
+        ];
+        $parts[2] = str_replace('%5B', '[', $parts[2]);
+        $parts[2] = str_replace('%5D', ']', $parts[2]);
+        $parts = array_map('rawurlencode', $parts);
+
+        return implode('&', $parts);
     }
 }

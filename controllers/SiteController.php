@@ -139,13 +139,13 @@ class SiteController extends BaseController
         }
 
         $tok = $api->access($oauth_token, $oauth_verifier);
+        $api->token = $tok;
         $user = $api->getAccount();
-
         $u = new User([
-            'id' => $user['id'],
-            'username' => $user['name'],
-            'token' => $tok->token,
-            'secret' => $tok->tokenSecret,
+            'id' => $user['body']['id'],
+            'username' => $user['body']['name'],
+            'token' => $tok['oauth_token'],
+            'secret' => $tok['oauth_token_secret'],
         ]);
 
         $u->saveSessionAccount();

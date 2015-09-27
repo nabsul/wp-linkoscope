@@ -8,8 +8,8 @@
 
 namespace automattic\Rest;
 
-use automattic\Rest\Models\Link;
-use automattic\Rest\Models\Comment;
+use automattic\LinkoScope\Models\Link;
+use automattic\LinkoScope\Models\Comment;
 
 interface iWpApi {
     public function getConfig();

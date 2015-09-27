@@ -8,14 +8,12 @@
 
 namespace automattic\Rest;
 
-use automattic\Rest\JsonOauth1;
-use automattic\Rest\iWpApi;
-use Faker\Provider\zh_TW\DateTime;
 use yii\authclient\OAuthToken;
-use automattic\Rest\Models\Link;
+use automattic\LinkoScope\Models\Link;
 use yii\base\Object;
-use automattic\Rest\Models\Comment;
+use automattic\LinkoScope\Models\Comment;
 use Yii;
+use yii\log\Logger;
 
 class OrgWpApi extends Object implements  iWpApi
 {
@@ -66,8 +64,18 @@ class OrgWpApi extends Object implements  iWpApi
      */
     public function access($token, $verifier)
     {
-        $client = $this->getAuthClient();
-        return $client->fetchAccessToken(new OAuthToken(['token' => $token]), $verifier);
+        $requestToken = new OAuthToken(['token' => $token]);
+        $defaultParams = [
+            'oauth_consumer_key' => $this->consumerKey,
+            'oauth_token' => $requestToken->getToken(),
+            'oauth_verifier' => $verifier,
+        ];
+
+        $api = $this->getAuthClient();
+        $response = $api->sendSignedRequest('GET', $this->blogUrl . $this->accessUrl, $defaultParams);
+        Yii::getLogger()->log("params: " . json_encode($response), Logger::LEVEL_INFO);
+
+        return $response;
     }
 
     public function getLinks()
@@ -156,7 +164,7 @@ class OrgWpApi extends Object implements  iWpApi
 
     public function getAccount()
     {
-        return $this->get($this->selfUrl);
+        return $this->get($this->selfUrl, ['_envelope' => 1]);
     }
 
     public function getComments($postId)
@@ -242,7 +250,7 @@ class OrgWpApi extends Object implements  iWpApi
             ],
         ]);
         if ($this->token != null)
-            $client->accessToken = $this->token;
+            $client->accessToken = ['params' => $this->token];
         return $client;
     }
 }

@@ -9,11 +9,9 @@
 namespace automattic\Rest;
 
 
-use automattic\Rest\iWpApi;
 use yii\base\Object;
-use automattic\Rest\Models\Link;
-use automattic\Rest\Models\Comment;
-use yii\authclient\OAuth2;
+use automattic\LinkoScope\Models\Link;
+use automattic\LinkoScope\Models\Comment;
 use yii\web\HttpException;
 
 class ComWpApi extends Object implements  iWpApi {
