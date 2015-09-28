@@ -25,13 +25,17 @@ class BaseController extends Controller
 			return null;
 
 		$cfg = json_decode(file_get_contents($files[0]));
+		if (!Yii::$app->user->isGuest)
+		{
+			$cfg->accessToken = Yii::$app->user->identity->token;
+			$cfg->accessTokenSecret = Yii::$app->user->identity->secret;
+		}
+
 		switch($cfg->type)
 		{
 			case 'org':
 				return new OrgWpApi($cfg);
 			case 'com':
-				if (!Yii::$app->user->isGuest)
-					$cfg->token = Yii::$app->user->identity->token;
 				return new ComWpApi($cfg);
 			default:
 				throw new \InvalidArgumentException('invalid API type: ' . $cfg['type']);

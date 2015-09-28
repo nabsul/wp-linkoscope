@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\User;
 use Yii;
 use yii\filters\AccessControl;
+use yii\log\Logger;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use app\controllers\BaseController;
@@ -139,7 +140,8 @@ class SiteController extends BaseController
         }
 
         $tok = $api->access($oauth_token, $oauth_verifier);
-        $api->token = $tok;
+        $api->accessToken = $tok['oauth_token'];
+        $api->accessTokenSecret = $tok['oauth_token_secret'];
         $user = $api->getAccount();
         $u = new User([
             'id' => $user['body']['id'],

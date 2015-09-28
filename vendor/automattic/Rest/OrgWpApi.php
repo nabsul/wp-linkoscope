@@ -21,7 +21,8 @@ class OrgWpApi extends Object implements  iWpApi
     public $consumerKey;
     public $consumerSecret;
     public $blogUrl;
-    public $token = null;
+    public $accessToken;
+    public $accessTokenSecret;
 
     private $requestUrl =   '/oauth1/request';
     private $authorizeUrl = '/oauth1/authorize';
@@ -50,9 +51,20 @@ class OrgWpApi extends Object implements  iWpApi
      */
     public function authorize($returnUrl)
     {
-        $oauthClient = $this->getAuthClient();
-        $requestToken = $oauthClient->fetchRequestToken(); // Get request token
-        $url = $oauthClient->buildAuthUrl($requestToken, ['oauth_callback' => $returnUrl]); // Get authorization URL
+        $params = [
+            'oauth_consumer_key' => $this->consumerKey,
+            'oauth_callback' => $returnUrl,
+        ];
+        $response = $this->getAuthClient()->sendSignedRequest('GET', $this->blogUrl . $this->requestUrl, $params);
+        Yii::getLogger()->log(json_encode($response), Logger::LEVEL_INFO);
+
+        $params = [
+            'oauth_callback' => $returnUrl,
+            'oauth_token' => $response['oauth_token'],
+        ];
+
+        $url = $this->blogUrl . $this->authorizeUrl . '?' . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+
         return $url; // Redirect to authorization URL
     }
 
@@ -70,12 +82,8 @@ class OrgWpApi extends Object implements  iWpApi
             'oauth_token' => $requestToken->getToken(),
             'oauth_verifier' => $verifier,
         ];
-
-        $api = $this->getAuthClient();
-        $response = $api->sendSignedRequest('GET', $this->blogUrl . $this->accessUrl, $defaultParams);
-        Yii::getLogger()->log("params: " . json_encode($response), Logger::LEVEL_INFO);
-
-        return $response;
+        $url = $this->blogUrl . $this->accessUrl;
+        return $this->getAuthClient()->sendSignedRequest('GET', $url, $defaultParams);
     }
 
     public function getLinks()
@@ -239,7 +247,7 @@ class OrgWpApi extends Object implements  iWpApi
 
     private function getAuthClient()
     {
-        $client = new JsonOauth1 ([
+        return new JsonOauth1 ([
             'consumerKey' => $this->consumerKey,
             'consumerSecret' => $this->consumerSecret,
             'authUrl' => $this->blogUrl . $this->authorizeUrl,
@@ -248,9 +256,9 @@ class OrgWpApi extends Object implements  iWpApi
             'curlOptions' => [
                 CURLOPT_FOLLOWLOCATION => true,
             ],
+            'accessToken' => $this->accessToken,
+            'accessTokenSecret' => $this->accessTokenSecret,
         ]);
-        if ($this->token != null)
-            $client->accessToken = ['params' => $this->token];
-        return $client;
     }
 }
+

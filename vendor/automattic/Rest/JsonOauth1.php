@@ -10,13 +10,28 @@
 
 namespace automattic\Rest;
 
-use yii\authclient\OAuth1;
-use yii\base\InvalidParamException;
+use yii\base\Object;
 use Yii;
-use yii\log\Logger;
+use yii\web\HttpException;
 
-class JsonOauth1 extends OAuth1
+/**
+ * Class JsonOauth1
+ *
+ * @package automattic\Rest
+ *
+*/
+class JsonOauth1 extends Object
 {
+    public $consumerKey;
+    public $consumerSecret;
+    public $authUrl;
+    public $requestTokenUrl;
+    public $accessTokenUrl;
+    public $curlOptions;
+
+    public $accessToken;
+    public $accessTokenSecret;
+
     /**
      * Composes HTTP request CUrl options, which will be merged with the default ones.
      * @param string $method request type.
@@ -50,10 +65,45 @@ class JsonOauth1 extends OAuth1
                 }
                 break;
             default:
-                throw new InvalidParamException("Unknown http method: $method");
+                throw new \Exception("Unknown http method: $method");
         }
 
         return $curlOptions;
+    }
+
+    /**
+     * Composes URL from base URL and GET params.
+     * @param string $url base URL.
+     * @param array $params GET params.
+     * @return string composed URL.
+     */
+    protected function composeUrl($url, array $params = [])
+    {
+        return $url . '?' . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+    }
+
+    /**
+     * Composes authorization header content.
+     * @param array $params request params.
+     * @param string $realm authorization realm.
+     * @return string authorization header content.
+     */
+    protected function composeAuthorizationHeader(array $params, $realm = '')
+    {
+        $header = 'Authorization: OAuth';
+        $headerParams = [];
+
+        foreach ($params as $key => $value) {
+            if (substr_compare($key, 'oauth', 0, 5)) {
+                continue;
+            }
+            $headerParams[] = rawurlencode($key) . '="' . rawurlencode($value) . '"';
+        }
+        if (!empty($headerParams)) {
+            $header .= ' ' . implode(', ', $headerParams);
+        }
+
+        return $header;
     }
 
     /**
@@ -65,12 +115,10 @@ class JsonOauth1 extends OAuth1
      */
     protected function signRequest($method, $url, array $params)
     {
-        Yii::getLogger()->log('sign params: ' . json_encode($params), Logger::LEVEL_INFO);
-        $signatureMethod = $this->getSignatureMethod();
-        $params['oauth_signature_method'] = $signatureMethod->getName();
+        $params['oauth_signature_method'] = 'HMAC-SHA1';
         $signatureBaseString = $this->composeSignatureBaseString($method, $url, array_diff_key($params, ['body' => 1]));
         $signatureKey = $this->composeSignatureKey();
-        $params['oauth_signature'] = $signatureMethod->generateSignature($signatureBaseString, $signatureKey);
+        $params['oauth_signature'] = base64_encode(hash_hmac('sha1', $signatureBaseString, $signatureKey, true));
 
         return $params;
     }
@@ -96,5 +144,81 @@ class JsonOauth1 extends OAuth1
         $parts = array_map('rawurlencode', $parts);
 
         return implode('&', $parts);
+    }
+
+    /**
+     * Composes request signature key.
+     * @return string signature key.
+     */
+    protected function composeSignatureKey()
+    {
+        $signatureKeyParts = [
+            $this->consumerSecret
+        ];
+
+        $signatureKeyParts[] = $this->accessTokenSecret ?: '';
+        $signatureKeyParts = array_map('rawurlencode', $signatureKeyParts);
+
+        return implode('&', $signatureKeyParts);
+    }
+
+    public function api($url, $method = 'GET', array $params = [], array $headers = [])
+    {
+        $params['oauth_consumer_key'] = $this->consumerKey;
+        $params['oauth_token'] = $this->accessToken;
+        return $this->sendSignedRequest($method, $url, $params, $headers);
+    }
+
+    public function sendSignedRequest($method, $url, array $params = [], array $headers = [])
+    {
+        $params = array_merge($params, [
+            'oauth_version' => '1.0',
+            'oauth_nonce' => md5(microtime() . mt_rand()),
+            'oauth_timestamp' => time(),
+        ]);
+        $params = $this->signRequest($method, $url, $params);
+
+        return $this->sendRequest($method, $url, $params, $headers);
+    }
+
+    protected function sendRequest($method, $url, array $params = [], array $headers = [])
+    {
+        $curlOptions = $this->composeRequestCurlOptions(strtoupper($method), $url, $params)
+            + [
+                CURLOPT_HTTPHEADER => $headers,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_URL => $url,
+                CURLOPT_USERAGENT => Yii::$app->name . ' OAuth 1.0 Client',
+                CURLOPT_CONNECTTIMEOUT => 30,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_SSL_VERIFYPEER => false,
+            ]
+            + $this->curlOptions;
+
+        $curlResource = curl_init();
+        foreach ($curlOptions as $option => $value) {
+            curl_setopt($curlResource, $option, $value);
+        }
+        $response = curl_exec($curlResource);
+        $responseHeaders = curl_getinfo($curlResource);
+
+        // check cURL error
+        $errorNumber = curl_errno($curlResource);
+        $errorMessage = curl_error($curlResource);
+
+        curl_close($curlResource);
+
+        if ($errorNumber > 0) {
+            throw new HttpException(500, 'Curl error requesting "' .  $url . '": #' . $errorNumber . ' - ' . $errorMessage);
+        }
+
+        if (strncmp($responseHeaders['http_code'], '20', 2) !== 0) {
+            throw new HttpException($responseHeaders['http_code'], $response);
+        }
+
+        $result = json_decode($response, true);
+        if ($result == null)
+            parse_str($response, $result);
+        return $result;
     }
 }
