@@ -86,16 +86,9 @@ class AdminController extends BaseController
         }
 
         $api = $this->getApi();
-        $tok = $api->access($oauth_token, $oauth_verifier);
+        $api->access($oauth_token, $oauth_verifier);
 
-        $types = $api->getTypes($tok);
-        if (false === array_search('linkoscope_link', array_keys($types)))
-        {
-            Yii::$app->session->setFlash('error', 'Site does not support linkoscope post type.');
-            return $this->redirect('index');
-        }
-
-        return $this->redirect(['link/index']);
+        return $this->redirect(['index']);
     }
 
     public function actionLogin()
@@ -106,7 +99,7 @@ class AdminController extends BaseController
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+            return $this->redirect(['index']);
         }
         return $this->render('login', [
             'model' => $model,

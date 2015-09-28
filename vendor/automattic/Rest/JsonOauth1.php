@@ -60,7 +60,7 @@ class JsonOauth1 extends Object
         }
 
         $curlOptions[CURLOPT_URL] = $this->composeUrl($url, $params);
-        
+
         return $curlOptions;
     }
 
