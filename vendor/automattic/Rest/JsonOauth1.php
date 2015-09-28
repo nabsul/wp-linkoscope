@@ -12,6 +12,7 @@ namespace automattic\Rest;
 
 use yii\base\Object;
 use Yii;
+use yii\log\Logger;
 use yii\web\HttpException;
 
 /**
@@ -32,42 +33,34 @@ class JsonOauth1 extends Object
     public $accessToken;
     public $accessTokenSecret;
 
-    /**
-     * Composes HTTP request CUrl options, which will be merged with the default ones.
-     * @param string $method request type.
-     * @param string $url request URL.
-     * @param array $params request params.
-     * @return array CUrl options.
-     * @throws Exception on failure.
-     */
-    protected function composeRequestCurlOptions($method, $url, array $params)
+    protected function composeRequestCurlOptions($method, $url, array $params, $body = null)
     {
-        $curlOptions = [];
-        switch ($method) {
-            case 'GET':
-            case 'HEAD':
-            case 'DELETE':
-                $curlOptions[CURLOPT_CUSTOMREQUEST] = $method;
-                $curlOptions[CURLOPT_URL] = $this->composeUrl($url, $params);
-                break;
-           case 'POST':
-            case 'PUT':
-                $curlOptions[CURLOPT_CUSTOMREQUEST] = $method;
-                $curlOptions[CURLOPT_POST] = true;
-                $curlOptions[CURLOPT_HTTPHEADER] = ['Content-type: application/json'];
-                if (!empty($params)) {
-                    $curlOptions[CURLOPT_URL] = $this->composeUrl($url, array_diff_key($params, ['body' => 1]));
-                    $curlOptions[CURLOPT_POSTFIELDS] = json_encode($params['body']);
-                }
-                $authorizationHeader = $this->composeAuthorizationHeader($params);
-                if (!empty($authorizationHeader)) {
-                    $curlOptions[CURLOPT_HTTPHEADER][] = $authorizationHeader;
-                }
-                break;
-            default:
-                throw new \Exception("Unknown http method: $method");
+        $curlOptions = [
+            CURLOPT_CUSTOMREQUEST => $method,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_URL => $url,
+            CURLOPT_USERAGENT => Yii::$app->name . ' OAuth 1.0 Client',
+            CURLOPT_CONNECTTIMEOUT => 30,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_URL => $this->composeUrl($url, $params),
+        ];
+
+        if ($method == 'PUT' || $method == 'POST')
+        {
+            $curlOptions[CURLOPT_HTTPHEADER] = ['Content-type: application/json'];
+            $curlOptions[CURLOPT_POSTFIELDS] = json_encode($body);
+            $curlOptions[CURLOPT_POST] = true;
         }
 
+        $authorizationHeader = $this->composeAuthorizationHeader($params);
+        if (!empty($authorizationHeader)) {
+            $curlOptions[CURLOPT_HTTPHEADER][] = $authorizationHeader;
+        }
+
+        $curlOptions[CURLOPT_URL] = $this->composeUrl($url, $params);
+        
         return $curlOptions;
     }
 
@@ -79,7 +72,9 @@ class JsonOauth1 extends Object
      */
     protected function composeUrl($url, array $params = [])
     {
-        return $url . '?' . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+        $val = $url . '?' . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+        Yii::getLogger()->log('url: ' . $val, Logger::LEVEL_INFO);
+        return $val;
     }
 
     /**
@@ -116,7 +111,8 @@ class JsonOauth1 extends Object
     protected function signRequest($method, $url, array $params)
     {
         $params['oauth_signature_method'] = 'HMAC-SHA1';
-        $signatureBaseString = $this->composeSignatureBaseString($method, $url, array_diff_key($params, ['body' => 1]));
+        $signatureBaseString = $this->composeSignatureBaseString($method, $url, $params);
+        Yii::getLogger()->log($signatureBaseString, Logger::LEVEL_INFO);
         $signatureKey = $this->composeSignatureKey();
         $params['oauth_signature'] = base64_encode(hash_hmac('sha1', $signatureBaseString, $signatureKey, true));
 
@@ -162,38 +158,25 @@ class JsonOauth1 extends Object
         return implode('&', $signatureKeyParts);
     }
 
-    public function api($url, $method = 'GET', array $params = [], array $headers = [])
-    {
-        $params['oauth_consumer_key'] = $this->consumerKey;
-        $params['oauth_token'] = $this->accessToken;
-        return $this->sendSignedRequest($method, $url, $params, $headers);
-    }
-
-    public function sendSignedRequest($method, $url, array $params = [], array $headers = [])
+    public function api($url, $method = 'GET', array $params = [], $body = null)
     {
         $params = array_merge($params, [
             'oauth_version' => '1.0',
             'oauth_nonce' => md5(microtime() . mt_rand()),
             'oauth_timestamp' => time(),
+            'oauth_consumer_key' => $this->consumerKey,
         ]);
+        if ($this->accessToken != null)
+            $params['oauth_token'] = $this->accessToken;
         $params = $this->signRequest($method, $url, $params);
 
-        return $this->sendRequest($method, $url, $params, $headers);
+        return $this->sendRequest($method, $url, $params, $body);
     }
 
-    protected function sendRequest($method, $url, array $params = [], array $headers = [])
+    protected function sendRequest($method, $url, array $params = [], $body = null)
     {
-        $curlOptions = $this->composeRequestCurlOptions(strtoupper($method), $url, $params)
-            + [
-                CURLOPT_HTTPHEADER => $headers,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_URL => $url,
-                CURLOPT_USERAGENT => Yii::$app->name . ' OAuth 1.0 Client',
-                CURLOPT_CONNECTTIMEOUT => 30,
-                CURLOPT_TIMEOUT => 30,
-                CURLOPT_SSL_VERIFYPEER => false,
-            ]
-            + $this->curlOptions;
+        $curlOptions = $this->composeRequestCurlOptions(strtoupper($method), $url, $params, $body);
+        Yii::getLogger()->log(json_encode($curlOptions), Logger::LEVEL_INFO);
 
         $curlResource = curl_init();
         foreach ($curlOptions as $option => $value) {

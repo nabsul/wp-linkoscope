@@ -43,47 +43,26 @@ class OrgWpApi extends Object implements  iWpApi
         ];
     }
 
-    /**
-     * Gets an initial authorization token and returns the URL to go to get user consent
-     *
-     * @param $returnUrl string URL to return from after user authorization.
-     * @return string
-     */
     public function authorize($returnUrl)
     {
-        $params = [
-            'oauth_consumer_key' => $this->consumerKey,
-            'oauth_callback' => $returnUrl,
-        ];
-        $response = $this->getAuthClient()->sendSignedRequest('GET', $this->blogUrl . $this->requestUrl, $params);
-        Yii::getLogger()->log(json_encode($response), Logger::LEVEL_INFO);
+        $response = $this->get($this->requestUrl, ['oauth_callback' => $returnUrl]);
 
         $params = [
             'oauth_callback' => $returnUrl,
             'oauth_token' => $response['oauth_token'],
         ];
 
-        $url = $this->blogUrl . $this->authorizeUrl . '?' . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
-
-        return $url; // Redirect to authorization URL
+        return $this->blogUrl . $this->authorizeUrl . '?' . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
     }
 
-    /**
-     * @param $token
-     * @param $verifier
-     * @return OAuthToken
-     * @throws \yii\base\Exception
-     */
     public function access($token, $verifier)
     {
-        $requestToken = new OAuthToken(['token' => $token]);
         $defaultParams = [
             'oauth_consumer_key' => $this->consumerKey,
-            'oauth_token' => $requestToken->getToken(),
+            'oauth_token' => $token,
             'oauth_verifier' => $verifier,
         ];
-        $url = $this->blogUrl . $this->accessUrl;
-        return $this->getAuthClient()->sendSignedRequest('GET', $url, $defaultParams);
+        return $this->get($this->accessUrl, $defaultParams);
     }
 
     public function getLinks()
@@ -133,7 +112,7 @@ class OrgWpApi extends Object implements  iWpApi
             'content' => $link->url,
         ];
 
-        return $this->put($this->postUrl . "/{$link->id}", $body);
+        return $this->put($this->postUrl . "/{$link->id}", [], $body);
     }
 
     public function likeLink($id, $userId)
@@ -201,7 +180,7 @@ class OrgWpApi extends Object implements  iWpApi
             'author_name' => Yii::$app->user->getIdentity()->username,
         ];
 
-        return $this->post($this->commentsUrl, $body);
+        return $this->post($this->commentsUrl, [], $body);
     }
 
     public function likeComment($id)
@@ -226,7 +205,7 @@ class OrgWpApi extends Object implements  iWpApi
 
     private function post($url, $body)
     {
-        return $this->send('POST', $url, ['body' => $body]);
+        return $this->send('POST', $url, [], $body);
     }
 
     private function delete($url)
@@ -236,13 +215,12 @@ class OrgWpApi extends Object implements  iWpApi
 
     private function put($url, $body)
     {
-        return $this->send('PUT', $url, ['body' => $body]);
+        return $this->send('PUT', $url, [], $body);
     }
 
-    private function send($method, $url, $params = [], $headers = [])
+    private function send($method, $url, $params = [], $body = null)
     {
-        $url = $this->blogUrl . $url;
-        return $this->getAuthClient()->api($url, $method, $params, $headers);
+        return $this->getAuthClient()->api($this->blogUrl . $url, $method, $params, $body);
     }
 
     private function getAuthClient()
@@ -253,9 +231,6 @@ class OrgWpApi extends Object implements  iWpApi
             'authUrl' => $this->blogUrl . $this->authorizeUrl,
             'requestTokenUrl' => $this->blogUrl . $this->requestUrl,
             'accessTokenUrl' => $this->blogUrl . $this->accessUrl,
-            'curlOptions' => [
-                CURLOPT_FOLLOWLOCATION => true,
-            ],
             'accessToken' => $this->accessToken,
             'accessTokenSecret' => $this->accessTokenSecret,
         ]);
