@@ -3,7 +3,10 @@
 namespace app\controllers;
 
 use app\models\User;
+use automattic\LinkoScope\ComLinkoScope;
+use automattic\Rest\ComWpApi;
 use Yii;
+use yii\debug\models\search\Log;
 use yii\filters\AccessControl;
 use yii\log\Logger;
 use yii\web\Controller;
@@ -93,7 +96,6 @@ class SiteController extends BaseController
 
         $api = $this->getApi();
         $auth = $api->token($code);
-        Yii::getLogger()->log('auth: ' . json_encode($auth), Logger::LEVEL_INFO);
 
         if (is_string($auth))
         {
@@ -102,14 +104,15 @@ class SiteController extends BaseController
 
         $redirect = Yii::$app->session->get('login-com', false);
         if ($redirect !== false) {
-            $api->blogId = $auth['blog_id'];
-            $api->blogUrl = $auth['blog_url'];
+            $cfg = ['blogUrl' => $auth['blog_url'], 'blogId' => $auth['blog_id']] + $api->getConfig();
+            $api = new ComLinkoScope(new ComWpApi($cfg));
             $this->saveConfig($api);
-            Yii::$app->session->setFlash('info', 'Successfully completed WP.com config for: ' . $api->blogUrl);
+            Yii::$app->session->setFlash('info', 'Successfully completed WP.com config for: ' . $auth['blog_url']);
             return $this->redirect([$redirect]);
         }
 
-        $api->token = $auth['access_token'];
+        $cfg = $api->getConfig() + ['accessToken' => $auth['access_token']];
+        $api = new ComLinkoScope(new ComWpApi($cfg));
         $account = $api->getAccount();
 
         $u = new User([

@@ -15,7 +15,7 @@ class BaseWpApi
     public $baseUrl;
     protected $curlOptions;
 
-    public function get($url, $params = []){
+    protected function get($url, $params = []){
         return $this->send(new ApiRequest([
             'method' => 'GET',
             'url' => $url,
@@ -23,7 +23,7 @@ class BaseWpApi
         ]));
     }
 
-    public function delete($url, $params = []){
+    protected function delete($url, $params = []){
         return $this->send(new ApiRequest([
             'method' => 'DELETE',
             'url' => $url,
@@ -31,7 +31,7 @@ class BaseWpApi
         ]));
     }
 
-    public function post($url, $params = [], $body = null){
+    protected function post($url, $params = [], $body = null){
         return $this->send(new ApiRequest([
             'method' => 'POST',
             'url' => $url,
@@ -40,7 +40,7 @@ class BaseWpApi
         ]));
     }
 
-    public function put($url, $params = [], $body = null){
+    protected function put($url, $params = [], $body = null){
         return $this->send(new ApiRequest([
             'method' => 'PUT',
             'url' => $url,
@@ -74,11 +74,9 @@ class BaseWpApi
             curl_setopt($curlResource, $option, $value);
         }
 
+        \Yii::getLogger()->log('url: ' . $this->composeUrl($request->url, $request->params), Logger::LEVEL_INFO);
         curl_setopt($curlResource, CURLOPT_CUSTOMREQUEST, $request->method);
         curl_setopt($curlResource, CURLOPT_HTTPHEADER, $request->headers);
-
-        \Yii::getLogger()->log(json_encode($this->composeUrl($request->url, $request->params)), Logger::LEVEL_INFO);
-        \Yii::getLogger()->log(json_encode($request), Logger::LEVEL_INFO);
 
         $response = curl_exec($curlResource);
         $responseHeaders = curl_getinfo($curlResource);
@@ -98,7 +96,6 @@ class BaseWpApi
             throw new WpApiException($responseHeaders['http_code'], $responseHeaders['http_code'] . ': ' . $response);
         }
 
-        \Yii::getLogger()->log("response: " . json_encode($response), Logger::LEVEL_INFO);
         $result = json_decode($response, true);
         if ($result == null)
             parse_str($response, $result);

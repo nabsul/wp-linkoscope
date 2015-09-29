@@ -15,8 +15,8 @@ use automattic\LinkoScope\Models\Link;
     'dataProvider' => $data,
     'columns' => [
         'id',
-        'votes' => ['label' => 'Votes', 'value' => function(Link $l) {return count($l->votes);}],
-        'voteslist' => ['label' => 'Votes List', 'value' => function(Link $l) {return implode(', ', $l->votes);}],
+        'date',
+        'votes',
         'score',
         'title',
         'url',

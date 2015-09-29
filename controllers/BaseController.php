@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use automattic\LinkoScope\ComLinkoScope;
 use automattic\LinkoScope\OrgLinkoScope;
+use automattic\Rest\ComWpApi;
 use automattic\Rest\OrgWpApi;
 use Yii;
 use yii\web\Controller;
@@ -37,7 +38,8 @@ class BaseController extends Controller
 				$api = new OrgWpApi($cfg);
 				return new OrgLinkoScope($api);
 			case 'com':
-				return new ComLinkoScope($cfg);
+				$api = new ComWpApi($cfg);
+				return new ComLinkoScope($api);
 			default:
 				throw new \InvalidArgumentException('invalid API type: ' . $cfg['type']);
 		}

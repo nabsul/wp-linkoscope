@@ -16,6 +16,7 @@ use yii\log\Logger;
 
 class OrgLinkoScope
 {
+    public $type = 'org';
     private $linkEndpoint = 'linkolink';
     private $api;
     private $linkVoteMultiplier = 24 * 60 * 60;
@@ -52,7 +53,6 @@ class OrgLinkoScope
 
     public function getLink($id) {
         $link = $this->api->getCustom($this->linkEndpoint, $id);
-        \Yii::getLogger()->log(json_encode($link), Logger::LEVEL_INFO);
         return $this->apiToLink($link);
     }
 
@@ -155,7 +155,6 @@ class OrgLinkoScope
 
     private function apiToLink($item)
     {
-        \Yii::getLogger()->log('link: ' . json_encode($item), Logger::LEVEL_INFO);
         return new Link([
             'id' => $item['id'],
             'date' => $item['date'],

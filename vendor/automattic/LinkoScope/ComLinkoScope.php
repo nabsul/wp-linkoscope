@@ -13,55 +13,31 @@ use automattic\LinkoScope\Models\Link;
 use automattic\LinkoScope\Models\Comment;
 use yii\log\Logger;
 
-class ComLinkoScope extends ComWpApi
+class ComLinkoScope
 {
-    private $requestUrl = '/oauth2/token';
-    private $authorizeUrl = '/oauth2/authorize';
-    private $wpBase = 'https://public-api.wordpress.com';
+    public $type = 'com';
+    private $api;
+    private $likeFactor = 24*60*60;
 
-    public function __construct(array $config)
-    {
-        $this->type = 'com';
-        $this->clientId = $config['clientId'];
-        $this->clientSecret = $config['clientSecret'];
-        $this->redirectUrl = $config['redirectUrl'];
-        $this->blogId = isset($config['blogId']) ? $config['blogId'] : null;
-        $this->blogUrl = isset($config['blogUrl']) ? $config['blogUrl'] : null;
-        $this->token = isset($config['accessToken']) ? $config['accessToken'] : null;
-        $this->baseUrl = $this->wpBase;
+    public function __construct(ComWpApi $api){
+        $this->api = $api;
     }
 
     public function getConfig(){
-        return [
-            'type' => 'com',
-            'clientId' => $this->clientId,
-            'clientSecret' => $this->clientSecret,
-            'redirectUrl' => $this->redirectUrl,
-            'blogId' => $this->blogId,
-            'blogUrl' => $this->blogUrl,
-        ];
+        return $this->api->getConfig();
     }
 
     public function authorize(){
-        return
-            $this->baseUrl . $this->authorizeUrl .
-            "?client_id=$this->clientId&redirect_uri=$this->redirectUrl&response_type=code" .
-            ($this->blogId !== null ? "&blog=$this->blogId" : '');
+        return $this->api->getAuthorizeUrl();
     }
 
     public function token($code)
     {
-        return $this->post($this->requestUrl, [], array(
-            'client_id' => $this->clientId,
-            'redirect_uri' => $this->redirectUrl,
-            'client_secret' => $this->clientSecret,
-            'code' => $code,
-            'grant_type' => 'authorization_code'
-        ));
+        return $this->api->getToken($code);
     }
 
     public function getLinks(){
-        $result = $this->get("/rest/v1.1/sites/$this->blogId/posts");
+        $result = $this->api->listPosts();
         if (!isset($result['posts']))
             return [];
 
@@ -69,89 +45,93 @@ class ComLinkoScope extends ComWpApi
     }
 
     public function getLink($id){
-        $result = $this->get("/rest/v1.1/sites/$this->blogId/posts/$id");
+        $result = $this->api->getPost($id);
         return $this->convertPosts([$result])[0];
     }
 
     public function addLink(Link $link){
-        return $this->post("/rest/v1.1/sites/$this->blogId/posts/new", [],
-            [
-                'title' => $link->title,
-                'content' => $link->url,
-            ]
-        );
+        return $this->api->addPost([
+            'title' => $link->title,
+            'content' => $link->url,
+            'status' => 'publish',
+        ]);
     }
 
     public function updateLink(Link $link){
-        return $this->put("/rest/v1.1/sites/$this->blogId/posts/$link->id", [],
-            [
-                'title' => $link->title,
-                'content' => $link->url,
-            ]
-        );
+        return $this->api->updatePost($link->id, [
+            'title' => $link->title,
+            'content' => $link->url,
+            'date' => $link->date,
+            'status' => 'publish',
+        ]);
     }
 
     public function likeLink($id, $userId = null)
     {
-        return $this->post("/rest/v1.1/sites/$this->blogId/posts/$id/likes/new");
+        $link = $this->getLink($id);
+        $link->date = date(DATE_ATOM, strtotime($link->date) + $this->likeFactor);
+        $this->updateLink($link);
+        return $this->api->likePost($id);
     }
 
     public function unlikeLink($id, $userId = null)
     {
-        return $this->post("/rest/v1.1/sites/$this->blogId/posts/$id/likes/mine/delete");
+        $link = $this->getLink($id);
+        $link->date = date(DATE_ATOM, strtotime($link->date) - $this->likeFactor);
+        $this->updateLink($link);
+        return $this->api->unlikePost($id);
     }
 
     public function likeComment($id, $userId = null)
     {
-        return $this->post("/rest/v1.1/sites/$this->blogId/comments/$id/likes/new");
+        return $this->api->likeComment($id);
     }
 
     public function unlikeComment($id, $userId = null)
     {
-        return $this->post("/rest/v1.1/sites/$this->blogId/comments/$id/likes/mine/delete");
+        return $this->api->unlikeComment($id);
     }
 
     public function deleteLink($id){
-        return $this->post("/rest/v1.1/sites/$this->blogId/posts/$id/delete");
+        return $this->api->deletePost($id);
     }
 
-    public function getTypes(){}
+    public function getTypes(){return [];}
 
     public function getAccount(){
-        return $this->get('/rest/v1.1/me');
+        return $this->api->getSelf();
     }
 
     public function getComments($postId){
-        $result = $this->get("/rest/v1.1/sites/$this->blogId/posts/$postId/replies/");
+        $result = $this->api->listComments($postId);
         if (!isset($result->comments))
             return [];
         return $this->convertComments($result->comments);
     }
 
     public function addComment(Comment $comment) {
-        return $this->post("/rest/v1.1/sites/$this->blogId/posts/$comment->postId/replies/new",
-            [
-                'content' => $comment->content,
-            ]
-        );
+        return $this->api->addComment([
+            'content' => $comment->content,
+        ]);
     }
 
     public function deleteComment($id)
     {
-        return $this->post("/rest/v1.1/sites/$this->blogId/comments/$id/delete");
+        return $this->api->deleteComment($id);
     }
 
     private function convertPosts($posts)
     {
-        \Yii::getLogger()->log('converting: ' . json_encode($posts), Logger::LEVEL_INFO);
         $result = [];
         foreach ($posts as $p)
         {
             $result[] = new Link([
                 'id' => $p['ID'],
+                'date' => $p['date'],
                 'title' => $p['title'],
                 'url' => $p['content'],
                 'votes' => $p['like_count'],
+                'score' => strtotime($p['date']),
             ]);
         }
         return $result;
