@@ -160,12 +160,26 @@ class OrgLinkoScope extends OrgWpApi
             $ret[] = new Comment([
                 'id' => $c['id'],
                 'postId' => $c['post'],
-                'content' => $c['content']['rendered'],
-                'votes' => 0,
+                'content' => $c['content']['raw'],
+                'score' => $c['linkoscope_score'],
+                'likes' => $c['karma'],
                 'author' => $c['author_name'],
             ]);
         }
         return $ret;
+    }
+
+    public function getComment($id)
+    {
+        $c = $this->get($this->commentsUrl . "/$id");
+        return new Comment([
+            'id' => $c['id'],
+            'postId' => $c['post'],
+            'content' => $c['content']['raw'],
+            'score' => $c['linkoscope_score'],
+            'likes' => $c['karma'],
+            'author' => $c['author_name'],
+        ]);
     }
 
     public function addComment(Comment $comment)
@@ -173,21 +187,38 @@ class OrgLinkoScope extends OrgWpApi
         $body = [
             'post' => $comment->postId,
             'content' => $comment->content,
-            'author' => Yii::$app->user->id,
-            'author_name' => Yii::$app->user->getIdentity()->username,
         ];
 
         return $this->post($this->commentsUrl, [], $body);
     }
 
+    public function updateComment(Comment $comment)
+    {
+        $body = [
+            'post' => $comment->postId,
+            'content' => $comment->content,
+            'author_name' => $comment->author,
+            'karma' =>  $comment->likes,
+            'linkoscope_score' => $comment->score,
+        ];
+
+        return $this->put($this->commentsUrl . "/$comment->id", [], $body);
+    }
+
     public function likeComment($id)
     {
-
+        $comment = $this->getComment($id);
+        $comment->likes++;
+        $comment->score = $comment->likes * 100;
+        return $this->updateComment($comment);
     }
 
     public function unlikeComment($id)
     {
-
+        $comment = $this->getComment($id);
+        $comment->likes--;
+        $comment->score = $comment->likes * 100;
+        return $this->updateComment($comment);
     }
 
     public function deleteComment($id)

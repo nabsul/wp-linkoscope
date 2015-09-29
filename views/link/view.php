@@ -5,7 +5,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\grid\ActionColumn;
 use yii\helpers\Url;
-use automattic\Rest\Models\Comment;
+use automattic\LinkoScope\Models\Comment;
 
 /** var $this yii\web\View */
 
@@ -21,7 +21,7 @@ use automattic\Rest\Models\Comment;
 <?= \yii\grid\GridView::widget([
     'dataProvider' => $comments,
     'columns' => [
-        'id', 'votes', 'author', 'content',
+        'id', 'score', 'likes', 'author', 'content',
         'actions' => [
             'class' => ActionColumn::className(),
             'template' => '{delete-comment} {up-comment} {down-comment}',
