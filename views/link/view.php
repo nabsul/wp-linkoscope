@@ -8,20 +8,34 @@ use yii\helpers\Url;
 use automattic\LinkoScope\Models\Comment;
 
 /** var $this yii\web\View */
+/** var $link automattic\LinkoScope\Models\Link */
+/** var $this yii\web\View */
 
 ?>
 
 <?= DetailView::widget([
     'model' => $link,
     'attributes' => [
-        'id', 'score', 'votes', 'title', 'url'
+        'id',
+        'date',
+        'score',
+        'votes' => ['label' => 'Votes', 'value' => count($link->votes)],
+        'voteslist' => ['label' => 'Votes List', 'value' => implode(', ', $link->votes)],
+        'title',
+        'url'
     ],
 ]); ?>
 
 <?= \yii\grid\GridView::widget([
     'dataProvider' => $comments,
     'columns' => [
-        'id', 'score', 'likes', 'author', 'content',
+        'id',
+        'date',
+        'likes' => ['label' => 'Likes', 'value' => function(Comment $c){return count($c->likes);}],
+        'likeslist' => ['label' => 'Likes List', 'value' => function(Comment $c){return implode(', ',$c->likes);}],
+        'score',
+        'author',
+        'content',
         'actions' => [
             'class' => ActionColumn::className(),
             'template' => '{delete-comment} {up-comment} {down-comment}',

@@ -86,19 +86,19 @@ class LinkController extends BaseController
 
     public function actionDown($id)
     {
-        $this->getApi()->unlikeLink($id);
+        $this->getApi()->unlikeLink($id, Yii::$app->user->id);
         return $this->redirect(['index']);
     }
 
     public function actionUpComment($post, $id)
     {
-        $this->getApi()->likeComment($id);
+        $this->getApi()->likeComment($id, Yii::$app->user->id);
         return $this->redirect(['view', 'id' => $post]);
     }
 
     public function actionDownComment($post, $id)
     {
-        $this->getApi()->unlikeComment($id);
+        $this->getApi()->unlikeComment($id, Yii::$app->user->id);
         return $this->redirect(['view', 'id' => $post]);
     }
 

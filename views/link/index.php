@@ -4,6 +4,7 @@ use yii\grid\GridView;
 use yii\grid\ActionColumn;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use automattic\LinkoScope\Models\Link;
 
 /* @var $this yii\web\View */
 
@@ -14,7 +15,8 @@ use yii\helpers\Url;
     'dataProvider' => $data,
     'columns' => [
         'id',
-        'votes',
+        'votes' => ['label' => 'Votes', 'value' => function(Link $l) {return count($l->votes);}],
+        'voteslist' => ['label' => 'Votes List', 'value' => function(Link $l) {return implode(', ', $l->votes);}],
         'score',
         'title',
         'url',

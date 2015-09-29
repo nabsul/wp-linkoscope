@@ -14,215 +14,194 @@ use automattic\LinkoScope\Models\Link;
 use automattic\LinkoScope\Models\Comment;
 use yii\log\Logger;
 
-class OrgLinkoScope extends OrgWpApi
+class OrgLinkoScope
 {
-    private $requestUrl =   '/oauth1/request';
-    private $authorizeUrl = '/oauth1/authorize';
-    private $accessUrl =    '/oauth1/access';
-    private $postUrl =      '/wp-json/wp/v2/linkolink';
-    private $typeUrl =      '/wp-json/wp/v2/types';
-    private $selfUrl =      '/wp-json/wp/v2/users/me';
-    private $commentsUrl =  '/wp-json/wp/v2/comments';
+    private $linkEndpoint = 'linkolink';
+    private $api;
+    private $linkVoteMultiplier = 24 * 60 * 60;
+    private $commentVoteMultiplier = 24 * 60 * 60;
 
-    public function __construct(array $config)
-    {
-        $this->type = $config['type'];
-        $this->baseUrl = $config['blogUrl'];
-        $this->consumerKey = $config['consumerKey'];
-        $this->consumerSecret = $config['consumerSecret'];
-        $this->accessToken = isset($config['accessToken']) ? $config['accessToken'] : null;
-        $this->accessTokenSecret = isset($config['accessTokenSecret']) ? $config['accessTokenSecret'] : null;
+    public function __construct(OrgWpApi $api) {
+        $this->api = $api;
     }
 
     public function getConfig()
     {
-        return [
-            'type' => 'org',
-            'consumerKey' => $this->consumerKey,
-            'consumerSecret' => $this->consumerSecret,
-            'blogUrl' => $this->baseUrl,
-        ];
+        return $this->api->getConfig();
     }
 
-    public function authorize($returnUrl)
-    {
-        $response = $this->get($this->requestUrl, ['oauth_callback' => $returnUrl]);
-        \Yii::getLogger()->log(json_encode($response), Logger::LEVEL_INFO);
-        $params = ['oauth_callback' => $returnUrl, 'oauth_token' => $response['oauth_token'],];
-        return $this->baseUrl . $this->authorizeUrl . '?' . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+    public function authorize($returnUrl) {
+        return $this->api->getAuthorizeUrl($returnUrl);
     }
 
-    public function access($token, $verifier)
-    {
-        $defaultParams = [
-            'oauth_consumer_key' => $this->consumerKey,
-            'oauth_token' => $token,
-            'oauth_verifier' => $verifier,
-        ];
-        return $this->get($this->accessUrl, $defaultParams);
+    public function access($token, $verifier) {
+        return $this->api->getAccessToken($token, $verifier);
     }
 
-    public function getLinks()
-    {
-        $links = $this->get($this->postUrl,[
+    public function getLinks() {
+        $sortParams = [
             'filter' => [
                 'meta_key' => 'linkoscope_score',
                 'order' => 'DESC',
                 'orderby' => 'meta_value_num',
-            ],
-        ]);
-        return array_map([$this, 'convertLink'], $links);
+        ]];
+
+        $links = $this->api->listCustom($this->linkEndpoint,$sortParams);
+        return $this->apiToLinks($links);
     }
 
-    public function getLink($id)
-    {
-        $link = $this->get($this->postUrl . "/$id");
-        return $this->convertLink($link);
-    }
-
-    private function convertLink($item)
-    {
-        return new Link([
-            'id' => $item['id'],
-            'title' => $item['title']['raw'],
-            'url' => $item['content']['raw'],
-            'votes' => count($item['linkoscope_likes']) > 0 ? count(explode(';', $item['linkoscope_likes'][0])) : 0,
-            'score' => count($item['linkoscope_score']) > 0 ? $item['linkoscope_score'][0] : 0,
-        ]);
+    public function getLink($id) {
+        $link = $this->api->getCustom($this->linkEndpoint, $id);
+        \Yii::getLogger()->log(json_encode($link), Logger::LEVEL_INFO);
+        return $this->apiToLink($link);
     }
 
     public function addLink(Link $link)
     {
-        $body = [
-            'title' => $link->title,
-            'content' => $link->url,
-            'status' => 'publish',
-            'linkoscope_score' => time(),
-        ];
-        return $this->post($this->postUrl, $body);
+        $body = $this->linkToApi($link);
+        return $this->api->addCustom($this->linkEndpoint, $body);
     }
 
     public function updateLink(Link $link)
     {
-        $body = [
-            'title' => $link->title,
-            'content' => $link->url,
-        ];
-
-        return $this->put($this->postUrl . "/{$link->id}", [], $body);
+        $link->score = strtotime($link->date) + $this->linkVoteMultiplier * count($link->votes);
+        $body = $this->linkToApi($link);
+        $result = $this->api->updateCustom($this->linkEndpoint, $link->id, $body);
+        return $this->apiToLink($result);
     }
 
     public function likeLink($id, $userId)
     {
-        $key = 'linkoscope_likes';
-        $url = $this->postUrl . "/$id";
-        $link = $this->get($url);
-        $likes = count($link[$key]) == 0 ? [] : explode(';', $link[$key][0]);
-        $likes[] = $userId;
-
-        //TODO: Uncomment this when testing is complete
-        //$likes = array_unique($likes);
-
-        return $this->put($url, [
-            'linkoscope_likes' => implode(';', $likes),
-            'linkoscope_score' => strtotime($link['date']) + 24 * 60 * 60 * count($likes),
-        ]);
+        $link = $this->getLink($id);
+        $link->votes[] = $id;
+        //$link->votes = array_unique($link->votes);  //TODO: Uncomment this after testing is complete
+        return $this->updateLink($link);
     }
 
     public function unlikeLink($id)
     {
         $link = $this->getLink($id);
-        $link->votes--;
-        return $this->updateLink($link);
+        $link->votes = array_diff($link->votes, [$id]);
+        return $this->api->updateCustom('linkolink', $id, $link);
     }
 
     public function deleteLink($id)
     {
-        return $this->delete($this->postUrl . "/$id");
+        return $this->api->deleteCustom($this->linkEndpoint, $id);
     }
 
     public function getTypes()
     {
-        return $this->get($this->typeUrl);
+        return $this->api->listTypes();
     }
 
     public function getAccount()
     {
-        return $this->get($this->selfUrl, ['_envelope' => 1]);
+        return $this->api->getSelf();
     }
 
     public function getComments($postId)
     {
-        $results = $this->get($this->commentsUrl, ['post' => $postId]);
-        $ret = [];
-        foreach ($results as $c)
-        {
-            $ret[] = new Comment([
-                'id' => $c['id'],
-                'postId' => $c['post'],
-                'content' => $c['content']['raw'],
-                'score' => $c['linkoscope_score'],
-                'likes' => $c['karma'],
-                'author' => $c['author_name'],
-            ]);
-        }
-        return $ret;
+        $sort = ['orderby' => 'karma'];
+        $results = $this->api->listComments($postId, $sort);
+        return $this->apiToComments($results);
     }
 
     public function getComment($id)
     {
-        $c = $this->get($this->commentsUrl . "/$id");
-        return new Comment([
-            'id' => $c['id'],
-            'postId' => $c['post'],
-            'content' => $c['content']['raw'],
-            'score' => $c['linkoscope_score'],
-            'likes' => $c['karma'],
-            'author' => $c['author_name'],
-        ]);
+        $c = $this->api->getComment($id);
+        return $this->apiToComment($c);
     }
 
     public function addComment(Comment $comment)
     {
-        $body = [
-            'post' => $comment->postId,
-            'content' => $comment->content,
-        ];
-
-        return $this->post($this->commentsUrl, [], $body);
+        $body = $this->commentToApi($comment);
+        return $this->api->addComment($body);
     }
 
     public function updateComment(Comment $comment)
     {
-        $body = [
-            'post' => $comment->postId,
-            'content' => $comment->content,
-            'author_name' => $comment->author,
-            'karma' =>  $comment->likes,
-            'linkoscope_score' => $comment->score,
-        ];
-
-        return $this->put($this->commentsUrl . "/$comment->id", [], $body);
+        $comment->score = strtotime($comment->date) +
+            $this->commentVoteMultiplier * count($comment->likes);
+        $body = $this->commentToApi($comment);
+        return $this->api->updateComment($comment->id, $body);
     }
 
-    public function likeComment($id)
+    public function likeComment($id, $userId)
     {
         $comment = $this->getComment($id);
-        $comment->likes++;
-        $comment->score = $comment->likes * 100;
+        $comment->likes[] = $userId;
         return $this->updateComment($comment);
     }
 
-    public function unlikeComment($id)
+    public function unlikeComment($id, $userId)
     {
         $comment = $this->getComment($id);
-        $comment->likes--;
-        $comment->score = $comment->likes * 100;
+        $comment->likes = array_diff_key($comment->likes, [$userId]);
         return $this->updateComment($comment);
     }
 
     public function deleteComment($id)
     {
-        return $this->delete($this->commentsUrl . "/$id");
+        return $this->api->deleteComment($id);
+    }
+
+    private function apiToLinks($items) {
+        $result = [];
+        foreach ($items as $item)
+            $result[] = $this->apiToLink($item);
+        return $result;
+    }
+
+    private function apiToLink($item)
+    {
+        \Yii::getLogger()->log('link: ' . json_encode($item), Logger::LEVEL_INFO);
+        return new Link([
+            'id' => $item['id'],
+            'date' => $item['date'],
+            'title' => $item['title']['raw'],
+            'url' => $item['content']['raw'],
+            'score' => $item['linkoscope_score'] ?: 0,
+            'votes' => empty($item['linkoscope_likes']) ? [] : explode(';', $item['linkoscope_likes']),
+        ]);
+    }
+
+    private function linkToApi(Link $link)
+    {
+        return [
+            'title' => $link->title,
+            'content' => $link->title,
+            'linkoscope_score' => $link->score,
+            'linkoscope_likes' => implode(';', $link->votes),
+        ];
+    }
+
+    private function apiToComments($items){
+        $result = [];
+        foreach ($items as $item)
+            $result[] = $this->apiToComment($item);
+        return $result;
+    }
+
+    private function apiToComment($c){
+        return new Comment([
+            'id' => $c['id'],
+            'date' => $c['date'],
+            'postId' => $c['post'],
+            'content' => $c['content']['raw'],
+            'likes' => empty($c['linkoscope_likes']) ? [] : explode(';', $c['linkoscope_likes']),
+            'score' => $c['karma'],
+            'author' => $c['author_name'],
+        ]);
+    }
+
+    private function commentToApi(Comment $comment){
+        return [
+            'post' => $comment->postId,
+            'content' => $comment->content,
+            'author_name' => $comment->author,
+            'karma' =>  $comment->score,
+            'linkoscope_likes' => implode(';', $comment->likes),
+        ];
     }
 }

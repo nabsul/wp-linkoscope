@@ -14,6 +14,7 @@ use yii\base\Object;
 class Comment extends Object
 {
     public $id;
+    public $date;
     public $postId;
     public $author;
     public $content;

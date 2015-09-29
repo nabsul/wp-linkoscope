@@ -15,7 +15,8 @@ class OrgWpApi extends BaseWpApi
     public $consumerSecret;
     public $accessToken;
     public $accessTokenSecret;
-    public $curlOptions = [
+
+    protected $curlOptions = [
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_HEADER => false,
@@ -24,6 +25,71 @@ class OrgWpApi extends BaseWpApi
         CURLOPT_TIMEOUT => 30,
         CURLOPT_SSL_VERIFYPEER => false,
     ];
+
+    private $requestUrl =   '/oauth1/request';
+    private $authorizeUrl = '/oauth1/authorize';
+    private $accessUrl =    '/oauth1/access';
+    private $postUrl =      '/wp-json/wp/v2/posts';
+    private $typeUrl =      '/wp-json/wp/v2/types';
+    private $selfUrl =      '/wp-json/wp/v2/users/me';
+    private $commentsUrl =  '/wp-json/wp/v2/comments';
+    private $customBase = '/wp-json/wp/v2/';
+
+    public function __construct(array $config)
+    {
+        $this->type = $config['type'];
+        $this->baseUrl = $config['blogUrl'];
+        $this->consumerKey = $config['consumerKey'];
+        $this->consumerSecret = $config['consumerSecret'];
+        $this->accessToken = isset($config['accessToken']) ? $config['accessToken'] : null;
+        $this->accessTokenSecret = isset($config['accessTokenSecret']) ? $config['accessTokenSecret'] : null;
+    }
+
+    public function getConfig()
+    {
+        return [
+            'type' => 'org',
+            'consumerKey' => $this->consumerKey,
+            'consumerSecret' => $this->consumerSecret,
+            'blogUrl' => $this->baseUrl,
+        ];
+    }
+
+    public function getAuthorizeUrl($returnUrl){
+        $response = $this->get($this->requestUrl, ['oauth_callback' => $returnUrl]);
+        $params = ['oauth_callback' => $returnUrl, 'oauth_token' => $response['oauth_token'],];
+        return $this->baseUrl . $this->authorizeUrl . '?' . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+    }
+
+    public function getAccessToken($token, $verifier){
+        $defaultParams = [
+            'oauth_consumer_key' => $this->consumerKey,
+            'oauth_token' => $token,
+            'oauth_verifier' => $verifier,
+        ];
+        return $this->get($this->accessUrl, $defaultParams);
+    }
+
+    public function listCustom($type, $params = []) {return $this->get($this->customBase . $type, $params);}
+    public function getCustom($type, $id) {return $this->get($this->customBase . $type . "/$id");}
+    public function addCustom($type, $data) {return $this->post($this->customBase . $type, [], $data);}
+    public function updateCustom($type, $id, $data) {return $this->put($this->customBase . $type . "/$id", [], $data);}
+    public function deleteCustom($type, $id) {return $this->delete($this->customBase . $type . "/$id");}
+
+    public function listPosts($params = []) {return $this->get($this->postUrl, $params);}
+    public function getPost($id) {return $this->get($this->postUrl . "/$id");}
+    public function addPost($data) {return $this->post($this->postUrl, [], $data);}
+    public function updatePost($id, $data) {return $this->put($this->postUrl . "/$id", [], $data);}
+    public function deletePost($id) {return $this->delete($this->postUrl . "/$id");}
+
+    public function listComments($postId, $params = []) {return $this->get($this->commentsUrl, ['post' => $postId] + $params);}
+    public function getComment($id) {return $this->get($this->commentsUrl . "/$id");}
+    public function addComment($data) {return $this->post($this->commentsUrl, [], $data);}
+    public function updateComment($id, $data) {return $this->put($this->commentsUrl . "/$id", [], $data);}
+    public function deleteComment($id) {return $this->delete($this->commentsUrl . "/$id");}
+
+    public function getSelf() {return $this->get($this->selfUrl, ['_envelope' => 1]);}
+    public function listTypes() {return $this->get($this->typeUrl);}
 
     protected function requestFilter(ApiRequest $req)
     {

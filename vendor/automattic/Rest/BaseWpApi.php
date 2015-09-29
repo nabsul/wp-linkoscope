@@ -13,7 +13,7 @@ use yii\log\Logger;
 class BaseWpApi
 {
     public $baseUrl;
-    public $curlOptions;
+    protected $curlOptions;
 
     public function get($url, $params = []){
         return $this->send(new ApiRequest([

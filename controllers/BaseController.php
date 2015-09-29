@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use automattic\LinkoScope\ComLinkoScope;
 use automattic\LinkoScope\OrgLinkoScope;
+use automattic\Rest\OrgWpApi;
 use Yii;
 use yii\web\Controller;
 use yii\helpers\FileHelper;
@@ -33,7 +34,8 @@ class BaseController extends Controller
 		switch($cfg['type'])
 		{
 			case 'org':
-				return new OrgLinkoScope($cfg);
+				$api = new OrgWpApi($cfg);
+				return new OrgLinkoScope($api);
 			case 'com':
 				return new ComLinkoScope($cfg);
 			default:
