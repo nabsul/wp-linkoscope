@@ -1,12 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Nabeel
- * Date: 2015-09-20
- * Time: 2:52 PM
- *
- * This class extends the Yii framework Oauth1 class to better support JSON REST APIs
- */
 
 namespace automattic\Rest;
 
@@ -15,19 +7,11 @@ use Yii;
 use yii\log\Logger;
 use yii\web\HttpException;
 
-/**
- * Class JsonOauth1
- *
- * @package automattic\Rest
- *
-*/
+
 class JsonOauth1 extends Object
 {
     public $consumerKey;
     public $consumerSecret;
-    public $authUrl;
-    public $requestTokenUrl;
-    public $accessTokenUrl;
     public $curlOptions;
 
     public $accessToken;
@@ -44,7 +28,6 @@ class JsonOauth1 extends Object
             CURLOPT_CONNECTTIMEOUT => 30,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_URL => $this->composeUrl($url, $params),
         ];
 
         if ($method == 'PUT' || $method == 'POST')
@@ -59,31 +42,12 @@ class JsonOauth1 extends Object
             $curlOptions[CURLOPT_HTTPHEADER][] = $authorizationHeader;
         }
 
-        $curlOptions[CURLOPT_URL] = $this->composeUrl($url, $params);
+        $curlOptions[CURLOPT_URL] = $url . '?' . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
 
         return $curlOptions;
     }
 
-    /**
-     * Composes URL from base URL and GET params.
-     * @param string $url base URL.
-     * @param array $params GET params.
-     * @return string composed URL.
-     */
-    protected function composeUrl($url, array $params = [])
-    {
-        $val = $url . '?' . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
-        Yii::getLogger()->log('url: ' . $val, Logger::LEVEL_INFO);
-        return $val;
-    }
-
-    /**
-     * Composes authorization header content.
-     * @param array $params request params.
-     * @param string $realm authorization realm.
-     * @return string authorization header content.
-     */
-    protected function composeAuthorizationHeader(array $params, $realm = '')
+    protected function composeAuthorizationHeader(array $params)
     {
         $header = 'Authorization: OAuth';
         $headerParams = [];
@@ -98,16 +62,10 @@ class JsonOauth1 extends Object
             $header .= ' ' . implode(', ', $headerParams);
         }
 
+        Yii::getLogger()->log('Header params: ' . json_encode($header), Logger::LEVEL_INFO);
         return $header;
     }
 
-    /**
-     * Sign request with [[signatureMethod]].
-     * @param string $method request method.
-     * @param string $url request URL.
-     * @param array $params request params.
-     * @return array signed request params.
-     */
     protected function signRequest($method, $url, array $params)
     {
         $params['oauth_signature_method'] = 'HMAC-SHA1';
@@ -119,13 +77,6 @@ class JsonOauth1 extends Object
         return $params;
     }
 
-    /**
-     * Creates signature base string, which will be signed by [[signatureMethod]].
-     * @param string $method request method.
-     * @param string $url request URL.
-     * @param array $params request params.
-     * @return string base signature string.
-     */
     protected function composeSignatureBaseString($method, $url, array $params)
     {
         unset($params['oauth_signature']);
@@ -142,10 +93,6 @@ class JsonOauth1 extends Object
         return implode('&', $parts);
     }
 
-    /**
-     * Composes request signature key.
-     * @return string signature key.
-     */
     protected function composeSignatureKey()
     {
         $signatureKeyParts = [
@@ -176,7 +123,6 @@ class JsonOauth1 extends Object
     protected function sendRequest($method, $url, array $params = [], $body = null)
     {
         $curlOptions = $this->composeRequestCurlOptions(strtoupper($method), $url, $params, $body);
-        Yii::getLogger()->log(json_encode($curlOptions), Logger::LEVEL_INFO);
 
         $curlResource = curl_init();
         foreach ($curlOptions as $option => $value) {

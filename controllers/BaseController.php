@@ -2,9 +2,8 @@
 
 namespace app\controllers;
 
-use automattic\Rest\OrgWpApi;
-use automattic\Rest\ComWpApi;
-use automattic\Rest\iWpApi;
+use automattic\LinkoScope\ComLinkoScope;
+use automattic\LinkoScope\OrgLinkoScope;
 use Yii;
 use yii\web\Controller;
 use yii\helpers\FileHelper;
@@ -24,19 +23,19 @@ class BaseController extends Controller
 		if (count($files) == 0)
 			return null;
 
-		$cfg = json_decode(file_get_contents($files[0]));
+		$cfg = json_decode(file_get_contents($files[0]), true);
 		if (!Yii::$app->user->isGuest)
 		{
-			$cfg->accessToken = Yii::$app->user->identity->token;
-			$cfg->accessTokenSecret = Yii::$app->user->identity->secret;
+			$cfg['accessToken'] = Yii::$app->user->identity->token;
+			$cfg['accessTokenSecret'] = Yii::$app->user->identity->secret;
 		}
 
-		switch($cfg->type)
+		switch($cfg['type'])
 		{
 			case 'org':
-				return new OrgWpApi($cfg);
+				return new OrgLinkoScope($cfg);
 			case 'com':
-				return new ComWpApi($cfg);
+				return new ComLinkoScope($cfg);
 			default:
 				throw new \InvalidArgumentException('invalid API type: ' . $cfg['type']);
 		}

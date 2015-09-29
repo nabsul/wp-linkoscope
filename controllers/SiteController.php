@@ -93,6 +93,7 @@ class SiteController extends BaseController
 
         $api = $this->getApi();
         $auth = $api->token($code);
+        Yii::getLogger()->log('auth: ' . json_encode($auth), Logger::LEVEL_INFO);
 
         if (is_string($auth))
         {
@@ -101,20 +102,20 @@ class SiteController extends BaseController
 
         $redirect = Yii::$app->session->get('login-com', false);
         if ($redirect !== false) {
-            $api->blogId = $auth->blog_id;
-            $api->blogUrl = $auth->blog_url;
+            $api->blogId = $auth['blog_id'];
+            $api->blogUrl = $auth['blog_url'];
             $this->saveConfig($api);
             Yii::$app->session->setFlash('info', 'Successfully completed WP.com config for: ' . $api->blogUrl);
             return $this->redirect([$redirect]);
         }
 
-        $api->token = $auth->access_token;
+        $api->token = $auth['access_token'];
         $account = $api->getAccount();
 
         $u = new User([
-            'id' => $account->ID,
-            'username' => $account->display_name,
-            'token' => $auth->access_token,
+            'id' => $account['ID'],
+            'username' => $account['display_name'],
+            'token' => $auth['access_token'],
         ]);
 
         $u->saveSessionAccount();

@@ -8,13 +8,14 @@ use automattic\LinkoScope\Models\Comment;
 use automattic\LinkoScope\Models\Link;
 use yii\data\ArrayDataProvider;
 use Yii;
+use yii\log\Logger;
 
 class LinkController extends BaseController
 {
     public function actionIndex()
     {
-        $api = $this->getApi();
-        $result = $api->getLinks();
+        $result = $this->getApi()->getLinks();
+        Yii::getLogger()->log(json_encode($result), Logger::LEVEL_INFO);
         $data = new ArrayDataProvider(['allModels' => $result]);
         return $this->render('index', [
             'data' => $data,

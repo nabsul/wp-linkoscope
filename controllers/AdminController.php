@@ -4,6 +4,8 @@ namespace app\controllers;
 
 use app\models\WpOrgConfigForm;
 use app\models\WpComConfigForm;
+use automattic\LinkoScope\ComLinkoScope;
+use automattic\LinkoScope\OrgLinkoScope;
 use automattic\Rest\ComWpApi;
 use automattic\Rest\OrgWpApi;
 use yii\base\InlineAction;
@@ -55,7 +57,7 @@ class AdminController extends BaseController
     {
         $form = new WpComConfigForm();
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
-            $api = new ComWpApi(array_merge(
+            $api = new ComLinkoScope(array_merge(
                 $form->getConfig(),
                 ['redirectUrl' => Url::to( ['site/login'], true )]
             ));
@@ -74,7 +76,7 @@ class AdminController extends BaseController
         {
             $form = new WpOrgConfigForm();
             if ($form->load(Yii::$app->request->post()) && $form->validate()) {
-                $api = new OrgWpApi($form->getConfig());
+                $api = new OrgLinkoScope($form->getConfig());
                 $this->saveConfig($api);
 
                 $here = Url::to( '', true );
