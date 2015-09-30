@@ -4,7 +4,6 @@ namespace automattic\Rest;
 
 use yii\base\Object;
 use Yii;
-use yii\log\Logger;
 use yii\web\HttpException;
 
 
@@ -62,7 +61,6 @@ class JsonOauth1 extends Object
             $header .= ' ' . implode(', ', $headerParams);
         }
 
-        Yii::getLogger()->log('Header params: ' . json_encode($header), Logger::LEVEL_INFO);
         return $header;
     }
 
@@ -70,7 +68,6 @@ class JsonOauth1 extends Object
     {
         $params['oauth_signature_method'] = 'HMAC-SHA1';
         $signatureBaseString = $this->composeSignatureBaseString($method, $url, $params);
-        Yii::getLogger()->log($signatureBaseString, Logger::LEVEL_INFO);
         $signatureKey = $this->composeSignatureKey();
         $params['oauth_signature'] = base64_encode(hash_hmac('sha1', $signatureBaseString, $signatureKey, true));
 

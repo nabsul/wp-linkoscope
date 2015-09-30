@@ -8,8 +8,6 @@
 
 namespace automattic\Rest;
 
-use yii\log\Logger;
-
 class BaseWpApi
 {
     public $baseUrl;
@@ -74,7 +72,6 @@ class BaseWpApi
             curl_setopt($curlResource, $option, $value);
         }
 
-        \Yii::getLogger()->log('url: ' . $this->composeUrl($request->url, $request->params), Logger::LEVEL_INFO);
         curl_setopt($curlResource, CURLOPT_CUSTOMREQUEST, $request->method);
         curl_setopt($curlResource, CURLOPT_HTTPHEADER, $request->headers);
 

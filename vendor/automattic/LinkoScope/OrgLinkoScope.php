@@ -12,7 +12,6 @@ namespace automattic\LinkoScope;
 use automattic\Rest\OrgWpApi;
 use automattic\LinkoScope\Models\Link;
 use automattic\LinkoScope\Models\Comment;
-use yii\log\Logger;
 
 class OrgLinkoScope
 {
