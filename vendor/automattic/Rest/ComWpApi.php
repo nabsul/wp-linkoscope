@@ -8,8 +8,6 @@
 
 namespace automattic\Rest;
 
-use yii\log\Logger;
-
 class ComWpApi extends BaseWpApi {
     public $type;
     public $clientId;
@@ -120,7 +118,7 @@ class ComWpApi extends BaseWpApi {
 
     private function getItem($type, $id){
         $url = $this->formatUrl($this->getFormat, $type, $id);
-        return $this->get($url);
+        return $this->get($url, ['context' => 'edit']);
     }
 
     private function newItem($type, $data){
