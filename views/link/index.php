@@ -15,8 +15,10 @@ use automattic\LinkoScope\Models\Link;
     'dataProvider' => $data,
     'columns' => [
         'id',
+        'authorId',
         'date',
         'votes',
+        'voteList' => ['label' => 'VoteList', 'value' => function(Link $link){return json_encode($link->voteList);}],
         'score',
         'title',
         'url',

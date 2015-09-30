@@ -30,7 +30,8 @@ use automattic\LinkoScope\Models\Comment;
     'columns' => [
         'id',
         'date',
-        'likes' => ['label' => 'Likes', 'value' => function(Comment $c){return count($c->likes);}],
+        'likes',
+        'likeList' => ['label' => 'LikeList', 'value' => function(Comment $c){return json_encode($c->likeList);}],
         'score',
         'author',
         'content',
