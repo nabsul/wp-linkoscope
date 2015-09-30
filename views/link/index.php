@@ -22,7 +22,7 @@ use automattic\LinkoScope\Models\Link;
         'url',
         'actions' => [
             'class' => ActionColumn::className(),
-            'template' => '{view} {update} {delete} {up} {down}',
+            'template' => '{view} {delete} {up} {down}',
             'urlCreator' => function($c, $m, $k, $i){
                 return Url::to([$c, 'id' => $m->id]);
             },

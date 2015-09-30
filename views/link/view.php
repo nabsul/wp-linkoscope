@@ -19,8 +19,7 @@ use automattic\LinkoScope\Models\Comment;
         'id',
         'date',
         'score',
-        'votes' => ['label' => 'Votes', 'value' => count($link->votes)],
-        'voteslist' => ['label' => 'Votes List', 'value' => implode(', ', $link->votes)],
+        'votes',
         'title',
         'url'
     ],
@@ -32,7 +31,6 @@ use automattic\LinkoScope\Models\Comment;
         'id',
         'date',
         'likes' => ['label' => 'Likes', 'value' => function(Comment $c){return count($c->likes);}],
-        'likeslist' => ['label' => 'Likes List', 'value' => function(Comment $c){return implode(', ',$c->likes);}],
         'score',
         'author',
         'content',

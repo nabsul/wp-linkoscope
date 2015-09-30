@@ -4,7 +4,9 @@ namespace app\controllers;
 
 use app\models\User;
 use automattic\LinkoScope\ComLinkoScope;
+use automattic\LinkoScope\OrgLinkoScope;
 use automattic\Rest\ComWpApi;
+use automattic\Rest\OrgWpApi;
 use Yii;
 use yii\debug\models\search\Log;
 use yii\filters\AccessControl;
@@ -144,8 +146,10 @@ class SiteController extends BaseController
         }
 
         $tok = $api->access($oauth_token, $oauth_verifier);
-        $api->accessToken = $tok['oauth_token'];
-        $api->accessTokenSecret = $tok['oauth_token_secret'];
+        $cfg = $api->getConfig();
+        $cfg['accessToken'] = $tok['oauth_token'];
+        $cfg['accessTokenSecret'] = $tok['oauth_token_secret'];
+        $api = new OrgLinkoScope(new OrgWpApi($cfg));
         $user = $api->getAccount();
         $u = new User([
             'id' => $user['body']['id'],

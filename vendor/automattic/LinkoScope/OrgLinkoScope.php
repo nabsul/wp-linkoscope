@@ -63,7 +63,8 @@ class OrgLinkoScope
 
     public function updateLink(Link $link)
     {
-        $link->score = strtotime($link->date) + $this->linkVoteMultiplier * count($link->votes);
+        $link->votes = count($link->voteList);
+        $link->score = strtotime($link->date) + $this->linkVoteMultiplier * $link->votes;
         $body = $this->linkToApi($link);
         $result = $this->api->updateCustom($this->linkEndpoint, $link->id, $body);
         return $this->apiToLink($result);
@@ -72,7 +73,7 @@ class OrgLinkoScope
     public function likeLink($id, $userId)
     {
         $link = $this->getLink($id);
-        $link->votes[] = $id;
+        $link->voteList[] = $id;
         //$link->votes = array_unique($link->votes);  //TODO: Uncomment this after testing is complete
         return $this->updateLink($link);
     }
@@ -80,8 +81,8 @@ class OrgLinkoScope
     public function unlikeLink($id)
     {
         $link = $this->getLink($id);
-        $link->votes = array_diff($link->votes, [$id]);
-        return $this->api->updateCustom('linkolink', $id, $link);
+        $link->voteList = array_diff($link->voteList, [$id]);
+        return $this->updateLink($link);
     }
 
     public function deleteLink($id)
@@ -160,7 +161,8 @@ class OrgLinkoScope
             'title' => $item['title']['raw'],
             'url' => $item['content']['raw'],
             'score' => $item['linkoscope_score'] ?: 0,
-            'votes' => empty($item['linkoscope_likes']) ? [] : explode(';', $item['linkoscope_likes']),
+            'voteList' => empty($item['linkoscope_likes']) ? [] : explode(';', $item['linkoscope_likes']),
+            'votes' => empty($item['linkoscope_likes']) ? 0 : count(explode(';', $item['linkoscope_likes'])),
         ]);
     }
 
@@ -170,7 +172,7 @@ class OrgLinkoScope
             'title' => $link->title,
             'content' => $link->title,
             'linkoscope_score' => $link->score,
-            'linkoscope_likes' => implode(';', $link->votes),
+            'linkoscope_likes' => implode(';', $link->voteList),
         ];
     }
 
