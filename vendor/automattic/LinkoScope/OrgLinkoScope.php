@@ -18,8 +18,8 @@ class OrgLinkoScope
     public $type = 'org';
     private $linkEndpoint = 'linkolink';
     private $api;
-    private $linkVoteMultiplier = 24 * 60 * 60;
-    private $commentVoteMultiplier = 24 * 60 * 60;
+    private $linkVoteMultiplier = 86400; //one day
+    private $commentVoteMultiplier = 86400;
 
     public function __construct(OrgWpApi $api) {
         $this->api = $api;
