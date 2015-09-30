@@ -34,16 +34,20 @@ AppAsset::register($this);
         ],
     ]);
     $isGuest = Yii::$app->user->isGuest;
+    $id = Yii::$app->user->id;
     $userId = $isGuest ? '' : Yii::$app->user->getIdentity()->username;
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
             ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'Links', 'url' => ['/link']],
-            ['label' => 'Login', 'url' => ['/site/login'], 'visible' => $isGuest],
-            ['label' => 'Admin', 'url' => ['/admin']],
             [
-                'label' => "Logout ($userId)",
+                'label' => 'Links',
+                'url' => ['/link'],
+                'visible' => $isGuest || Yii::$app->user->getIdentity()->username != 'admin'
+            ],
+            ['label' => 'Login', 'url' => ['/site/login'], 'visible' => $isGuest],
+            [
+                'label' => "Logout ($userId) ($id)",
                 'url' => ['/site/logout'],
                 'linkOptions' => ['data-method' => 'post'],
                 'visible' => !$isGuest,
