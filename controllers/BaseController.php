@@ -12,10 +12,10 @@ use yii\helpers\FileHelper;
 
 class BaseController extends Controller
 {
-	/**
-	 * @return iWmApi
+    /**
+     * @return ComLinkoScope|OrgLinkoScope|null
      */
-	protected function getApi()
+    protected function getApi()
 	{
 		$files = FileHelper::findFiles(Yii::$app->runtimePath, [
 			'recursive' => false,
