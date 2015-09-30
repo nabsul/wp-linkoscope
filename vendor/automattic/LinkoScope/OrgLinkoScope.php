@@ -12,6 +12,7 @@ namespace automattic\LinkoScope;
 use automattic\Rest\OrgWpApi;
 use automattic\LinkoScope\Models\Link;
 use automattic\LinkoScope\Models\Comment;
+use yii\log\Logger;
 
 class OrgLinkoScope
 {
@@ -57,12 +58,15 @@ class OrgLinkoScope
 
     public function addLink(Link $link)
     {
+        $link->voteList = [];
+        $link->score = time();
         $body = $this->linkToApi($link);
         return $this->api->addCustom($this->linkEndpoint, $body);
     }
 
     public function updateLink(Link $link)
     {
+        $link->voteList = array_unique($link->voteList);
         $link->votes = count($link->voteList);
         $link->score = strtotime($link->date) + $this->linkVoteMultiplier * $link->votes;
         $body = $this->linkToApi($link);
@@ -73,15 +77,14 @@ class OrgLinkoScope
     public function likeLink($id, $userId)
     {
         $link = $this->getLink($id);
-        $link->voteList[] = $id;
-        //$link->votes = array_unique($link->votes);  //TODO: Uncomment this after testing is complete
+        $link->voteList[] = $userId;
         return $this->updateLink($link);
     }
 
-    public function unlikeLink($id)
+    public function unlikeLink($id, $userId)
     {
         $link = $this->getLink($id);
-        $link->voteList = array_diff($link->voteList, [$id]);
+        $link->voteList = array_diff($link->voteList, [$userId]);
         return $this->updateLink($link);
     }
 
@@ -115,14 +118,21 @@ class OrgLinkoScope
 
     public function addComment(Comment $comment)
     {
+        $comment->likeList = [];
+        $comment->likes = 0;
+        $comment->score = time();
         $body = $this->commentToApi($comment);
         return $this->api->addComment($body);
     }
 
     public function updateComment(Comment $comment)
     {
+        $comment->likeList = array_unique($comment->likeList);
+        $comment->likes = count($comment->likeList);
+        $oldScore = $comment->score;
         $comment->score = strtotime($comment->date) +
-            $this->commentVoteMultiplier * count($comment->likes);
+            $this->commentVoteMultiplier * $comment->likes;
+        if ($oldScore == $comment->score) $comment->score++; // API throws an error if nothing changes.
         $body = $this->commentToApi($comment);
         return $this->api->updateComment($comment->id, $body);
     }
@@ -130,14 +140,14 @@ class OrgLinkoScope
     public function likeComment($id, $userId)
     {
         $comment = $this->getComment($id);
-        $comment->likes[] = $userId;
+        $comment->likeList[] = $userId;
         return $this->updateComment($comment);
     }
 
     public function unlikeComment($id, $userId)
     {
         $comment = $this->getComment($id);
-        $comment->likes = array_diff_key($comment->likes, [$userId]);
+        $comment->likeList = array_diff_key($comment->likeList, [$userId]);
         return $this->updateComment($comment);
     }
 
@@ -157,6 +167,7 @@ class OrgLinkoScope
     {
         return new Link([
             'id' => $item['id'],
+            'authorId' => $item['author'],
             'date' => $item['date'],
             'title' => $item['title']['raw'],
             'url' => $item['content']['raw'],
@@ -170,9 +181,10 @@ class OrgLinkoScope
     {
         return [
             'title' => $link->title,
-            'content' => $link->title,
+            'content' => $link->url,
             'linkoscope_score' => $link->score,
             'linkoscope_likes' => implode(';', $link->voteList),
+            'status' => 'publish',
         ];
     }
 
@@ -184,12 +196,15 @@ class OrgLinkoScope
     }
 
     private function apiToComment($c){
+        $likeList = empty($c['linkoscope_likes']) ? [] : explode(';', $c['linkoscope_likes']);
+        $likes = count($likeList);
         return new Comment([
             'id' => $c['id'],
             'date' => $c['date'],
             'postId' => $c['post'],
             'content' => $c['content']['raw'],
-            'likes' => empty($c['linkoscope_likes']) ? [] : explode(';', $c['linkoscope_likes']),
+            'likes' => $likes,
+            'likeList' => $likeList,
             'score' => $c['karma'],
             'author' => $c['author_name'],
         ]);
@@ -201,7 +216,7 @@ class OrgLinkoScope
             'content' => $comment->content,
             'author_name' => $comment->author,
             'karma' =>  $comment->score,
-            'linkoscope_likes' => implode(';', $comment->likes),
+            'linkoscope_likes' => implode(';', $comment->likeList ?: []),
         ];
     }
 }

@@ -20,4 +20,5 @@ class Comment extends Object
     public $content;
     public $score;
     public $likes;
+    public $likeList;
 }

@@ -8,6 +8,7 @@ class Link extends Object
 {
 	public $id;
     public $date;
+	public $authorId;
 	public $title;
 	public $url;
 	public $votes;
