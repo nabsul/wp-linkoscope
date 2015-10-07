@@ -8,55 +8,48 @@ class m151007_141657_initial_db extends Migration
     public function up()
     {
         $this->createTable('link',[
-            'id',
-            'post_id',
-            'date',
-            'user_id',
-            'username',
-            'title',
-            'url',
-            'vote_count',
-            'score',
+            'id' => 'pk',
+            'post_id' => 'integer',
+            'date' => 'datetime',
+            'user_id' => 'integer',
+            'username' => 'string',
+            'title' => 'text',
+            'url' => 'string',
+            'vote_count' => 'integer',
+            'score' => 'integer',
         ]);
 
         $this->createTable('link_vote',[
-            'id',
-            'link_id',
-            'user_id',
+            'id' => 'pk',
+            'link_id' => 'integer',
+            'user_id' => 'integer',
         ]);
 
         $this->createTable('comment',[
-            'id',
-            'link_id',
-            'date',
-            'user_id',
-            'username',
-            'comment',
-            'vote_count',
-            'score',
+            'id' => 'pk',
+            'comment_id' => 'integer',
+            'link_id' => 'integer',
+            'date' => 'integer',
+            'user_id' => 'integer',
+            'username' => 'string',
+            'comment' => 'text',
+            'vote_count' => 'integer',
+            'score' => 'integer',
         ]);
 
         $this->createTable('comment_vote',[
-            'id',
-            'comment_id',
-            'user_id',
+            'id' => 'pk',
+            'comment_id' => 'integer',
+            'user_id' => 'integer',
         ]);
+
     }
 
     public function down()
     {
-        echo "m151007_141657_initial_db cannot be reverted.\n";
-        return false;
+        $this->dropTable('link');
+        $this->dropTable('link_vote');
+        $this->dropTable('comment');
+        $this->dropTable('comment_vote');
     }
-
-    /*
-    // Use safeUp/safeDown to run migration code within a transaction
-    public function safeUp()
-    {
-    }
-
-    public function safeDown()
-    {
-    }
-    */
 }
