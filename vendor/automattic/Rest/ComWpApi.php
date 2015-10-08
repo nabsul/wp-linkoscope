@@ -16,6 +16,9 @@ class ComWpApi extends BaseWpApi {
     public $blogId;
     public $blogUrl;
     public $token;
+    public $adminToken;
+
+    public $useAdminToken = false;
 
     public $curlOptions = [
         CURLOPT_RETURNTRANSFER => true,
@@ -46,6 +49,7 @@ class ComWpApi extends BaseWpApi {
         $this->blogId = isset($config['blogId']) ? $config['blogId'] : null;
         $this->blogUrl = isset($config['blogUrl']) ? $config['blogUrl'] : null;
         $this->token = isset($config['accessToken']) ? $config['accessToken'] : null;
+        $this->adminToken = isset($config['adminToken']) ? $config['adminToken'] : null;
         $this->baseUrl = $this->wpBase;
     }
 
@@ -57,6 +61,7 @@ class ComWpApi extends BaseWpApi {
             'redirectUrl' => $this->redirectUrl,
             'blogId' => $this->blogId,
             'blogUrl' => $this->blogUrl,
+            'adminToken' => $this->adminToken,
         ];
     }
 
@@ -98,7 +103,7 @@ class ComWpApi extends BaseWpApi {
     public function listTypes() {return [];}
 
     protected function requestFilter(ApiRequest $request) {
-        $request->headers[] = 'Authorization: Bearer ' . $this->token;
+        $request->headers[] = 'Authorization: Bearer ' . ($this->useAdminToken ? $this->adminToken : $this->token);
 
         if ($request->body != null)
         {
