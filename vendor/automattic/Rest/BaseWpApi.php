@@ -55,7 +55,8 @@ class BaseWpApi
     protected function send(ApiRequest $request)
     {
         $request = $this->requestFilter($request);
-        $curlResource = curl_init($this->composeUrl($request->url, $request->params));
+        $url = $this->composeUrl($request->url, $request->params);
+        $curlResource = curl_init($url);
         $curlOptions = $this->curlOptions;
 
         if ($request->body != null)
