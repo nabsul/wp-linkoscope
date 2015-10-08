@@ -102,7 +102,11 @@ class SiteController extends BaseController
 
         $redirect = Yii::$app->session->get('login-com', false);
         if ($redirect !== false) {
-            $cfg = ['blogUrl' => $auth['blog_url'], 'blogId' => $auth['blog_id']] + $api->getConfig();
+            $cfg = [
+                    'blogUrl' => $auth['blog_url'],
+                    'blogId' => $auth['blog_id'],
+                    'adminToken' => $auth['access_token'],
+                ] + $api->getConfig();
             $api = new ComLinkoScope(new ComWpApi($cfg));
             $this->saveConfig($api);
             Yii::$app->session->setFlash('info', 'Successfully completed WP.com config for: ' . $auth['blog_url']);
