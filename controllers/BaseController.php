@@ -4,8 +4,8 @@ namespace app\controllers;
 
 use automattic\LinkoScope\ComLinkoScope;
 use automattic\LinkoScope\OrgLinkoScope;
-use automattic\Rest\ComWpApi;
-use automattic\Rest\OrgWpApi;
+use ShortCirquit\WordPressApi\ComWpApi;
+use ShortCirquit\WordPressApi\OrgWpApi;
 use Yii;
 use yii\web\Controller;
 use yii\helpers\FileHelper;

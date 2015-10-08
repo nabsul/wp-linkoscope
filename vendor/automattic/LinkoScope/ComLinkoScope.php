@@ -8,7 +8,7 @@
 
 namespace automattic\LinkoScope;
 
-use automattic\Rest\ComWpApi;
+use ShortCirquit\WordPressApi\ComWpApi;
 use automattic\LinkoScope\Models\Link;
 use automattic\LinkoScope\Models\Comment;
 

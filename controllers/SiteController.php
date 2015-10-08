@@ -5,15 +5,11 @@ namespace app\controllers;
 use app\models\User;
 use automattic\LinkoScope\ComLinkoScope;
 use automattic\LinkoScope\OrgLinkoScope;
-use automattic\Rest\ComWpApi;
-use automattic\Rest\OrgWpApi;
+use ShortCirquit\WordPressApi\ComWpApi;
+use ShortCirquit\WordPressApi\OrgWpApi;
 use Yii;
-use yii\debug\models\search\Log;
 use yii\filters\AccessControl;
-use yii\log\Logger;
-use yii\web\Controller;
 use yii\filters\VerbFilter;
-use app\controllers\BaseController;
 use yii\helpers\Url;
 use yii\web\HttpException;
 
@@ -127,8 +123,6 @@ class SiteController extends BaseController
         Yii::$app->user->login($u);
 
         return $this->redirect(['link/index']);
-
-        return json_encode($account);
     }
 
     private function loginOrg($oauth_token = null, $oauth_verifier = null, $wp_scope = null)
