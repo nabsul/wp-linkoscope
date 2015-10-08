@@ -4,8 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "8bcc0599f90010be828bbf152d7952ce",
-    "content-hash": "3e54a3b9cafa8c8635f148e1eb56c542",
+    "hash": "7d10c3c1a2cfa667b50ded7f7d999a88",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -316,6 +315,41 @@
                 "html"
             ],
             "time": "2013-11-30 08:25:19"
+        },
+        {
+            "name": "shortcirquit/wordpress-api",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ShortCirquit/WordPressApi.git",
+                "reference": "1ae3601ccc4aea05d8ef10f902b97c712f80e2fd"
+            },
+            "require": {
+                "yiisoft/yii2": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ShortCirquit\\WordPressApi\\": ""
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nabeel Sulieman",
+                    "email": "nabsul@outlook.com"
+                }
+            ],
+            "description": "Libraries for interfacing with WordPress WP-API plugin and WordPress.com APIs",
+            "keywords": [
+                "api",
+                "wordpress",
+                "wordpress.com",
+                "wp-api"
+            ],
+            "time": "2015-10-07 18:12:34"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -963,7 +997,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "shortcirquit/wordpress-api": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
