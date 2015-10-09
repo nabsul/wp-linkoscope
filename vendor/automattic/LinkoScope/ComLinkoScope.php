@@ -93,13 +93,13 @@ class ComLinkoScope
 
     public function getComments($postId){
         $result = $this->api->listComments($postId);
-        if (!isset($result->comments))
+        if (!isset($result['comments']))
             return [];
-        return $this->convertComments($result->comments);
+        return $this->apiToComments($result['comments']);
     }
 
     public function addComment(Comment $comment) {
-        return $this->api->addComment([
+        return $this->api->addComment($comment->postId, [
             'content' => $comment->content,
         ]);
     }
@@ -122,11 +122,14 @@ class ComLinkoScope
     private function apiToLink($p){
         return new Link([
             'id' => $p['ID'],
-            'date' => $this->getMetaKeyValue($p, 'linkoscope_created'),
+            'authorId' => $p['author']['ID'],
+            'authorName' => $p['author']['name'],
+            'date' => $p['modified'],
             'title' => $p['title'],
             'url' => $p['content'],
             'votes' => $p['like_count'],
-            'score' => strtotime($p['date']),
+            'score' => $this->getMetaKeyValue($p, 'linkoscope_score'),
+            'comments' => $p['discussion']['comment_count'],
         ]);
     }
 
@@ -163,9 +166,9 @@ class ComLinkoScope
         return new Comment([
             'id' => $c['ID'],
             'date' => $c['date'],
-            'postId' => $c['post->ID'],
+            'postId' => $c['post']['ID'],
             'content' => $c['content'],
-            'author' => $c['author->name'],
+            'author' => $c['author']['name'],
             'votes' => $c['like_count'],
         ]);
     }
