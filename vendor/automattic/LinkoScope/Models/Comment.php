@@ -19,6 +19,6 @@ class Comment extends Object
     public $author;
     public $content;
     public $score;
-    public $likes;
+    public $votes;
     public $likeList;
 }
