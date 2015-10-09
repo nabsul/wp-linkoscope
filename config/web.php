@@ -45,9 +45,6 @@ $config = [
         'db' => require(__DIR__ . '/db.php'),
     ],
     'params' => $params,
-    'aliases' => [
-        '@automattic' => '@vendor/automattic',
-    ],
 ];
 
 if (YII_ENV_DEV) {

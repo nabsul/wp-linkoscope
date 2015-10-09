@@ -4,8 +4,8 @@ namespace app\controllers;
 
 use app\models\CommentForm;
 use app\models\LinkForm;
-use automattic\LinkoScope\Models\Comment;
-use automattic\LinkoScope\Models\Link;
+use ShortCirquit\LinkoScopeApi\Models\Comment;
+use ShortCirquit\LinkoScopeApi\Models\Link;
 use yii\data\ArrayDataProvider;
 use Yii;
 use yii\log\Logger;

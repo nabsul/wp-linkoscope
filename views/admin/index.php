@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $api automattic/Rest/Org/OrgWpApi */
+/* @var $api ShortCirquit\WordPressApi\OrgWpApi */
 
 ?>
 <h1>Admin</h1>

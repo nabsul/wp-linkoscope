@@ -1,7 +1,7 @@
 <?php
 use yii\helpers\Html;
 
-/* @var $model automattic\LinkoScope\models\Link */
+/* @var $model ShortCirquit\LinkoScopeApi\models\Link */
 ?>
 
 <div>

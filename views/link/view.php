@@ -6,7 +6,7 @@ use yii\widgets\ActiveForm;
 use yii\widgets\ListView;
 
 /** var $this yii\web\View */
-/** var $link automattic\LinkoScope\Models\Link */
+/** var $link ShortCirquit\LinkoScopeApi\Models\Link */
 /** var $this yii\web\View */
 
 ?>

@@ -2,8 +2,8 @@
 
 namespace app\controllers;
 
-use automattic\LinkoScope\ComLinkoScope;
-use automattic\LinkoScope\OrgLinkoScope;
+use ShortCirquit\LinkoScopeApi\ComLinkoScope;
+use ShortCirquit\LinkoScopeApi\OrgLinkoScope;
 use ShortCirquit\WordPressApi\ComWpApi;
 use ShortCirquit\WordPressApi\OrgWpApi;
 use Yii;

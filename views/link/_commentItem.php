@@ -1,7 +1,7 @@
 <?php
 use yii\helpers\Html;
 
-/* @var $model automattic\LinkoScope\models\Comment */
+/* @var $model ShortCirquit\LinkoScopeApi\models\Comment */
 ?>
 
 <div>

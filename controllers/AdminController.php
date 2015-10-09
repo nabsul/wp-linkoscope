@@ -4,8 +4,8 @@ namespace app\controllers;
 
 use app\models\WpOrgConfigForm;
 use app\models\WpComConfigForm;
-use automattic\LinkoScope\ComLinkoScope;
-use automattic\LinkoScope\OrgLinkoScope;
+use ShortCirquit\LinkoScopeApi\ComLinkoScope;
+use ShortCirquit\LinkoScopeApi\OrgLinkoScope;
 use ShortCirquit\WordPressApi\ComWpApi;
 use ShortCirquit\WordPressApi\OrgWpApi;
 use yii\base\InlineAction;
