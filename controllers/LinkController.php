@@ -31,6 +31,7 @@ class LinkController extends BaseController
             $link = new Link([
                 'title' => $form->title,
                 'url' => $form->url,
+                'authorId' => Yii::$app->user->identity->getId(),
             ]);
 
             $this->getApi()->addLink($link);

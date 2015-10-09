@@ -15,5 +15,5 @@ use yii\helpers\Html;
     </div>
 </div>
 <div>
-    <?= "$model->author ($model->authorId) | $model->date | $model->votes votes " ?>
+    <?= "$model->authorName ($model->authorId) | $model->date | $model->votes votes " ?>
 </div>

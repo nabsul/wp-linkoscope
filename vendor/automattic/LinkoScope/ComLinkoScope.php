@@ -37,6 +37,7 @@ class ComLinkoScope
     }
 
     public function getLinks(){
+        $this->api->useAdminToken = true;
         $result = $this->api->listPosts();
         if (!isset($result['posts']))
             return [];
@@ -45,6 +46,7 @@ class ComLinkoScope
     }
 
     public function getLink($id){
+        $this->api->useAdminToken = true;
         $result = $this->api->getPost($id);
         return $this->apiToLink($result);
     }
@@ -57,17 +59,25 @@ class ComLinkoScope
         return $this->api->updatePost($link->id, $this->linkToApi($link));
     }
 
+    public function deleteLink($id){
+        return $this->api->deletePost($id);
+    }
+
     public function likeLink($id, $userId = null)
     {
         $this->api->likePost($id);
+        $this->api->useAdminToken = true;
         $link = $this->getLink($id);
+        $this->api->useAdminToken = true;
         return $this->updateLink($link);
     }
 
     public function unlikeLink($id, $userId = null)
     {
         $this->api->unlikePost($id);
+        $this->api->useAdminToken = true;
         $link = $this->getLink($id);
+        $this->api->useAdminToken = true;
         return $this->updateLink($link);
     }
 
@@ -81,10 +91,6 @@ class ComLinkoScope
         return $this->api->unlikeComment($id);
     }
 
-    public function deleteLink($id){
-        return $this->api->deletePost($id);
-    }
-
     public function getTypes(){return [];}
 
     public function getAccount(){
@@ -92,6 +98,7 @@ class ComLinkoScope
     }
 
     public function getComments($postId){
+        $this->api->useAdminToken = true;
         $result = $this->api->listComments($postId);
         if (!isset($result['comments']))
             return [];
@@ -138,13 +145,13 @@ class ComLinkoScope
             'title' => $link->title,
             'content' => $link->url,
             'status' => 'publish',
+            'author' => $link->authorId,
         ];
 
         // If there is no created metadata, add it and set the date field with it's initial 'score'
         $created = $this->getMetaKeyValue($val, 'linkoscope_created');
         if (null == $created){
-            $time = time();
-            $val = $this->setMetaKey($val, 'linkoscope_created', date(DATE_ATOM, $time));
+            $val = $this->setMetaKey($val, 'linkoscope_created', time());
             $link->votes = 0;
         } else {
             $time = date(DATE_ATOM, $created);
@@ -168,7 +175,8 @@ class ComLinkoScope
             'date' => $c['date'],
             'postId' => $c['post']['ID'],
             'content' => $c['content'],
-            'author' => $c['author']['name'],
+            'authorId' => $c['author']['ID'],
+            'authorName' => $c['author']['name'],
             'votes' => $c['like_count'],
         ]);
     }
