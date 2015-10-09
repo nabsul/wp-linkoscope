@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7d10c3c1a2cfa667b50ded7f7d999a88",
+    "hash": "96e0b62d56cf363f635b8ca4981f5e41",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -317,12 +317,48 @@
             "time": "2013-11-30 08:25:19"
         },
         {
+            "name": "shortcirquit/linkoscope-api",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ShortCirquit/LinkoScopeApi.git",
+                "reference": "0eb4ecbf4209562bfe5756b490927b3a13a92b9a"
+            },
+            "require": {
+                "yiisoft/yii2": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ShortCirquit\\LinkoScopeApi\\": ""
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nabeel Sulieman",
+                    "email": "nabsul@outlook.com"
+                }
+            ],
+            "description": "Wraps WordPressApi to provide the LinkoScope data layer",
+            "keywords": [
+                "api",
+                "linkoscope",
+                "wordpress",
+                "wordpress.com",
+                "wp-api"
+            ],
+            "time": "2015-10-09 22:43:40"
+        },
+        {
             "name": "shortcirquit/wordpress-api",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ShortCirquit/WordPressApi.git",
-                "reference": "1ae3601ccc4aea05d8ef10f902b97c712f80e2fd"
+                "reference": "db3ab4bbedbf900250276a8f58403af4f5c146bb"
             },
             "require": {
                 "yiisoft/yii2": "*"
@@ -349,7 +385,7 @@
                 "wordpress.com",
                 "wp-api"
             ],
-            "time": "2015-10-07 18:12:34"
+            "time": "2015-10-09 22:36:46"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -494,16 +530,16 @@
         },
         {
             "name": "yiisoft/yii2-authclient",
-            "version": "2.0.4",
+            "version": "2.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-authclient.git",
-                "reference": "cbe801a7d8bb477be15cb0fbdaa75ca5bdfeb91b"
+                "reference": "22910bfe0000538f5b3ca1102cd3de0b5d14a0e2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-authclient/zipball/cbe801a7d8bb477be15cb0fbdaa75ca5bdfeb91b",
-                "reference": "cbe801a7d8bb477be15cb0fbdaa75ca5bdfeb91b",
+                "url": "https://api.github.com/repos/yiisoft/yii2-authclient/zipball/22910bfe0000538f5b3ca1102cd3de0b5d14a0e2",
+                "reference": "22910bfe0000538f5b3ca1102cd3de0b5d14a0e2",
                 "shasum": ""
             },
             "require": {
@@ -538,25 +574,25 @@
                 "oauth",
                 "yii2"
             ],
-            "time": "2015-05-10 22:07:56"
+            "time": "2015-09-23 17:26:02"
         },
         {
             "name": "yiisoft/yii2-bootstrap",
-            "version": "2.0.4",
+            "version": "2.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-bootstrap.git",
-                "reference": "1b6b1e61cf91c3cdd517d6a7e71d30bb212e4af0"
+                "reference": "1464f93834b1d5edb1f5625f7ffd6c3723fa4923"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-bootstrap/zipball/1b6b1e61cf91c3cdd517d6a7e71d30bb212e4af0",
-                "reference": "1b6b1e61cf91c3cdd517d6a7e71d30bb212e4af0",
+                "url": "https://api.github.com/repos/yiisoft/yii2-bootstrap/zipball/1464f93834b1d5edb1f5625f7ffd6c3723fa4923",
+                "reference": "1464f93834b1d5edb1f5625f7ffd6c3723fa4923",
                 "shasum": ""
             },
             "require": {
                 "bower-asset/bootstrap": "3.3.* | 3.2.* | 3.1.*",
-                "yiisoft/yii2": ">=2.0.4"
+                "yiisoft/yii2": ">=2.0.6"
             },
             "type": "yii2-extension",
             "extra": {
@@ -588,7 +624,7 @@
                 "bootstrap",
                 "yii2"
             ],
-            "time": "2015-05-10 22:08:17"
+            "time": "2015-09-23 17:48:24"
         },
         {
             "name": "yiisoft/yii2-composer",
@@ -998,7 +1034,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "shortcirquit/wordpress-api": 20
+        "shortcirquit/wordpress-api": 20,
+        "shortcirquit/linkoscope-api": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

@@ -19,7 +19,8 @@
         "yiisoft/yii2-bootstrap": "*",
         "yiisoft/yii2-swiftmailer": "*",
         "yiisoft/yii2-authclient": "^2.0",
-        "shortcirquit/wordpress-api": "dev-master"
+        "shortcirquit/wordpress-api": "dev-master",
+        "shortcirquit/linkoscope-api": "dev-master"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
@@ -57,6 +58,10 @@
         {
             "type": "git",
             "url": "https://github.com/ShortCirquit/WordPressApi.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/ShortCirquit/LinkoScopeApi.git"
         }
     ]
 }
