@@ -119,7 +119,7 @@ class OrgLinkoScope
     public function addComment(Comment $comment)
     {
         $comment->likeList = [];
-        $comment->likes = 0;
+        $comment->votes = 0;
         $comment->score = time();
         $body = $this->commentToApi($comment);
         return $this->api->addComment($body);
@@ -128,10 +128,10 @@ class OrgLinkoScope
     public function updateComment(Comment $comment)
     {
         $comment->likeList = array_unique($comment->likeList);
-        $comment->likes = count($comment->likeList);
+        $comment->votes = count($comment->likeList);
         $oldScore = $comment->score;
         $comment->score = strtotime($comment->date) +
-            $this->commentVoteMultiplier * $comment->likes;
+            $this->commentVoteMultiplier * $comment->votes;
         if ($oldScore == $comment->score) $comment->score++; // API throws an error if nothing changes.
         $body = $this->commentToApi($comment);
         return $this->api->updateComment($comment->id, $body);
@@ -203,7 +203,7 @@ class OrgLinkoScope
             'date' => $c['date'],
             'postId' => $c['post'],
             'content' => $c['content']['raw'],
-            'likes' => $likes,
+            'votes' => $likes,
             'likeList' => $likeList,
             'score' => $c['karma'],
             'author' => $c['author_name'],
