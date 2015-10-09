@@ -13,6 +13,7 @@ class Link extends Object
 	public $title;
 	public $url;
 	public $votes;
+	public $voteList;
 	public $comments;
 	public $score;
 }
