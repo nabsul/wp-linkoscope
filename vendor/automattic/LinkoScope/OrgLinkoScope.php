@@ -168,12 +168,14 @@ class OrgLinkoScope
         return new Link([
             'id' => $item['id'],
             'authorId' => $item['author'],
+            'authorName' => $item['author_name'],
             'date' => $item['date'],
             'title' => $item['title']['raw'],
             'url' => $item['content']['raw'],
             'score' => $item['linkoscope_score'] ?: 0,
             'voteList' => empty($item['linkoscope_likes']) ? [] : explode(';', $item['linkoscope_likes']),
             'votes' => empty($item['linkoscope_likes']) ? 0 : count(explode(';', $item['linkoscope_likes'])),
+            'comments' => $item['comment_count'],
         ]);
     }
 
@@ -206,7 +208,8 @@ class OrgLinkoScope
             'votes' => $likes,
             'likeList' => $likeList,
             'score' => $c['karma'],
-            'author' => $c['author_name'],
+            'authorId' => $c['author'],
+            'authorName' => $c['author_name'],
         ]);
     }
 
@@ -214,7 +217,7 @@ class OrgLinkoScope
         return [
             'post' => $comment->postId,
             'content' => $comment->content,
-            'author_name' => $comment->author,
+            'author_name' => $comment->authorName,
             'karma' =>  $comment->score,
             'linkoscope_likes' => implode(';', $comment->likeList ?: []),
         ];
