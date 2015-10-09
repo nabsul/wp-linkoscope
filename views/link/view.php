@@ -15,6 +15,8 @@ use yii\widgets\ListView;
 <?= DetailView::widget([
     'model' => $link,
     'attributes' => [
+        'authorId',
+        'authorName',
         'title',
         'url',
         'date',
