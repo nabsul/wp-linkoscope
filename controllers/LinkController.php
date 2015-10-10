@@ -40,6 +40,27 @@ class LinkController extends BaseController
         return $this->render('new', ['model' => $form]);
     }
 
+    public function actionEdit($id)
+    {
+        $form = new LinkForm();
+        if ($form->load(Yii::$app->request->post()) && $form->validate())
+        {
+            $link = new Link([
+                'title' => $form->title,
+                'url' => $form->url,
+                'id' => $id
+            ]);
+
+            $this->getApi()->updateLink($link);
+            return $this->redirect(['view', 'id' => $id]);
+        }
+
+        $link = $this->getApi()->getLink($id);
+        $form->url = $link->url;
+        $form->title = $link->title;
+        return $this->render('new', ['model' => $form]);
+    }
+
     public function actionView($id)
     {
         $api = $this->getApi();
