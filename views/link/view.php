@@ -7,22 +7,21 @@ use yii\widgets\ListView;
 
 /** var $this yii\web\View */
 /** var $link ShortCirquit\LinkoScopeApi\Models\Link */
-/** var $this yii\web\View */
 
 ?>
 
 <h1>Link Details </h1>
+
 <?= DetailView::widget([
     'model' => $link,
     'attributes' => [
-        'authorId',
-        'authorName',
-        'title',
-        'url',
-        'date',
-        'score',
-        'comments',
-        'votes',
+        'link' => ['label' => 'Link', 'format' => 'raw',
+                   'value' => "$link->title (" . Html::a($link->url, $link->url, ['target' => '_blank']) . ")"],
+        'author' => ['label' => 'Author', 'value' => "$link->authorName ($link->authorId) $link->date"],
+        'datails' => [
+            'label' => 'Details',
+            'value' => "Comments: $link->comments | Votes: $link->votes | Score: $link->score"
+        ],
     ],
 ]); ?>
 
