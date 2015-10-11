@@ -71,14 +71,14 @@ class SiteController extends BaseController
             $this->redirect(['admin/login']);
         }
 
-        switch ($api->type)
+        switch (get_class($api))
         {
-            case 'com':
+            case 'ShortCirquit\LinkoScopeApi\ComLinkoScope':
                 return $this->loginCom($code, $error);
-            case 'org':
+            case 'ShortCirquit\LinkoScopeApi\OrgLinkoScope':
                 return $this->loginOrg($oauth_token, $oauth_verifier, $wp_scope);
             default:
-                throw new HttpException(500, "Invalid API config.");
+                throw new HttpException(500, 'Unexpected WpApi class type: ' . get_class($api));
         }
     }
 
@@ -107,14 +107,14 @@ class SiteController extends BaseController
                     'blogId' => $auth['blog_id'],
                     'adminToken' => $auth['access_token'],
                 ] + $api->getConfig();
-            $api = new ComLinkoScope(new ComWpApi($cfg));
+            $api = new ComLinkoScope($cfg);
             $this->saveConfig($api);
             Yii::$app->session->setFlash('info', 'Successfully completed WP.com config for: ' . $auth['blog_url']);
             return $this->redirect([$redirect]);
         }
 
         $cfg = $api->getConfig() + ['accessToken' => $auth['access_token']];
-        $api = new ComLinkoScope(new ComWpApi($cfg));
+        $api = new ComLinkoScope($cfg);
         $account = $api->getAccount();
 
         $u = new User([
@@ -147,7 +147,7 @@ class SiteController extends BaseController
         $cfg = $api->getConfig();
         $cfg['accessToken'] = $tok['oauth_token'];
         $cfg['accessTokenSecret'] = $tok['oauth_token_secret'];
-        $api = new OrgLinkoScope(new OrgWpApi($cfg));
+        $api = new OrgLinkoScope($cfg);
         $user = $api->getAccount();
         $u = new User([
             'id' => $user['body']['id'],

@@ -4,8 +4,6 @@ namespace app\controllers;
 
 use ShortCirquit\LinkoScopeApi\ComLinkoScope;
 use ShortCirquit\LinkoScopeApi\OrgLinkoScope;
-use ShortCirquit\WordPressApi\ComWpApi;
-use ShortCirquit\WordPressApi\OrgWpApi;
 use Yii;
 use yii\web\Controller;
 use yii\helpers\FileHelper;
@@ -32,22 +30,16 @@ class BaseController extends Controller
 			$cfg['accessTokenSecret'] = Yii::$app->user->identity->secret;
 		}
 
-		switch($cfg['type'])
-		{
-			case 'org':
-				$api = new OrgWpApi($cfg);
-				return new OrgLinkoScope($api);
-			case 'com':
-				$api = new ComWpApi($cfg);
-				return new ComLinkoScope($api);
-			default:
-				throw new \InvalidArgumentException('invalid API type: ' . $cfg['type']);
-		}
+		$classNAme = $cfg['type'];
+        $api = new $classNAme($cfg);
+        return $api;
 	}
 
 	protected function saveConfig($api)
 	{
 		$file = Yii::$app->runtimePath . '/api.cfg';
-		file_put_contents($file, json_encode($api->getConfig()));
+		$cfg = $api->getConfig();
+        $cfg['type'] = get_class($api);
+		file_put_contents($file, json_encode($cfg, JSON_PRETTY_PRINT));
 	}
 }

@@ -58,7 +58,7 @@ class AdminController extends BaseController
         $form = new WpComConfigForm();
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             $cfg = array_merge($form->getConfig(),['redirectUrl' => Url::to( ['site/login'], true )]);
-            $api = new ComLinkoScope(new ComWpApi($cfg));
+            $api = new ComLinkoScope($cfg);
             $this->saveConfig($api);
 
             Yii::$app->session->set('login-com', 'admin/index');
@@ -74,7 +74,7 @@ class AdminController extends BaseController
         {
             $form = new WpOrgConfigForm();
             if ($form->load(Yii::$app->request->post()) && $form->validate()) {
-                $api = new OrgLinkoScope(new OrgWpApi($form->getConfig()));
+                $api = new OrgLinkoScope($form->getConfig());
                 $this->saveConfig($api);
 
                 $here = Url::to( '', true );
