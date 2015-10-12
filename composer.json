@@ -53,15 +53,5 @@
             "npm-asset-library": "vendor/npm",
             "bower-asset-library": "vendor/bower"
         }
-    },
-    "repositories":[
-        {
-            "type": "git",
-            "url": "https://github.com/ShortCirquit/WordPressApi.git"
-        },
-        {
-            "type": "git",
-            "url": "https://github.com/ShortCirquit/LinkoScopeApi.git"
-        }
-    ]
+    }
 }

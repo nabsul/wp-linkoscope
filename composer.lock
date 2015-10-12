@@ -4,7 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "96e0b62d56cf363f635b8ca4981f5e41",
+    "hash": "73315bda3d887e48c098f89ca079ca3a",
+    "content-hash": "3a66a27aff6059ee3fff57cfa4963f5c",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -322,10 +323,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ShortCirquit/LinkoScopeApi.git",
-                "reference": "0eb4ecbf4209562bfe5756b490927b3a13a92b9a"
+                "reference": "87e1b9043008d4a1761fb4453fabde75620512a3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ShortCirquit/LinkoScopeApi/zipball/87e1b9043008d4a1761fb4453fabde75620512a3",
+                "reference": "87e1b9043008d4a1761fb4453fabde75620512a3",
+                "shasum": ""
             },
             "require": {
-                "yiisoft/yii2": "*"
+                "shortcirquit/wordpress-api": "dev-master"
             },
             "type": "library",
             "autoload": {
@@ -333,13 +340,14 @@
                     "ShortCirquit\\LinkoScopeApi\\": ""
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "authors": [
                 {
                     "name": "Nabeel Sulieman",
-                    "email": "nabsul@outlook.com"
+                    "email": "n@runto.co"
                 }
             ],
             "description": "Wraps WordPressApi to provide the LinkoScope data layer",
@@ -350,7 +358,7 @@
                 "wordpress.com",
                 "wp-api"
             ],
-            "time": "2015-10-09 22:43:40"
+            "time": "2015-10-12 01:39:13"
         },
         {
             "name": "shortcirquit/wordpress-api",
@@ -358,10 +366,13 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ShortCirquit/WordPressApi.git",
-                "reference": "db3ab4bbedbf900250276a8f58403af4f5c146bb"
+                "reference": "52723038068323f78043fc06dcfe274b3aa31a67"
             },
-            "require": {
-                "yiisoft/yii2": "*"
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ShortCirquit/WordPressApi/zipball/52723038068323f78043fc06dcfe274b3aa31a67",
+                "reference": "52723038068323f78043fc06dcfe274b3aa31a67",
+                "shasum": ""
             },
             "type": "library",
             "autoload": {
@@ -369,13 +380,14 @@
                     "ShortCirquit\\WordPressApi\\": ""
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "authors": [
                 {
                     "name": "Nabeel Sulieman",
-                    "email": "nabsul@outlook.com"
+                    "email": "n@runto.co"
                 }
             ],
             "description": "Libraries for interfacing with WordPress WP-API plugin and WordPress.com APIs",
@@ -385,7 +397,7 @@
                 "wordpress.com",
                 "wp-api"
             ],
-            "time": "2015-10-09 22:36:46"
+            "time": "2015-10-11 17:40:21"
         },
         {
             "name": "swiftmailer/swiftmailer",
