@@ -20,7 +20,8 @@
         "yiisoft/yii2-swiftmailer": "*",
         "yiisoft/yii2-authclient": "^2.0",
         "shortcirquit/wordpress-api": "dev-master",
-        "shortcirquit/linkoscope-api": "dev-master"
+        "shortcirquit/linkoscope-api": "dev-master",
+        "phpunit/phpunit": "^5.0"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
