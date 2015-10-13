@@ -113,7 +113,7 @@ class SiteController extends BaseController
             return $this->redirect([$redirect]);
         }
 
-        $cfg = $api->getConfig() + ['accessToken' => $auth['access_token']];
+        $cfg = $api->getConfig() + ['token' => $auth['access_token']];
         $api = new ComLinkoScope($cfg);
         $account = $api->getAccount();
 
