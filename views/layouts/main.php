@@ -10,6 +10,7 @@ use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 
 AppAsset::register($this);
+$this->title = "LinkoScope"
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -28,7 +29,7 @@ AppAsset::register($this);
     <?php
     NavBar::begin([
         'brandLabel' => 'LinkoScope',
-        'brandUrl' => Yii::$app->homeUrl,
+        'brandUrl' => ['link/index'],
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
@@ -39,15 +40,10 @@ AppAsset::register($this);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
-            [
-                'label' => 'Links',
-                'url' => ['/link'],
-                'visible' => $isGuest || Yii::$app->user->getIdentity()->username != 'admin'
-            ],
+            ['label' => 'About', 'url' => ['/site/about']],
             ['label' => 'Login', 'url' => ['/site/login'], 'visible' => $isGuest],
             [
-                'label' => "Logout ($userId) ($id)",
+                'label' => "Logout ($userId)",
                 'url' => ['/site/logout'],
                 'linkOptions' => ['data-method' => 'post'],
                 'visible' => !$isGuest,
@@ -77,7 +73,7 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
+        <p class="pull-left">&copy; Nabeel Sulieman <?= date('Y') ?></p>
 
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>
