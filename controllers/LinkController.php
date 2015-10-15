@@ -8,7 +8,6 @@ use ShortCirquit\LinkoScopeApi\Models\Comment;
 use ShortCirquit\LinkoScopeApi\Models\Link;
 use yii\data\ArrayDataProvider;
 use Yii;
-use yii\log\Logger;
 use yii\filters\AccessControl;
 use yii\base\InlineAction;
 
@@ -39,7 +38,6 @@ class LinkController extends BaseController
     public function actionIndex()
     {
         $result = $this->getApi()->getLinks();
-        Yii::getLogger()->log(json_encode($result), Logger::LEVEL_INFO);
         $data = new ArrayDataProvider(['allModels' => $result]);
         return $this->render('index', [
             'data' => $data,
