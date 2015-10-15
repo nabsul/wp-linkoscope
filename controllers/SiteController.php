@@ -53,7 +53,12 @@ class SiteController extends BaseController
 
     public function actionIndex()
     {
-        return $this->render('index');
+        return $this->redirect('link/index');
+    }
+
+    public function actionAbout()
+    {
+        return $this->render('about');
     }
 
     public function actionLogout()
