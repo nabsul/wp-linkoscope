@@ -9,9 +9,33 @@ use ShortCirquit\LinkoScopeApi\Models\Link;
 use yii\data\ArrayDataProvider;
 use Yii;
 use yii\log\Logger;
+use yii\filters\AccessControl;
+use yii\base\InlineAction;
 
 class LinkController extends BaseController
 {
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'except' => ['index'],
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'matchCallback' => function($r, $a){
+                            return !Yii::$app->user->isGuest;
+                        },
+                    ],
+                ],
+                'denyCallback' => function($r, InlineAction $a){
+                    Yii::$app->session->setFlash('info', 'You must be logged in to do that.');
+                    $a->controller->redirect(['link/index']);
+                }
+            ],
+        ];
+    }
+
     public function actionIndex()
     {
         $result = $this->getApi()->getLinks();
