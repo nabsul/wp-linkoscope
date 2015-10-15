@@ -11,7 +11,7 @@ use yii\helpers\Html;
     <div style="top: 0px; float: right;">
         <?= Html::a('<span class="glyphicon glyphicon-arrow-up"></span>', ['up-comment', 'post' => $model->postId, 'id' => $model->id,], ['title' => 'Up']) ?>
         <?= Html::a('<span class="glyphicon glyphicon-arrow-down"></span>', ['down-comment', 'post' => $model->postId, 'id' => $model->id,], ['title' => 'Down']) ?>
-        <?= Html::a('<span class="glyphicon glyphicon-trash"></span>', ['delete-comment', 'post' => $model->postId, 'id' => $model->id,], ['title' => 'Delete']) ?>
+        <?= ''/*Html::a('<span class="glyphicon glyphicon-trash"></span>', ['delete-comment', 'post' => $model->postId, 'id' => $model->id,], ['title' => 'Delete'])*/ ?>
     </div>
 </div>
 <div>
