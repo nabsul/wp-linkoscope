@@ -17,7 +17,7 @@ use yii\widgets\ListView;
     'attributes' => [
         'link' => ['label' => 'Link', 'format' => 'raw',
                    'value' => "$link->title (" . Html::a($link->url, $link->url, ['target' => '_blank']) . ")"],
-        'author' => ['label' => 'Author', 'value' => "$link->authorName ($link->authorId) $link->date"],
+        'author' => ['label' => 'Author', 'value' => "$link->authorName ($link->date)"],
         'datails' => [
             'label' => 'Details',
             'value' => "Comments: $link->comments | Votes: $link->votes | Score: $link->score"

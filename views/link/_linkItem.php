@@ -20,5 +20,5 @@ use yii\helpers\Html;
 <?php endif; ?>
 </div>
 <div>
-    <?= "$model->authorName ($model->authorId) | $model->date | $model->votes votes | $model->comments comments | $model->score points" ?>
+    <?= "$model->authorName | $model->date | $model->votes votes | $model->comments comments | $model->score points" ?>
 </div>
