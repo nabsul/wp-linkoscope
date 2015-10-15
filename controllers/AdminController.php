@@ -6,14 +6,11 @@ use app\models\WpOrgConfigForm;
 use app\models\WpComConfigForm;
 use ShortCirquit\LinkoScopeApi\ComLinkoScope;
 use ShortCirquit\LinkoScopeApi\OrgLinkoScope;
-use ShortCirquit\WordPressApi\ComWpApi;
-use ShortCirquit\WordPressApi\OrgWpApi;
 use yii\base\InlineAction;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
 use Yii;
 use app\models\LoginForm;
-use yii\web\HttpException;
 
 class AdminController extends BaseController
 {
