@@ -26,8 +26,8 @@ class BaseController extends Controller
 		$cfg = json_decode(file_get_contents($files[0]), true);
 		if (!Yii::$app->user->isGuest)
 		{
-			$cfg['accessToken'] = Yii::$app->user->identity->token;
-			$cfg['accessTokenSecret'] = Yii::$app->user->identity->secret;
+			$cfg['token'] = Yii::$app->user->identity->token;
+			$cfg['tokenSecret'] = Yii::$app->user->identity->secret;
 		}
 
 		$classNAme = $cfg['type'];
