@@ -14,4 +14,6 @@ use yii\widgets\ListView;
     'options' => ['class' => 'striped'],
 ]); ?>
 
+<?php if (!Yii::$app->user->isGuest) : ?>
 <?= Html::a('Add New', ['new'], ['class' => 'btn btn-default btn-success']); ?>
+<?php endif; ?>
