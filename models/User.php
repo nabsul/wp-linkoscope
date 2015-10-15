@@ -94,15 +94,22 @@ class User extends Object implements IdentityInterface
      */
     public function validatePassword($password)
     {
-        return $this->password === $password;
+        $hash = sha1($password);
+        return $this->password === $hash;
     }
 
     private static function getAdminAccount()
     {
+        $file = Yii::$app->runtimePath . '/adminPassHash.txt';
+        if (!file_exists($file)){
+            return null;
+        }
+
+        $passHash = file_get_contents($file);
         return new User([
             'id' => 'admin',
             'username' => 'admin',
-            'password' => Yii::$app->params['adminPassword'],
+            'password' => trim($passHash),
         ]);
     }
 
