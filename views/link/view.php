@@ -16,11 +16,12 @@ use yii\widgets\ListView;
     'model' => $link,
     'attributes' => [
         'link' => ['label' => 'Link', 'format' => 'raw',
-                   'value' => "$link->title (" . Html::a($link->url, $link->url, ['target' => '_blank']) . ")"],
-        'author' => ['label' => 'Author', 'value' => "$link->authorName (". date('D d M Y', strtotime($link->date)) . ")"],
+                   'value' => "$link->title <br />" . Html::a($link->url, $link->url, ['target' => '_blank'])],
         'datails' => [
             'label' => 'Details',
-            'value' => "Comments: $link->comments | Votes: $link->votes"
+            'value' => "$link->authorName | " .
+                date('D d M Y', strtotime($link->date)) .
+                " | $link->comments comments | $link->votes votes"
         ],
     ],
 ]); ?>
