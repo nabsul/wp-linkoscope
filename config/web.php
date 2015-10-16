@@ -1,6 +1,8 @@
 <?php
 
 $params = require(__DIR__ . '/params.php');
+$db = require(__DIR__ . '/db.php');
+$linkoScope = require(__DIR__ . '/linkoscope.php');
 
 $config = [
     'id' => 'basic',
@@ -42,6 +44,8 @@ $config = [
                 ],
             ],
         ],
+        'linko' => $linkoScope,
+        'db' => $db,
     ],
     'params' => $params,
 ];

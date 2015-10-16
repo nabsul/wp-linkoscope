@@ -3,6 +3,8 @@
 Yii::setAlias('@tests', dirname(__DIR__) . '/tests');
 
 $params = require(__DIR__ . '/params.php');
+$db = require(__DIR__ . '/db.php');
+$linkoScope = require(__DIR__ . '/linkoscope.php');
 
 return [
     'id' => 'basic-console',
@@ -24,6 +26,8 @@ return [
                 ],
             ],
         ],
+        'linko' => $linkoScope,
+        'db' => $db,
     ],
     'params' => $params,
 ];
