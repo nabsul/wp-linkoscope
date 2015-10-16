@@ -1311,12 +1311,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ShortCirquit/LinkoScopeApi.git",
-                "reference": "fceebcdbaa3e0c83f592255817911d62757542bc"
+                "reference": "d5d23a58825b4386229375b1e8b5a98544b02e1f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ShortCirquit/LinkoScopeApi/zipball/fceebcdbaa3e0c83f592255817911d62757542bc",
-                "reference": "fceebcdbaa3e0c83f592255817911d62757542bc",
+                "url": "https://api.github.com/repos/ShortCirquit/LinkoScopeApi/zipball/d5d23a58825b4386229375b1e8b5a98544b02e1f",
+                "reference": "d5d23a58825b4386229375b1e8b5a98544b02e1f",
                 "shasum": ""
             },
             "require": {
@@ -1346,7 +1346,7 @@
                 "wordpress.com",
                 "wp-api"
             ],
-            "time": "2015-10-15 03:53:52"
+            "time": "2015-10-16 01:22:39"
         },
         {
             "name": "shortcirquit/wordpress-api",
@@ -1354,12 +1354,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ShortCirquit/WordPressApi.git",
-                "reference": "2d2c26f0e9f03a2b40b7bcf62cae55b45b5020b5"
+                "reference": "46665877d7fcbb70b0707bcbd42f1e8643c7605c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ShortCirquit/WordPressApi/zipball/2d2c26f0e9f03a2b40b7bcf62cae55b45b5020b5",
-                "reference": "2d2c26f0e9f03a2b40b7bcf62cae55b45b5020b5",
+                "url": "https://api.github.com/repos/ShortCirquit/WordPressApi/zipball/46665877d7fcbb70b0707bcbd42f1e8643c7605c",
+                "reference": "46665877d7fcbb70b0707bcbd42f1e8643c7605c",
                 "shasum": ""
             },
             "type": "library",
@@ -1385,7 +1385,7 @@
                 "wordpress.com",
                 "wp-api"
             ],
-            "time": "2015-10-12 22:23:36"
+            "time": "2015-10-15 15:41:27"
         },
         {
             "name": "swiftmailer/swiftmailer",
