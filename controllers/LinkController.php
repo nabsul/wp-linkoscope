@@ -103,6 +103,10 @@ class LinkController extends BaseController
             $this->redirect(['view', 'id'=>$id]);
         }
 
+        if ($form->hasErrors()){
+            Yii::$app->session->setFlash('error', implode('<br />', $form->getFirstErrors()));
+        }
+
         $linkObject = $api->getLink($id);
         $comments = $api->getComments($id);
 
