@@ -37,16 +37,6 @@ class LinkController extends BaseController
 
     public function actionIndex()
     {
-        $result = $this->getApi()->getLinks();
-        $data = new ArrayDataProvider(['allModels' => $result]);
-        return $this->render('index', [
-            'data' => $data,
-            'result' => $result,
-        ]);
-    }
-
-    public function actionNew()
-    {
         $form = new LinkForm();
         if ($form->load(Yii::$app->request->post()) && $form->validate())
         {
@@ -57,9 +47,21 @@ class LinkController extends BaseController
             ]);
 
             $this->getApi()->addLink($link);
+            Yii::$app->session->setFlash('info', 'Your link has been added.');
             return $this->redirect(['index']);
         }
-        return $this->render('new', ['model' => $form]);
+
+        if ($form->hasErrors()){
+            Yii::$app->session->setFlash('error', implode('<br />', $form->getFirstErrors()));
+        }
+
+        $result = $this->getApi()->getLinks();
+        $data = new ArrayDataProvider(['allModels' => $result]);
+        return $this->render('index', [
+            'data' => $data,
+            'result' => $result,
+            'linkForm' => $form,
+        ]);
     }
 
     public function actionEdit($id)
