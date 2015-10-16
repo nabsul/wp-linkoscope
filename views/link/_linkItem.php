@@ -7,8 +7,10 @@ use yii\helpers\Html;
 <div>
     <div>
         <?= ($index + 1) ?>:
+<?php if (!Yii::$app->user->isGuest) : ?>
         <?= Html::a('<span class="glyphicon glyphicon-arrow-up"></span>', ['up', 'id' => $model->id,], ['title' => 'Up']) ?>
         <?= Html::a('<span class="glyphicon glyphicon-arrow-down"></span>', ['down', 'id' => $model->id,], ['title' => 'Down']) ?>
+<?php endif; ?>
         [<?= Html::a($model->title, $model->url, ['target' => '_blank',]); ?>]
         (<?= parse_url($model->url, PHP_URL_HOST) ?>)
     </div>
