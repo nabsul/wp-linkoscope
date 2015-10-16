@@ -12,7 +12,7 @@ use yii\helpers\Html;
     <?php else: ?>
         <?= Html::a('<span class="glyphicon glyphicon-arrow-up"></span>', ['up-comment', 'post' => $model->postId, 'id' => $model->id,], ['title' => 'Up']) ?>
     <?php endif; ?>
-        <?= $model->content ?>
+        <span class='main-link'><?= $model->content ?></span>
     </div>
 </div>
 <div>

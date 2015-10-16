@@ -91,5 +91,9 @@ a.desc:after {
 }
 
 .striped > div:nth-of-type(even) {
-    background-color: #d1d1d1;
+    background-color: #ededed;
+}
+
+.main-link {
+    font-size: 120%
 }

@@ -14,7 +14,9 @@ use yii\helpers\Html;
         <?= Html::a('<span class="glyphicon glyphicon-arrow-up"></span>', ['up', 'id' => $model->id,], ['title' => 'Up']) ?>
     <?php endif; ?>
 <?php endif; ?>
-        [<?= Html::a($model->title, $model->url, ['target' => '_blank',]); ?>]
+        <span class="main-link">
+            [<?= Html::a($model->title, $model->url, ['target' => '_blank',]); ?>]
+        </span>
         (<?= parse_url($model->url, PHP_URL_HOST) ?>)
     </div>
 <?php if (!Yii::$app->user->isGuest) : ?>
