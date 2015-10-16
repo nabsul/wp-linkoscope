@@ -46,6 +46,7 @@ class LinkoScope extends Component
             $id = Yii::$app->user->identity;
             $cfg['token'] = $id->token;
             $cfg['tokenSecret'] = $id->secret;
+            $cfg['userId'] = $id->id;
         }
 
         $className = $cfg['type'];
