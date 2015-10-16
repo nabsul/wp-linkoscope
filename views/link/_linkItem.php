@@ -21,7 +21,7 @@ use yii\helpers\Html;
 <div>
     <?=
         "$model->authorName | " .
-        date(DATE_RFC2822, strtotime($model->date)) .
+        date('D d M Y', strtotime($model->date)) .
         " | $model->votes votes | " .
         Html::a($model->comments == 0 ? "discuss" : "$model->comments comments", ['link/view', 'id' => $model->id])
     ?>

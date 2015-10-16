@@ -15,5 +15,5 @@ use yii\helpers\Html;
     </div>
 </div>
 <div>
-    <?= "$model->authorName | ". date(DATE_RFC2822, strtotime($model->date)) . " | $model->votes votes" ?>
+    <?= "$model->authorName | ". date('D d M Y', strtotime($model->date)) . " | $model->votes votes" ?>
 </div>
