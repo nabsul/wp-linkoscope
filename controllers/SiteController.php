@@ -123,8 +123,8 @@ class SiteController extends BaseController
         $account = $api->getAccount();
 
         $u = new User([
-            'id' => $account['ID'],
-            'username' => $account['display_name'],
+            'id' => $account->id,
+            'username' => $account->username,
             'token' => $auth['access_token'],
         ]);
 
@@ -155,8 +155,8 @@ class SiteController extends BaseController
         $api = new OrgLinkoScope($cfg);
         $user = $api->getAccount();
         $u = new User([
-            'id' => $user['body']['id'],
-            'username' => $user['body']['name'],
+            'id' => $user->id,
+            'username' => $user->username,
             'token' => $tok['oauth_token'],
             'secret' => $tok['oauth_token_secret'],
         ]);
