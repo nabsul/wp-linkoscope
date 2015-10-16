@@ -8,8 +8,11 @@ use yii\helpers\Html;
     <div>
         <?= ($index + 1) ?>:
 <?php if (!Yii::$app->user->isGuest) : ?>
-        <?= Html::a('<span class="glyphicon glyphicon-arrow-up"></span>', ['up', 'id' => $model->id,], ['title' => 'Up']) ?>
+    <?php if ($model->hasVoted) : ?>
         <?= Html::a('<span class="glyphicon glyphicon-arrow-down"></span>', ['down', 'id' => $model->id,], ['title' => 'Down']) ?>
+    <?php else : ?>
+        <?= Html::a('<span class="glyphicon glyphicon-arrow-up"></span>', ['up', 'id' => $model->id,], ['title' => 'Up']) ?>
+    <?php endif; ?>
 <?php endif; ?>
         [<?= Html::a($model->title, $model->url, ['target' => '_blank',]); ?>]
         (<?= parse_url($model->url, PHP_URL_HOST) ?>)
