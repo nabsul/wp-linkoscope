@@ -6,12 +6,13 @@ use yii\helpers\Html;
 
 <div>
     <div>
-        <?= ($index + 1) ?>: <?= $model->content ?>
-    </div>
-    <div style="top: 0px; float: right;">
-        <?= Html::a('<span class="glyphicon glyphicon-arrow-up"></span>', ['up-comment', 'post' => $model->postId, 'id' => $model->id,], ['title' => 'Up']) ?>
+        <?= ($index + 1) ?>:
+    <?php if ($model->hasVoted) : ?>
         <?= Html::a('<span class="glyphicon glyphicon-arrow-down"></span>', ['down-comment', 'post' => $model->postId, 'id' => $model->id,], ['title' => 'Down']) ?>
-        <?= ''/*Html::a('<span class="glyphicon glyphicon-trash"></span>', ['delete-comment', 'post' => $model->postId, 'id' => $model->id,], ['title' => 'Delete'])*/ ?>
+    <?php else: ?>
+        <?= Html::a('<span class="glyphicon glyphicon-arrow-up"></span>', ['up-comment', 'post' => $model->postId, 'id' => $model->id,], ['title' => 'Up']) ?>
+    <?php endif; ?>
+        <?= $model->content ?>
     </div>
 </div>
 <div>
