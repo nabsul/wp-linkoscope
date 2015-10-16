@@ -59,12 +59,12 @@ $this->title = "LinkoScope"
         ]) ?>
         <?php if (Yii::$app->session->hasFlash('error')) : ?>
             <p style="background-color:red;">
-                Error: <?= Yii::$app->session->getFlash('error'); ?>
+                <?= Yii::$app->session->getFlash('error'); ?>
             </p>
         <?php endif ?>
         <?php if (Yii::$app->session->hasFlash('info')) : ?>
             <p style="background-color:green;">
-                Info: <?= Yii::$app->session->getFlash('info'); ?>
+                <?= Yii::$app->session->getFlash('info'); ?>
             </p>
         <?php endif ?>
         <?= $content ?>
