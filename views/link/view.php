@@ -20,7 +20,7 @@ use yii\widgets\ListView;
         'author' => ['label' => 'Author', 'value' => "$link->authorName (". date(DATE_RFC2822, strtotime($link->date)) . ")"],
         'datails' => [
             'label' => 'Details',
-            'value' => "Comments: $link->comments | Votes: $link->votes | Score: $link->score"
+            'value' => "Comments: $link->comments | Votes: $link->votes"
         ],
     ],
 ]); ?>
