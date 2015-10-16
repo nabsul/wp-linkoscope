@@ -838,16 +838,16 @@
         },
         {
             "name": "phpunit/phpunit-mock-objects",
-            "version": "3.0.1",
+            "version": "3.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit-mock-objects.git",
-                "reference": "43d27a86f24c7eacf886edadcdb4503451485cc7"
+                "reference": "3324b035ed1822df22b2c99f2ae22547085eb7a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/43d27a86f24c7eacf886edadcdb4503451485cc7",
-                "reference": "43d27a86f24c7eacf886edadcdb4503451485cc7",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/3324b035ed1822df22b2c99f2ae22547085eb7a8",
+                "reference": "3324b035ed1822df22b2c99f2ae22547085eb7a8",
                 "shasum": ""
             },
             "require": {
@@ -890,7 +890,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2015-10-14 13:04:29"
+            "time": "2015-10-16 12:26:30"
         },
         {
             "name": "sebastian/comparator",
@@ -1311,12 +1311,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ShortCirquit/LinkoScopeApi.git",
-                "reference": "d5d23a58825b4386229375b1e8b5a98544b02e1f"
+                "reference": "f15a7bea4965e250862586d45751af3000d91e02"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ShortCirquit/LinkoScopeApi/zipball/d5d23a58825b4386229375b1e8b5a98544b02e1f",
-                "reference": "d5d23a58825b4386229375b1e8b5a98544b02e1f",
+                "url": "https://api.github.com/repos/ShortCirquit/LinkoScopeApi/zipball/f15a7bea4965e250862586d45751af3000d91e02",
+                "reference": "f15a7bea4965e250862586d45751af3000d91e02",
                 "shasum": ""
             },
             "require": {
@@ -1346,7 +1346,7 @@
                 "wordpress.com",
                 "wp-api"
             ],
-            "time": "2015-10-16 01:22:39"
+            "time": "2015-10-16 18:02:28"
         },
         {
             "name": "shortcirquit/wordpress-api",
