@@ -28,6 +28,9 @@ return [
         ],
         'linko' => $linkoScope,
         'db' => $db,
+        'worker' => [
+            'class' => 'app\components\LinkoScopeWorker',
+        ]
     ],
     'params' => $params,
 ];
