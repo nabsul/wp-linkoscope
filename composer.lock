@@ -1355,12 +1355,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ShortCirquit/WordPressApi.git",
-                "reference": "5a9be332eb06e7836005b43c77ab6506ac68164f"
+                "reference": "33c4b013687fc6eb347295b801b15e6d578baaea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ShortCirquit/WordPressApi/zipball/5a9be332eb06e7836005b43c77ab6506ac68164f",
-                "reference": "5a9be332eb06e7836005b43c77ab6506ac68164f",
+                "url": "https://api.github.com/repos/ShortCirquit/WordPressApi/zipball/33c4b013687fc6eb347295b801b15e6d578baaea",
+                "reference": "33c4b013687fc6eb347295b801b15e6d578baaea",
                 "shasum": ""
             },
             "require": {
@@ -1389,7 +1389,7 @@
                 "wordpress.com",
                 "wp-api"
             ],
-            "time": "2015-10-18 18:20:11"
+            "time": "2015-10-19 22:54:12"
         },
         {
             "name": "swiftmailer/swiftmailer",
