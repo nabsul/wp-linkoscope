@@ -39,7 +39,7 @@ class LinkController extends BaseController
     public function actionIndex()
     {
         $form = new LinkForm();
-        $form->title = '__HIDDEN__';
+        $form->title = '__AUTO__';
 
         $result = $this->getApi()->getLinks();
         $data = new ArrayDataProvider(['allModels' => $result]);
@@ -53,7 +53,18 @@ class LinkController extends BaseController
     public function actionNew()
     {
         $form = new LinkForm();
-        if ($form->load(Yii::$app->request->post()) && $form->title != '__HIDDEN__' && $form->validate()){
+        if (!$form->load(Yii::$app->request->post()))
+            return $this->render('new', ['linkForm' => $form]);
+
+        if ($form->title == '__AUTO__')
+        {
+            $form->title = null;
+            if (preg_match('/^https?:\/\//', $form->url))
+                $form->title = Yii::$app->crawler->readTitle($form->url);
+            return $this->render('new', ['linkForm' => $form]);
+        }
+
+        if ($form->validate()){
             $link = new Link([
                 'title' => $form->title,
                 'url' => $form->url,
@@ -66,12 +77,6 @@ class LinkController extends BaseController
 
         if ($form->hasErrors()){
             Yii::$app->session->setFlash('error', implode('<br />', $form->getFirstErrors()));
-        }
-
-        if(preg_match('/^https?:\/\//', $form->url)){
-            /** @var $crawler Crawler */
-            $crawler = Yii::$app->crawler;
-            $form->title = $crawler->readTitle($form->url);
         }
 
         return $this->render('new', ['linkForm' => $form]);
