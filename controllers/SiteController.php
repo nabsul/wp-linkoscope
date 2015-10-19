@@ -150,8 +150,8 @@ class SiteController extends BaseController
 
         $tok = $api->access($oauth_token, $oauth_verifier);
         $cfg = $api->getConfig();
-        $cfg['accessToken'] = $tok['oauth_token'];
-        $cfg['accessTokenSecret'] = $tok['oauth_token_secret'];
+        $cfg['token'] = $tok['oauth_token'];
+        $cfg['tokenSecret'] = $tok['oauth_token_secret'];
         $api = new OrgLinkoScope($cfg);
         $user = $api->getAccount();
         $u = new User([
