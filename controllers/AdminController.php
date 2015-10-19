@@ -11,6 +11,7 @@ use yii\filters\AccessControl;
 use yii\helpers\Url;
 use Yii;
 use app\models\LoginForm;
+use yii\web\HttpException;
 
 class AdminController extends BaseController
 {
@@ -42,7 +43,13 @@ class AdminController extends BaseController
 
     public function actionIndex()
     {
-        return $this->render('index',['api'=>$this->getApi()]);
+        try{
+            $api = $this->getApi();
+        } catch (HttpException $e){
+            $api = null;
+        }
+        
+        return $this->render('index',['api'=>$api]);
     }
 
     public function actionConfig()
