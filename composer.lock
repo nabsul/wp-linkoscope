@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a5e0ab15fef02b2e02cec8258c721dcb",
-    "content-hash": "9a60207beaf456141cd87a94055e06b0",
+    "hash": "415c5661fff2123a2225f766fbb42d8a",
+    "content-hash": "e20a21e45f62b2db25e870052a661e3c",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -838,16 +838,16 @@
         },
         {
             "name": "phpunit/phpunit-mock-objects",
-            "version": "3.0.2",
+            "version": "3.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit-mock-objects.git",
-                "reference": "3324b035ed1822df22b2c99f2ae22547085eb7a8"
+                "reference": "382c729a52b7ef682e94c73fd6868f5ee8116ba7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/3324b035ed1822df22b2c99f2ae22547085eb7a8",
-                "reference": "3324b035ed1822df22b2c99f2ae22547085eb7a8",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/382c729a52b7ef682e94c73fd6868f5ee8116ba7",
+                "reference": "382c729a52b7ef682e94c73fd6868f5ee8116ba7",
                 "shasum": ""
             },
             "require": {
@@ -890,7 +890,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2015-10-16 12:26:30"
+            "time": "2015-10-18 07:55:54"
         },
         {
             "name": "sebastian/comparator",
@@ -1311,15 +1311,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ShortCirquit/LinkoScopeApi.git",
-                "reference": "f15a7bea4965e250862586d45751af3000d91e02"
+                "reference": "bcd2604335fe38329e12853b2f2c21c2e187b91e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ShortCirquit/LinkoScopeApi/zipball/f15a7bea4965e250862586d45751af3000d91e02",
-                "reference": "f15a7bea4965e250862586d45751af3000d91e02",
+                "url": "https://api.github.com/repos/ShortCirquit/LinkoScopeApi/zipball/bcd2604335fe38329e12853b2f2c21c2e187b91e",
+                "reference": "bcd2604335fe38329e12853b2f2c21c2e187b91e",
                 "shasum": ""
             },
             "require": {
+                "phpunit/phpunit": "^5.0",
                 "shortcirquit/wordpress-api": "dev-master"
             },
             "type": "library",
@@ -1346,7 +1347,7 @@
                 "wordpress.com",
                 "wp-api"
             ],
-            "time": "2015-10-16 18:02:28"
+            "time": "2015-10-18 19:03:45"
         },
         {
             "name": "shortcirquit/wordpress-api",
@@ -1354,13 +1355,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ShortCirquit/WordPressApi.git",
-                "reference": "46665877d7fcbb70b0707bcbd42f1e8643c7605c"
+                "reference": "5a9be332eb06e7836005b43c77ab6506ac68164f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ShortCirquit/WordPressApi/zipball/46665877d7fcbb70b0707bcbd42f1e8643c7605c",
-                "reference": "46665877d7fcbb70b0707bcbd42f1e8643c7605c",
+                "url": "https://api.github.com/repos/ShortCirquit/WordPressApi/zipball/5a9be332eb06e7836005b43c77ab6506ac68164f",
+                "reference": "5a9be332eb06e7836005b43c77ab6506ac68164f",
                 "shasum": ""
+            },
+            "require": {
+                "phpunit/phpunit": "^5.0"
             },
             "type": "library",
             "autoload": {
@@ -1385,7 +1389,7 @@
                 "wordpress.com",
                 "wp-api"
             ],
-            "time": "2015-10-15 15:41:27"
+            "time": "2015-10-18 18:20:11"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -1439,6 +1443,59 @@
                 "mailer"
             ],
             "time": "2015-06-06 14:19:39"
+        },
+        {
+            "name": "symfony/dom-crawler",
+            "version": "v2.7.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/dom-crawler.git",
+                "reference": "2e185ca136399f902b948694987e62c80099c052"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/dom-crawler/zipball/2e185ca136399f902b948694987e62c80099c052",
+                "reference": "2e185ca136399f902b948694987e62c80099c052",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.9"
+            },
+            "require-dev": {
+                "symfony/css-selector": "~2.3",
+                "symfony/phpunit-bridge": "~2.7"
+            },
+            "suggest": {
+                "symfony/css-selector": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.7-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\DomCrawler\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony DomCrawler Component",
+            "homepage": "https://symfony.com",
+            "time": "2015-09-20 21:13:58"
         },
         {
             "name": "symfony/yaml",
