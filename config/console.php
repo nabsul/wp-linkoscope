@@ -30,6 +30,9 @@ return [
         'db' => $db,
         'worker' => [
             'class' => 'app\components\LinkoScopeWorker',
+        ],
+        'crawler' => [
+            'class' => 'app\components\Crawler',
         ]
     ],
     'params' => $params,
