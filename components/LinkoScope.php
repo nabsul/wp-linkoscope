@@ -13,6 +13,7 @@ use ShortCirquit\LinkoScopeApi\iLinkoScope;
 use yii\base\Component;
 use app\models\User;
 use Yii;
+use yii\web\HttpException;
 
 class LinkoScope extends Component
 {
@@ -31,6 +32,9 @@ class LinkoScope extends Component
     {
         if ($this->api === null)
             $this->readConfig();
+
+        if ($this->api === null)
+            throw new HttpException(500, 'The site is not configured');
 
         return $this->api;
     }
