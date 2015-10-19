@@ -27,16 +27,15 @@ use yii\widgets\ListView;
 ]); ?>
 
 <h2>Comments</h2>
-
-<?php $form = ActiveForm::begin([
-    'id' => 'comment-form',
-    'options' => ['class' => 'form-horizontal'],
-]); ?>
-
-<?= Html::activeTextInput($commentForm, 'comment', ['size' => 40]) ?>
-<?= Html::submitButton('Add Comment', ['class' => 'btn-xs btn-primary', 'name' => 'login-button']) ?>
-
-<?php ActiveForm::end(); ?>
+<?php if (!Yii::$app->user->isGuest) : ?>
+    <?php $form = ActiveForm::begin([
+        'id' => 'comment-form',
+        'options' => ['class' => 'form-horizontal'],
+    ]); ?>
+    <?= Html::activeTextInput($commentForm, 'comment', ['size' => 40]) ?>
+    <?= Html::submitButton('Add Comment', ['class' => 'btn-xs btn-primary', 'name' => 'login-button']) ?>
+    <?php ActiveForm::end(); ?>
+<?php endif; ?>
 
 <?= ListView::widget([
     'dataProvider' => $comments,

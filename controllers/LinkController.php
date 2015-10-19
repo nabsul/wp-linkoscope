@@ -18,7 +18,7 @@ class LinkController extends BaseController
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'except' => ['index'],
+                'except' => ['index', 'view'],
                 'rules' => [
                     [
                         'allow' => true,
