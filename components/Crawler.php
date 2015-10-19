@@ -10,18 +10,39 @@ namespace app\components;
 
 
 use yii\base\Component;
+use yii\log\Logger;
 
 class Crawler extends Component
 {
+    public $enabled = true;
 
     public function readTitle($url)
     {
-        $content = $this->fetchUrl($url);
-        $crawler = new \Symfony\Component\DomCrawler\Crawler();
-        $crawler->addHtmlContent($content);
-        $node = $crawler->filterXPath('html/head/title');
-        if ($node->count() > 0)
-            return $node->first()->text();
+        if (!$this->enabled)
+            return null;
+
+        try
+        {
+            $content = $this->fetchUrl($url);
+        }
+        catch (\Exception $e)
+        {
+            \Yii::getLogger()->log("Crawler fetchUrl exception: {$e->getMessage()}", Logger::LEVEL_ERROR);
+            return null;
+        }
+
+        try
+        {
+            $crawler = new \Symfony\Component\DomCrawler\Crawler();
+            $crawler->addHtmlContent($content);
+            $node = $crawler->filterXPath('html/head/title');
+            if ($node->count() > 0)
+                return $node->first()->text();
+        }
+        catch (\Exception $e)
+        {
+            \Yii::getLogger()->log("Crawler DOM extraction exception: {$e->getMessage()}", Logger::LEVEL_ERROR);
+        }
         return null;
     }
 
