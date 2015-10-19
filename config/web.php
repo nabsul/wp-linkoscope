@@ -45,6 +45,9 @@ $config = [
             ],
         ],
         'linko' => $linkoScope,
+        'crawler' => [
+            'class' => 'app\components\Crawler',
+        ],
         'db' => $db,
     ],
     'params' => $params,

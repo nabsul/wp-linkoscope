@@ -10,6 +10,7 @@ use yii\data\ArrayDataProvider;
 use Yii;
 use yii\filters\AccessControl;
 use yii\base\InlineAction;
+use app\components\Crawler;
 
 class LinkController extends BaseController
 {
@@ -38,14 +39,26 @@ class LinkController extends BaseController
     public function actionIndex()
     {
         $form = new LinkForm();
-        if ($form->load(Yii::$app->request->post()) && $form->validate())
-        {
+        $form->title = '__HIDDEN__';
+
+        $result = $this->getApi()->getLinks();
+        $data = new ArrayDataProvider(['allModels' => $result]);
+        return $this->render('index', [
+            'data' => $data,
+            'result' => $result,
+            'linkForm' => $form,
+        ]);
+    }
+
+    public function actionNew()
+    {
+        $form = new LinkForm();
+        if ($form->load(Yii::$app->request->post()) && $form->title != '__HIDDEN__' && $form->validate()){
             $link = new Link([
                 'title' => $form->title,
                 'url' => $form->url,
                 'authorId' => Yii::$app->user->identity->getId(),
             ]);
-
             $this->getApi()->addLink($link);
             Yii::$app->session->setFlash('info', 'Your link has been added.');
             return $this->redirect(['index']);
@@ -55,13 +68,13 @@ class LinkController extends BaseController
             Yii::$app->session->setFlash('error', implode('<br />', $form->getFirstErrors()));
         }
 
-        $result = $this->getApi()->getLinks();
-        $data = new ArrayDataProvider(['allModels' => $result]);
-        return $this->render('index', [
-            'data' => $data,
-            'result' => $result,
-            'linkForm' => $form,
-        ]);
+        if(preg_match('/^https?:\/\//', $form->url)){
+            /** @var $crawler Crawler */
+            $crawler = Yii::$app->crawler;
+            $form->title = $crawler->readTitle($form->url);
+        }
+
+        return $this->render('new', ['linkForm' => $form]);
     }
 
     public function actionEdit($id)

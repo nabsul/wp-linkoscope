@@ -33,7 +33,7 @@ return [
         ],
         'crawler' => [
             'class' => 'app\components\Crawler',
-        ]
+        ],
     ],
     'params' => $params,
 ];
