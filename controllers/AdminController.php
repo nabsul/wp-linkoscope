@@ -48,7 +48,7 @@ class AdminController extends BaseController
         } catch (HttpException $e){
             $api = null;
         }
-        
+
         return $this->render('index',['api'=>$api]);
     }
 
@@ -89,8 +89,14 @@ class AdminController extends BaseController
             return $this->render('wp-org', ['model' => $form]);
         }
 
+        // Add admin token to configuration
         $api = $this->getApi();
-        $api->access($oauth_token, $oauth_verifier);
+        $tok = $api->access($oauth_token, $oauth_verifier);
+        $file = Yii::$app->runtimePath . '/api.cfg';
+        $cfg = json_decode(file_get_contents($file), true);
+        $cfg['adminToken'] = $tok['oauth_token'];
+        $cfg['adminSecret'] = $tok['oauth_token_secret'];
+        file_put_contents($file, json_encode($cfg, JSON_PRETTY_PRINT));
 
         return $this->redirect(['index']);
     }

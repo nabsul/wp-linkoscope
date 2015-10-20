@@ -45,7 +45,7 @@ class LinkoScope extends Component
 
         $cfg = json_decode(file_get_contents($this->apiConfigFile), true);
 
-        if (!Yii::$app->user->isGuest) {
+        if (isset(Yii::$app->user) && !Yii::$app->user->isGuest) {
             /** @var User $id */
             $id = Yii::$app->user->identity;
             $cfg['token'] = $id->token;
