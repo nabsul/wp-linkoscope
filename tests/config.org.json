@@ -1,0 +1,7 @@
+{
+  "type" : "org",
+  "url" : "http://localhost/linkoscope/web",
+  "testUrl" : "http://localhost/linkoscope/web/index-test.php",
+  "username" : "user",
+  "password" : "pass"
+}
