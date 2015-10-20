@@ -20,10 +20,19 @@ $I->wantTo('see API configuration parameters');
 $I->see('Admin');
 $I->see('Current config');
 
-$cfg = json_decode(file_get_contents(Yii::$app->runtimePath . '/api.cfg'), true);
-unset($cfg['type']);
-foreach ($cfg as $k => $v){
-    $I->see("[$k] => $v");
+switch($I->getConfig()->type){
+    case 'com':
+        $adminParams = ['clientId', 'clientSecret', 'redirectUrl', 'blogId', 'blogUrl', 'adminToken'];
+        break;
+    case 'org':
+        $adminParams = ['consumerKey', 'consumerSecret', 'blogUrl'];
+        break;
+    default:
+        throw new \Exception('config file not found.');
+}
+
+foreach ($adminParams as $k){
+    $I->see("[$k]");
 }
 
 $I->see('WP Com Setup');
@@ -32,4 +41,4 @@ $I->see('WP Org Setup');
 $I->click('Logout');
 $I->wait(3);
 
-$I->see('Links Index');
+$I->see('Shared Links:');
