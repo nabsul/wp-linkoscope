@@ -24,15 +24,10 @@ class AcceptanceTester extends \Codeception\Actor
      * Define custom actions here
      */
 
-
-    public $secrets;
-
-    public function loadSecrets()
+    public function getConfig()
     {
-        $file = __DIR__ . '/../config/secrets.json';
-        if (!file_exists($file))
-            throw new Exception('no secrets file found');
-        $this->secrets = json_decode(file_get_contents($file));
+        $file = __DIR__ . '/../../config.json';
+        return json_decode(file_get_contents($file));
     }
 
     public function seeInRow($rowNumber, $text){
@@ -43,15 +38,15 @@ class AcceptanceTester extends \Codeception\Actor
         $this->dontSeeElement("div[data-key='$rowNum']");
     }
 
-    public function clickRowAction($rowNum, $action){
-        $this->click("a[title='$action']", "div[data-key='$rowNum']");
+    public function clickInRow($rowNum, $action){
+        $this->click($action, "div[data-key='$rowNum']");
         $this->wait(5);
     }
 
     public function addNewLink($title, $url){
         $this->seeInCurrentUrl('link/index');
         $this->click('Add New');
-        $this->see('Submit Link');
+        $this->see('Submit');
         $this->see('Title');
         $this->see('Url');
 
