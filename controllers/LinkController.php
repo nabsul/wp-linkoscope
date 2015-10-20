@@ -114,6 +114,7 @@ class LinkController extends BaseController
                 'postId' => $id,
                 'content' => $form->comment,
                 'authorId' => Yii::$app->user->id,
+                'authorName' => Yii::$app->user->getIdentity()->username
             ]);
 
             $api->addComment($comment);
