@@ -113,11 +113,15 @@ $I->seeInRow(0, '0 votes');
 $I->seeInRow(1, '0 votes');
 
 $I->clickInRow(1, "a[title='Up']");
+$I->wait(5);
+$I->reloadPage();
 $I->seeInRow(0, $links[0]['title']);
 $I->seeInRow(0, '1 votes');
 $I->seeInRow(1, '0 votes');
 
 $I->clickInRow(0, "a[title='Down']");
+$I->wait(5);
+$I->reloadPage();
 $I->seeInRow(0, $links[1]['title']);
 $I->seeInRow(1, $links[0]['title']);
 $I->seeInRow(0, '0 votes');
@@ -125,6 +129,8 @@ $I->seeInRow(1, '0 votes');
 
 $I->wantTo('try adding a comment');
 $I->clickInRow(0, "a[title='Up']");
+$I->wait(5);
+$I->reloadPage();
 $I->seeInRow(0, "1 votes");
 $I->clickInRow(0, 'discuss');
 $I->seeInCurrentUrl('link/view');
@@ -161,18 +167,24 @@ $I->seeInRow(0, '0 votes');
 $I->seeInRow(1, '0 votes');
 
 $I->clickInRow(1, "a[title='Up']");
+$I->wait(5);
+$I->reloadPage();
 $I->seeInRow(0, 'test comment 1');
 $I->seeInRow(1, 'test comment 2');
 $I->seeInRow(0, '1 votes');
 $I->seeInRow(1, '0 votes');
 
 $I->clickInRow(1, "a[title='Up']");
+$I->wait(5);
+$I->reloadPage();
 $I->seeInRow(0, 'test comment 2');
 $I->seeInRow(1, 'test comment 1');
 $I->seeInRow(0, '1 votes');
 $I->seeInRow(1, '1 votes');
 
 $I->clickInRow(0, "a[title='Down']");
+$I->wait(5);
+$I->reloadPage();
 $I->seeInRow(0, 'test comment 1');
 $I->seeInRow(1, 'test comment 2');
 $I->seeInRow(0, '1 votes');
