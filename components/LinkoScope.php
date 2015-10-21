@@ -18,12 +18,9 @@ use yii\web\HttpException;
 class LinkoScope extends Component
 {
     public $apiConfigFile;
+    public $async = false;
 
     private $api = null;
-
-    public function __construct($cfg = []){
-        parent::__construct($cfg);
-    }
 
     /**
      * @return iLinkoScope
@@ -44,6 +41,10 @@ class LinkoScope extends Component
             return null;
 
         $cfg = json_decode(file_get_contents($this->apiConfigFile), true);
+
+        if ($this->async){
+            $cfg['handler'] = new AsyncApiHandler();
+        }
 
         if (isset(Yii::$app->user) && !Yii::$app->user->isGuest) {
             /** @var User $id */
