@@ -1311,12 +1311,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ShortCirquit/LinkoScopeApi.git",
-                "reference": "bce02b1263d524dbbdf5d2dd6b9702fdb83aa3f3"
+                "reference": "95a61885617f9e6ca394794f1009deb8bafda04c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ShortCirquit/LinkoScopeApi/zipball/bce02b1263d524dbbdf5d2dd6b9702fdb83aa3f3",
-                "reference": "bce02b1263d524dbbdf5d2dd6b9702fdb83aa3f3",
+                "url": "https://api.github.com/repos/ShortCirquit/LinkoScopeApi/zipball/95a61885617f9e6ca394794f1009deb8bafda04c",
+                "reference": "95a61885617f9e6ca394794f1009deb8bafda04c",
                 "shasum": ""
             },
             "require": {
@@ -1347,7 +1347,7 @@
                 "wordpress.com",
                 "wp-api"
             ],
-            "time": "2015-10-20 04:16:42"
+            "time": "2015-10-21 03:25:56"
         },
         {
             "name": "shortcirquit/wordpress-api",
