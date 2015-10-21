@@ -36,6 +36,18 @@ class LinkoScope extends Component
         return $this->api;
     }
 
+    /**
+     * @return iLinkoScope
+     */
+    public function getConsoleApi(){
+        $config = json_decode(file_get_contents(\Yii::$app->runtimePath . '/api.cfg'), true);
+        $config['token'] = $config['adminToken'];
+        if (isset($config['adminSecret']))
+            $config['tokenSecret'] = $config['adminSecret'];
+        $api = new $config['type']($config);
+        return $api;
+    }
+
     private function readConfig(){
         if (!file_exists($this->apiConfigFile))
             return null;
