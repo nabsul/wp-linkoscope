@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "jobs".
@@ -15,7 +16,7 @@ use Yii;
  * @property string $type
  * @property string $arguments
  */
-class Job extends \yii\db\ActiveRecord
+class Job extends ActiveRecord
 {
     /**
      * @inheritdoc
