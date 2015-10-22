@@ -6,56 +6,7 @@ $I = new AcceptanceTester($scenario);
 
 $I->amOnPage('/link/index');
 
-if ($I->getConfig()->type == 'com'){
-    $I->click('Login');
-    $I->seeInCurrentUrl('oauth2/authorize');
-    $I->see('Howdy!');
-    $I->see('Email or UserName');
-    $I->see('Password');
-
-    $I->fillField('log', $I->getConfig()->username);
-    $I->fillField('pwd', $I->getConfig()->password);
-    $I->click('button[type=submit]');
-
-    $I->seeInCurrentUrl('oauth2/authorize');
-    $I->see('Howdy!');
-    $I->see('Deny');
-    $I->see('Approve');
-    $I->click('Approve');
-
-    $I->seeInCurrentUrl('web/link');
-}else{
-    $I->wantTo('check that main page is working');
-    $I->amOnPage('/');
-    $I->see('LinkoScope');
-
-    $I->click('Login');
-    $I->wait(3);
-
-    $I->seeInCurrentUrl('/wp-login.php');
-    $I->see('Lost your password');
-    $I->see('Back to');
-    $I->see('UserName');
-    $I->see('Password');
-
-    $I->fillField('log', $I->getConfig()->username);
-    $I->fillField('pwd', $I->getConfig()->password);
-    $I->click('#wp-submit');
-    $I->wait(3);
-
-    $I->seeInCurrentUrl('/wp-login.php');
-    $I->see('Howdy');
-    $I->see('would like to connect to');
-    $I->see('Authorize');
-    $I->see('Cancel');
-    $I->see('Switch user');
-    $I->click('Authorize');
-    $I->wait(3);
-
-    $I->seeInCurrentUrl('link/index');
-    $I->see('Shared Links:');
-    $I->see('Add New');
-}
+$I->login();
 
 $I->wantTo('Check main links page');
 $I->amOnPage('link/index');

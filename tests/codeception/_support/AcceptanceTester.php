@@ -27,23 +27,28 @@ class AcceptanceTester extends \Codeception\Actor
     public function getConfig()
     {
         $file = __DIR__ . '/../../config.json';
+
         return json_decode(file_get_contents($file));
     }
 
-    public function seeInRow($rowNumber, $text){
+    public function seeInRow($rowNumber, $text)
+    {
         $this->see($text, "div[data-key='$rowNumber']");
     }
 
-    public function dontSeeRow($rowNum){
+    public function dontSeeRow($rowNum)
+    {
         $this->dontSeeElement("div[data-key='$rowNum']");
     }
 
-    public function clickInRow($rowNum, $action){
+    public function clickInRow($rowNum, $action)
+    {
         $this->click($action, "div[data-key='$rowNum']");
         $this->wait(5);
     }
 
-    public function addNewLink($title, $url){
+    public function addNewLink($title, $url)
+    {
         $this->seeInCurrentUrl('link/index');
         $this->click('Add New');
         $this->see('Submit');
@@ -54,5 +59,68 @@ class AcceptanceTester extends \Codeception\Actor
         $this->fillField('LinkForm[url]', $url);
         $this->click('Submit');
         $this->wait(3);
+    }
+
+    public function login()
+    {
+        if ($this->getConfig()->type == 'com')
+            $this->loginCom();
+        else
+            $this->loginOrg();
+    }
+
+    private function loginCom()
+    {
+        $this->click('Login');
+        $this->seeInCurrentUrl('oauth2/authorize');
+        $this->see('Howdy!');
+        $this->see('Email or UserName');
+        $this->see('Password');
+
+        $this->fillField('log', $this->getConfig()->username);
+        $this->fillField('pwd', $this->getConfig()->password);
+        $this->click('button[type=submit]');
+
+        $this->seeInCurrentUrl('oauth2/authorize');
+        $this->see('Howdy!');
+        $this->see('Deny');
+        $this->see('Approve');
+        $this->click('Approve');
+
+        $this->seeInCurrentUrl('web/link');
+    }
+
+    private function loginOrg()
+    {
+        $this->wantTo('check that main page is working');
+        $this->amOnPage('/');
+        $this->see('LinkoScope');
+
+        $this->click('Login');
+        $this->wait(3);
+
+        $this->seeInCurrentUrl('/wp-login.php');
+        $this->see('Lost your password');
+        $this->see('Back to');
+        $this->see('UserName');
+        $this->see('Password');
+
+        $this->fillField('log', $this->getConfig()->username);
+        $this->fillField('pwd', $this->getConfig()->password);
+        $this->click('#wp-submit');
+        $this->wait(3);
+
+        $this->seeInCurrentUrl('/wp-login.php');
+        $this->see('Howdy');
+        $this->see('would like to connect to');
+        $this->see('Authorize');
+        $this->see('Cancel');
+        $this->see('Switch user');
+        $this->click('Authorize');
+        $this->wait(3);
+
+        $this->seeInCurrentUrl('link/index');
+        $this->see('Shared Links:');
+        $this->see('Add New');
     }
 }
