@@ -11,9 +11,10 @@ use yii\data\ArrayDataProvider;
 use Yii;
 use yii\filters\AccessControl;
 use yii\base\InlineAction;
-use app\components\Crawler;
+use ShortCirquit\LinkoScopeApi\iLinkoScope;
+use yii\web\Controller;
 
-class LinkController extends BaseController
+class LinkController extends Controller
 {
     public function behaviors()
     {
@@ -48,7 +49,7 @@ class LinkController extends BaseController
         $req = new GetLinksRequest();
         $req->offset = $offset;
         $req->maxResults = $pageSize;
-        $result = $this->getApi()->getLinks($req);
+        $result = Yii::$app->linko->getApi()->getLinks($req);
 
         $data = new ArrayDataProvider([
             'totalCount' => $result->totalResults,
@@ -73,7 +74,8 @@ class LinkController extends BaseController
         $form = new LinkForm();
         $form->title = '__AUTO__';
 
-        $api = $this->getApi();
+        /** @var iLinkoScope $api */
+        $api = Yii::$app->linko->getApi();
 
         $req = new GetLinksRequest();
         $req->offset = $offset;
@@ -117,7 +119,7 @@ class LinkController extends BaseController
                 'url' => $form->url,
                 'authorId' => Yii::$app->user->identity->getId(),
             ]);
-            $this->getApi()->addLink($link);
+            Yii::$app->linko->getApi()->addLink($link);
             Yii::$app->session->setFlash('info', 'Your link has been added.');
             return $this->redirect(['index']);
         }
@@ -140,11 +142,11 @@ class LinkController extends BaseController
                 'id' => $id
             ]);
 
-            $this->getApi()->updateLink($link);
+            Yii::$app->linko->getApi()->updateLink($link);
             return $this->redirect(['view', 'id' => $id]);
         }
 
-        $link = $this->getApi()->getLink($id);
+        $link = Yii::$app->linko->getApi()->getLink($id);
         $form->url = $link->url;
         $form->title = $link->title;
         return $this->render('new', ['model' => $form]);
@@ -152,7 +154,8 @@ class LinkController extends BaseController
 
     public function actionView($id)
     {
-        $api = $this->getApi();
+        /** @var iLinkoScope $api */
+        $api = Yii::$app->linko->getApi();
 
         $form = new CommentForm();
         if ($form->load(Yii::$app->request->post()) && $form->validate())
@@ -185,43 +188,43 @@ class LinkController extends BaseController
 
     public function actionUpdate($id)
     {
-        $this->getApi()->getLink($id);
+        Yii::$app->linko->getApi()->getLink($id);
         return $this->render('update', ['id' => $id]);
     }
 
     public function actionDelete($id)
     {
-        $this->getApi()->deleteLink($id);
+        Yii::$app->linko->getApi()->deleteLink($id);
         return $this->redirect(['index']);
     }
 
     public function actionUp($id)
     {
-        $this->getApi()->likeLink($id, Yii::$app->user->id);
+        Yii::$app->linko->getApi()->likeLink($id, Yii::$app->user->id);
         return $this->redirect(['index']);
     }
 
     public function actionDown($id)
     {
-        $this->getApi()->unlikeLink($id, Yii::$app->user->id);
+        Yii::$app->linko->getApi()->unlikeLink($id, Yii::$app->user->id);
         return $this->redirect(['index']);
     }
 
     public function actionUpComment($post, $id)
     {
-        $this->getApi()->likeComment($id, Yii::$app->user->id);
+        Yii::$app->linko->getApi()->likeComment($id, Yii::$app->user->id);
         return $this->redirect(['view', 'id' => $post]);
     }
 
     public function actionDownComment($post, $id)
     {
-        $this->getApi()->unlikeComment($id, Yii::$app->user->id);
+        Yii::$app->linko->getApi()->unlikeComment($id, Yii::$app->user->id);
         return $this->redirect(['view', 'id' => $post]);
     }
 
     public function actionDeleteComment($post, $id)
     {
-        $this->getApi()->deleteComment($id);
+        Yii::$app->linko->getApi()->deleteComment($id);
         return $this->redirect(['view', 'id' => $post]);
     }
 }
