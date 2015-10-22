@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\CommentForm;
 use app\models\LinkForm;
+use ShortCirquit\LinkoScopeApi\GetLinksRequest;
 use ShortCirquit\LinkoScopeApi\Models\Comment;
 use ShortCirquit\LinkoScopeApi\Models\Link;
 use yii\data\ArrayDataProvider;
@@ -47,6 +48,23 @@ class LinkController extends BaseController
             'data' => $data,
             'result' => $result,
             'linkForm' => $form,
+        ]);
+    }
+
+    public function actionUser($id)
+    {
+        $api = $this->getApi();
+
+        $req = new GetLinksRequest();
+        $req->authorId = $id;
+        $result = $api->getLinks($req);
+        $data = new ArrayDataProvider(['allModels' => $result]);
+
+        $user = $api->getAccount($id);
+
+        return $this->render('user', [
+            'data' => $data,
+            'user' => $user,
         ]);
     }
 
