@@ -3,6 +3,7 @@
 /* @var $scenario Codeception\Scenario */
 
 $I = new AcceptanceTester($scenario);
+$I->deleteAllLinks();
 
 $I->amOnPage('/link/index');
 
