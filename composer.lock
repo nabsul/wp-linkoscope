@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "415c5661fff2123a2225f766fbb42d8a",
-    "content-hash": "e20a21e45f62b2db25e870052a661e3c",
+    "hash": "583d9ec486b5a31937bc04cfdf63aa1a",
+    "content-hash": "f8214a755423239004f7920ac05a792c",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -414,6 +414,56 @@
             "time": "2015-10-05 15:07:09"
         },
         {
+            "name": "nategood/httpful",
+            "version": "0.2.19",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nategood/httpful.git",
+                "reference": "bd73f89d34d8f879c54ac46eb94b0f7be1d00820"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nategood/httpful/zipball/bd73f89d34d8f879c54ac46eb94b0f7be1d00820",
+                "reference": "bd73f89d34d8f879c54ac46eb94b0f7be1d00820",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=5.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Httpful": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nate Good",
+                    "email": "me@nategood.com",
+                    "homepage": "http://nategood.com"
+                }
+            ],
+            "description": "A Readable, Chainable, REST friendly, PHP HTTP Client",
+            "homepage": "http://github.com/nategood/httpful",
+            "keywords": [
+                "api",
+                "curl",
+                "http",
+                "requests",
+                "rest",
+                "restful"
+            ],
+            "time": "2015-03-08 15:22:23"
+        },
+        {
             "name": "phpdocumentor/reflection-docblock",
             "version": "2.0.4",
             "source": {
@@ -764,16 +814,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "5.0.6",
+            "version": "5.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "d2656ec378c88e036b3fc14fb4262ee1a25498c9"
+                "reference": "8beaaffcde39e3202917f81341e7cdfc44b275d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d2656ec378c88e036b3fc14fb4262ee1a25498c9",
-                "reference": "d2656ec378c88e036b3fc14fb4262ee1a25498c9",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/8beaaffcde39e3202917f81341e7cdfc44b275d8",
+                "reference": "8beaaffcde39e3202917f81341e7cdfc44b275d8",
                 "shasum": ""
             },
             "require": {
@@ -834,7 +884,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-10-14 13:51:20"
+            "time": "2015-10-22 09:08:03"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -1311,12 +1361,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ShortCirquit/LinkoScopeApi.git",
-                "reference": "5d9bc30e6dce51374e21bf5bc692d5a6302018fc"
+                "reference": "1f0cd130116c792468f99b05472883e151e7c650"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ShortCirquit/LinkoScopeApi/zipball/5d9bc30e6dce51374e21bf5bc692d5a6302018fc",
-                "reference": "5d9bc30e6dce51374e21bf5bc692d5a6302018fc",
+                "url": "https://api.github.com/repos/ShortCirquit/LinkoScopeApi/zipball/1f0cd130116c792468f99b05472883e151e7c650",
+                "reference": "1f0cd130116c792468f99b05472883e151e7c650",
                 "shasum": ""
             },
             "require": {
@@ -1347,7 +1397,7 @@
                 "wordpress.com",
                 "wp-api"
             ],
-            "time": "2015-10-21 04:04:06"
+            "time": "2015-10-22 16:20:16"
         },
         {
             "name": "shortcirquit/wordpress-api",
@@ -1355,12 +1405,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ShortCirquit/WordPressApi.git",
-                "reference": "7646eef1da5cf323fbff58e11d2c26da372486f2"
+                "reference": "12963a28611480e34b5ac5219dffe3ed1dbc22af"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ShortCirquit/WordPressApi/zipball/7646eef1da5cf323fbff58e11d2c26da372486f2",
-                "reference": "7646eef1da5cf323fbff58e11d2c26da372486f2",
+                "url": "https://api.github.com/repos/ShortCirquit/WordPressApi/zipball/12963a28611480e34b5ac5219dffe3ed1dbc22af",
+                "reference": "12963a28611480e34b5ac5219dffe3ed1dbc22af",
                 "shasum": ""
             },
             "require": {
@@ -1389,7 +1439,7 @@
                 "wordpress.com",
                 "wp-api"
             ],
-            "time": "2015-10-20 04:09:11"
+            "time": "2015-10-22 04:44:47"
         },
         {
             "name": "swiftmailer/swiftmailer",
