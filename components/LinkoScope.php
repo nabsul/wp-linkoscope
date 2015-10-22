@@ -19,6 +19,7 @@ class LinkoScope extends Component
 {
     public $apiConfigFile;
     public $async = false;
+    public $config;
 
     private $api = null;
 
@@ -40,7 +41,7 @@ class LinkoScope extends Component
      * @return iLinkoScope
      */
     public function getConsoleApi(){
-        $config = json_decode(file_get_contents(\Yii::$app->runtimePath . '/api.cfg'), true);
+        $config = json_decode(file_get_contents($this->apiConfigFile), true);
         $config['token'] = $config['adminToken'];
         if (isset($config['adminSecret']))
             $config['tokenSecret'] = $config['adminSecret'];
@@ -48,12 +49,13 @@ class LinkoScope extends Component
         return $api;
     }
 
-    private function readConfig(){
+    public function readConfig(){
         if (!file_exists($this->apiConfigFile))
             return null;
 
-        $cfg = json_decode(file_get_contents($this->apiConfigFile), true);
+        $this->config = json_decode(file_get_contents($this->apiConfigFile), true);
 
+        $cfg = $this->config;
         if ($this->async){
             $cfg['handler'] = new AsyncApiHandler();
         }
@@ -71,11 +73,8 @@ class LinkoScope extends Component
         return $this->api;
     }
 
-    public function saveConfig(iLinkoScope $api)
+    public function saveConfig()
     {
-        $file = $this->apiConfigFile;
-        $cfg = $api->getConfig();
-        $cfg['type'] = get_class($api);
-        file_put_contents($file, json_encode($cfg, JSON_PRETTY_PRINT));
+        file_put_contents($this->apiConfigFile, json_encode($this->config, JSON_PRETTY_PRINT));
     }
 }
