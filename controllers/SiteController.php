@@ -11,9 +11,10 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\Url;
+use yii\web\Controller;
 use yii\web\HttpException;
 
-class SiteController extends BaseController
+class SiteController extends Controller
 {
     public function behaviors()
     {
@@ -93,11 +94,13 @@ class SiteController extends BaseController
             throw new HttpException(301, "Error: $error");
         }
 
+        /** @var ComLinkoScope $api */
+        $api = Yii::$app->linko->getApi();
+
         if ($code == null) {
-            return $this->redirect($this->getApi()->authorize());
+            return $this->redirect($api->authorize());
         }
 
-        $api = $this->getApi();
         $auth = $api->token($code);
 
         if (is_string($auth))
@@ -107,18 +110,17 @@ class SiteController extends BaseController
 
         $redirect = Yii::$app->session->get('login-com', false);
         if ($redirect !== false) {
-            $cfg = [
+            Yii::$app->linko->config = [
                     'blogUrl' => $auth['blog_url'],
                     'blogId' => $auth['blog_id'],
                     'adminToken' => $auth['access_token'],
-                ] + $api->getConfig();
-            $api = new ComLinkoScope($cfg);
-            $this->saveConfig($api);
+                ] + Yii::$app->linko->config;
+            Yii::$app->linko->saveConfig();
             Yii::$app->session->setFlash('info', 'Successfully completed WP.com config for: ' . $auth['blog_url']);
             return $this->redirect([$redirect]);
         }
 
-        $cfg = $api->getConfig() + ['token' => $auth['access_token']];
+        $cfg = Yii::$app->link->config + ['token' => $auth['access_token']];
         $api = new ComLinkoScope($cfg);
         $account = $api->getAccount();
 
