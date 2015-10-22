@@ -11,9 +11,10 @@ use yii\filters\AccessControl;
 use yii\helpers\Url;
 use Yii;
 use app\models\LoginForm;
+use yii\web\Controller;
 use yii\web\HttpException;
 
-class AdminController extends BaseController
+class AdminController extends Controller
 {
     public function behaviors()
     {
@@ -44,7 +45,7 @@ class AdminController extends BaseController
     public function actionIndex()
     {
         try{
-            $api = $this->getApi();
+            $api = Yii::$app->linko->getApi();
         } catch (HttpException $e){
             $api = null;
         }
@@ -61,9 +62,11 @@ class AdminController extends BaseController
     {
         $form = new WpComConfigForm();
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
-            $cfg = array_merge($form->getConfig(),['redirectUrl' => Url::to( ['site/login'], true )]);
-            $api = new ComLinkoScope($cfg);
-            $this->saveConfig($api);
+            Yii::$app->linko->config = $form->getConfig() + [
+                    'redirectUrl' => Url::to( ['site/login'], true ),
+                    'type' => 'ShortCirquit\LinkoScopeApi\ComLinkoScope',
+                ];
+            Yii::$app->linko->saveConfig();
 
             Yii::$app->session->set('login-com', 'admin/index');
             return $this->redirect( ['site/login'] );
@@ -78,8 +81,14 @@ class AdminController extends BaseController
         {
             $form = new WpOrgConfigForm();
             if ($form->load(Yii::$app->request->post()) && $form->validate()) {
-                $api = new OrgLinkoScope($form->getConfig());
-                $this->saveConfig($api);
+                Yii::$app->linko->config = $form->getConfig() + [
+                        'type' => 'ShortCirquit\LinkoScopeApi\OrgLinkoScope',
+                    ];
+                Yii::$app->linko->saveConfig();
+                Yii::$app->linko->readConfig();
+
+                /** @var OrgLinkoScope $api */
+                $api = Yii::$app->linko->getApi();
 
                 $here = Url::to( '', true );
                 $redirect = $api->authorize( $here );
@@ -89,21 +98,19 @@ class AdminController extends BaseController
             return $this->render('wp-org', ['model' => $form]);
         }
 
-        // Add admin token to configuration
-        $api = $this->getApi();
+        /** @var OrgLinkoScope $api */
+        $api = Yii::$app->linko->getApi();
         $tok = $api->access($oauth_token, $oauth_verifier);
-        $file = Yii::$app->runtimePath . '/api.cfg';
-        $cfg = json_decode(file_get_contents($file), true);
-        $cfg['adminToken'] = $tok['oauth_token'];
-        $cfg['adminSecret'] = $tok['oauth_token_secret'];
-        file_put_contents($file, json_encode($cfg, JSON_PRETTY_PRINT));
+        Yii::$app->linko->config['adminToken'] = $tok['oauth_token'];
+        Yii::$app->linko->config['adminSecret'] = $tok['oauth_token_secret'];
+        Yii::$app->linko->saveConfig();
 
         return $this->redirect(['index']);
     }
 
     public function actionLogin()
     {
-        if (!\Yii::$app->user->isGuest) {
+        if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
 
