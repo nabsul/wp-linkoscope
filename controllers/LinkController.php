@@ -37,9 +37,9 @@ class LinkController extends BaseController
         ];
     }
 
-    public function actionIndex($page = null)
+    public function actionIndex($page = null, $pageSize = null)
     {
-        $pageSize = Yii::$app->params['pageSize'];
+        $pageSize = $pageSize ?: Yii::$app->params['pageSize'];
         $page = $page ?: 1;
         $offset = ($page - 1) * $pageSize;
         $form = new LinkForm();
@@ -65,9 +65,9 @@ class LinkController extends BaseController
         ]);
     }
 
-    public function actionUser($id, $page = null)
+    public function actionUser($id, $page = null, $pageSize = null)
     {
-        $pageSize = Yii::$app->params['pageSize'];
+        $pageSize = $pageSize ?: Yii::$app->params['pageSize'];
         $page = $page ?: 1;
         $offset = ($page - 1) * $pageSize;
         $form = new LinkForm();
