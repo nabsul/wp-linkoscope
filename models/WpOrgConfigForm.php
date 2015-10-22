@@ -22,14 +22,4 @@ class WpOrgConfigForm extends Model
             [['blogUrl', 'consumerKey', 'consumerSecret'], 'required'],
         ];
     }
-
-    public function getConfig()
-    {
-        return [
-            'type' => 'org',
-            'consumerKey' => $this->consumerKey,
-            'consumerSecret' => $this->consumerSecret,
-            'blogUrl' => $this->blogUrl,
-        ];
-    }
 }

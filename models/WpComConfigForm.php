@@ -21,13 +21,4 @@ class WpComConfigForm extends Model
             [['clientId', 'clientSecret'], 'required'],
         ];
     }
-
-    public function getConfig()
-    {
-        return [
-            'type' => 'com',
-            'clientId' => $this->clientId,
-            'clientSecret' => $this->clientSecret,
-        ];
-    }
 }

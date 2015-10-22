@@ -27,8 +27,10 @@ class User extends Object implements IdentityInterface
      */
     public static function findIdentity($id)
     {
-        foreach (self::getBothAccounts() as $acc) {
-            if ( $acc != null && $acc->id == $id ) {
+        foreach (self::getBothAccounts() as $acc)
+        {
+            if ($acc != null && $acc->id == $id)
+            {
                 return $acc;
             }
         }
@@ -47,14 +49,16 @@ class User extends Object implements IdentityInterface
     /**
      * Finds user by username
      *
-     * @param  string      $username
+     * @param  string $username
      * @return static|null
      */
     public static function findByUsername($username)
     {
         $accounts = self::getBothAccounts();
-        foreach ($accounts as $acc) {
-            if ( $acc != null && $acc->username == $username ) {
+        foreach ($accounts as $acc)
+        {
+            if ($acc != null && $acc->username == $username)
+            {
                 return $acc;
             }
         }
@@ -86,30 +90,29 @@ class User extends Object implements IdentityInterface
         return $this->authKey === $authKey;
     }
 
-    /**
-     * Validates password
-     *
-     * @param  string  $password password to validate
-     * @return boolean if password provided is valid for current user
-     */
     public function validatePassword($password)
     {
-        $hash = sha1($password);
-        return $this->password === $hash;
+        return $this->password === $password;
     }
+
+    public static function adminConfigured()
+    {
+        return User::getAdminAccount() != null;
+    }
+
 
     private static function getAdminAccount()
     {
-        $file = Yii::$app->runtimePath . '/adminPassHash.txt';
+        $file = Yii::$app->runtimePath . '/adminPass.txt';
         if (!file_exists($file)){
             return null;
         }
 
-        $passHash = file_get_contents($file);
+        $pass = trim(file_get_contents($file));
         return new User([
             'id' => 'admin',
             'username' => 'admin',
-            'password' => trim($passHash),
+            'password' => $pass,
         ]);
     }
 

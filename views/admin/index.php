@@ -9,8 +9,8 @@ use yii\helpers\Html;
 <h1>Admin</h1>
 
 <p>
-    <?php if (isset($api)) : ?>
-        Current config: <br /> <?= nl2br(print_r($api->getConfig(), true)) ?>
+    <?php if (isset(Yii::$app->linko->config)) : ?>
+        Current config: <br /> <?= nl2br(print_r(Yii::$app->linko->config, true)) ?>
     <?php else: ?>
         Nothing configured. Select one of the options below to get started.
     <?php endif ?>

@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\User;
 use app\models\WpOrgConfigForm;
 use app\models\WpComConfigForm;
 use ShortCirquit\LinkoScopeApi\ComLinkoScope;
@@ -44,13 +45,8 @@ class AdminController extends Controller
 
     public function actionIndex()
     {
-        try{
-            $api = Yii::$app->linko->getApi();
-        } catch (HttpException $e){
-            $api = null;
-        }
-
-        return $this->render('index',['api'=>$api]);
+        Yii::$app->linko->readConfig();
+        return $this->render('index');
     }
 
     public function actionConfig()
@@ -62,10 +58,12 @@ class AdminController extends Controller
     {
         $form = new WpComConfigForm();
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
-            Yii::$app->linko->config = $form->getConfig() + [
-                    'redirectUrl' => Url::to( ['site/login'], true ),
-                    'type' => 'ShortCirquit\LinkoScopeApi\ComLinkoScope',
-                ];
+            Yii::$app->linko->config =  [
+                'clientId' => $form->clientId,
+                'clientSecret' => $form->clientSecret,
+                'redirectUrl' => Url::to( ['site/login'], true ),
+                'type' => 'ShortCirquit\LinkoScopeApi\ComLinkoScope',
+            ];
             Yii::$app->linko->saveConfig();
 
             Yii::$app->session->set('login-com', 'admin/index');
@@ -81,9 +79,12 @@ class AdminController extends Controller
         {
             $form = new WpOrgConfigForm();
             if ($form->load(Yii::$app->request->post()) && $form->validate()) {
-                Yii::$app->linko->config = $form->getConfig() + [
-                        'type' => 'ShortCirquit\LinkoScopeApi\OrgLinkoScope',
-                    ];
+                Yii::$app->linko->config = [
+                    'consumerKey' => $form->consumerKey,
+                    'consumerSecret' => $form->consumerSecret,
+                    'blogUrl' => $form->blogUrl,
+                    'type' => 'ShortCirquit\LinkoScopeApi\OrgLinkoScope',
+                ];
                 Yii::$app->linko->saveConfig();
                 Yii::$app->linko->readConfig();
 
@@ -112,6 +113,11 @@ class AdminController extends Controller
     {
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
+        }
+
+        if (!User::adminConfigured())
+        {
+            throw new HttpException(403, 'Admin account not configured.');
         }
 
         $model = new LoginForm();
