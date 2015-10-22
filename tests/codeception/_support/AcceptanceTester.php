@@ -16,6 +16,9 @@
  *
  * @SuppressWarnings(PHPMD)
 */
+
+use ShortCirquit\LinkoScopeApi\iLinkoScope;
+
 class AcceptanceTester extends \Codeception\Actor
 {
     use _generated\AcceptanceTesterActions;
@@ -122,5 +125,36 @@ class AcceptanceTester extends \Codeception\Actor
         $this->seeInCurrentUrl('link/index');
         $this->see('Shared Links:');
         $this->see('Add New');
+    }
+
+    public function deleteAllLinks()
+    {
+        /** @var iLinkoScope $api */
+        $api = Yii::$app->linko->getConsoleApi();
+        while(count($links = $api->getLinks()->links) > 0)
+        {
+            foreach ($links as $link)
+                $api->deleteLink($link->id);
+        }
+    }
+
+    public function setSiteData($count)
+    {
+        $this->deleteAllLinks();
+        /** @var iLinkoScope $api */
+        $api = Yii::$app->linko->getConsoleApi();
+
+        $users = $api->getAccounts();
+        $userCount = count($users);
+
+        for ($i = 1; $i <= $count; $i++)
+        {
+            $link = new \ShortCirquit\LinkoScopeApi\Models\Link([
+                'title' => "Test Title #$i",
+                'url' => "http://url$i.com/$i/$i",
+                'authorId' => $users[$i % $userCount]->id,
+            ]);
+            $api->addLink($link);
+        }
     }
 }
