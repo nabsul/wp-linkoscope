@@ -37,30 +37,59 @@ class LinkController extends BaseController
         ];
     }
 
-    public function actionIndex()
+    public function actionIndex($page = null)
     {
+        $pageSize = Yii::$app->params['pageSize'];
+        $page = $page ?: 1;
+        $offset = ($page - 1) * $pageSize;
         $form = new LinkForm();
         $form->title = '__AUTO__';
 
-        $result = $this->getApi()->getLinks();
-        $data = new ArrayDataProvider(['allModels' => $result]);
+        $req = new GetLinksRequest();
+        $req->offset = $offset;
+        $req->maxResults = $pageSize;
+        $result = $this->getApi()->getLinks($req);
+
+        $data = new ArrayDataProvider([
+            'totalCount' => $result->totalResults,
+            'models' => $result->links,
+            'pagination' => [
+                'totalCount' => $result->totalResults,
+                'defaultPageSize' => $pageSize,
+            ],
+        ]);
+
         return $this->render('index', [
             'data' => $data,
-            'result' => $result,
             'linkForm' => $form,
         ]);
     }
 
-    public function actionUser($id)
+    public function actionUser($id, $page = null)
     {
+        $pageSize = Yii::$app->params['pageSize'];
+        $page = $page ?: 1;
+        $offset = ($page - 1) * $pageSize;
+        $form = new LinkForm();
+        $form->title = '__AUTO__';
+
         $api = $this->getApi();
 
         $req = new GetLinksRequest();
+        $req->offset = $offset;
+        $req->maxResults = $pageSize;
         $req->authorId = $id;
         $result = $api->getLinks($req);
-        $data = new ArrayDataProvider(['allModels' => $result]);
-
         $user = $api->getAccount($id);
+
+        $data = new ArrayDataProvider([
+            'totalCount' => $result->totalResults,
+            'models' => $result->links,
+            'pagination' => [
+                'totalCount' => $result->totalResults,
+                'defaultPageSize' => $pageSize,
+            ],
+        ]);
 
         return $this->render('user', [
             'data' => $data,
