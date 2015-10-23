@@ -71,7 +71,7 @@ class SiteController extends Controller
     public function actionLogin($code = null, $error = null, $oauth_token = null,
                                 $oauth_verifier = null, $wp_scope = null)
     {
-        $api = $this->getApi();
+        $api = Yii::$app->linko->getApi();
         if ($api == null) {
             Yii::$app->session->setFlash('error', 'The site is not configured yet.');
             $this->redirect(['admin/login']);
@@ -120,7 +120,7 @@ class SiteController extends Controller
             return $this->redirect([$redirect]);
         }
 
-        $cfg = Yii::$app->link->config + ['token' => $auth['access_token']];
+        $cfg = Yii::$app->linko->config + ['token' => $auth['access_token']];
         $api = new ComLinkoScope($cfg);
         $account = $api->getAccount();
 
@@ -138,7 +138,8 @@ class SiteController extends Controller
 
     private function loginOrg($oauth_token = null, $oauth_verifier = null, $wp_scope = null)
     {
-        $api = $this->getApi();
+        /** @var OrgLinkoScope $api */
+        $api = Yii::$app->linko->getApi();
         if ($api == null) {
             Yii::$app->session->setFlash('error', 'The site is not configured yet.');
             $this->redirect(['admin/login']);
@@ -151,7 +152,7 @@ class SiteController extends Controller
         }
 
         $tok = $api->access($oauth_token, $oauth_verifier);
-        $cfg = $api->getConfig();
+        $cfg = Yii::$app->linko->config;
         $cfg['token'] = $tok['oauth_token'];
         $cfg['tokenSecret'] = $tok['oauth_token_secret'];
         $api = new OrgLinkoScope($cfg);
