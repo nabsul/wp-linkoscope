@@ -18,8 +18,6 @@ modules:
 # it is useful if you want to login in your app in each test.
 #        - WebDriver
     config:
-        PhpBrowser:
-            url: http://localhost/linkoscope/web
         WebDriver:
             url: http://localhost/linkoscope/web
             browser: firefox
