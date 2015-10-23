@@ -1,8 +1,7 @@
 <?php
 
-/* @var $scenario Codeception\Scenario */
+/* @var $I AcceptanceTester */
 
-$I = new AcceptanceTester($scenario);
 $I->deleteAllLinks();
 
 $I->amOnPage('/link/index');
