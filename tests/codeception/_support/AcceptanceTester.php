@@ -33,7 +33,10 @@ class AcceptanceTester extends \Codeception\Actor
         parent::__construct($scenario);
         if ($type == 'com' || $type == 'org')
             $this->configure($type);
+        $this->type = $type;
     }
+
+    private $type;
 
     public function getConfig()
     {
@@ -74,10 +77,12 @@ class AcceptanceTester extends \Codeception\Actor
 
     public function login()
     {
-        if ($this->getConfig()->type == 'com')
+        if ($this->type == 'com')
             $this->loginCom();
-        else
+        elseif($this->type == 'org')
             $this->loginOrg();
+        else
+            throw new Exception('Type not configured. Cannot log in.');
     }
 
     private function loginCom()
@@ -88,8 +93,8 @@ class AcceptanceTester extends \Codeception\Actor
         $this->see('Email or UserName');
         $this->see('Password');
 
-        $this->fillField('log', $this->getConfig()->username);
-        $this->fillField('pwd', $this->getConfig()->password);
+        $this->fillField('log', $this->getConfig()->users->com->username);
+        $this->fillField('pwd', $this->getConfig()->users->com->password);
         $this->click('button[type=submit]');
 
         $this->seeInCurrentUrl('oauth2/authorize');
@@ -116,8 +121,8 @@ class AcceptanceTester extends \Codeception\Actor
         $this->see('UserName');
         $this->see('Password');
 
-        $this->fillField('log', $this->getConfig()->username);
-        $this->fillField('pwd', $this->getConfig()->password);
+        $this->fillField('log', $this->getConfig()->users->org->username);
+        $this->fillField('pwd', $this->getConfig()->users->org->password);
         $this->click('#wp-submit');
         $this->wait(3);
 
