@@ -1,0 +1,30 @@
+{
+  "users" :{
+    "com":{
+      "username": "",
+      "password": ""
+    },
+    "org":{
+      "username": "",
+      "password": ""
+    }
+  },
+  "testUrl": "http:\/\/localhost/linkoscope/web/index-test.php",
+  "com" : {
+    "blogUrl": "",
+    "blogId": "",
+    "adminToken": "",
+    "clientId": "",
+    "clientSecret": "",
+    "redirectUrl": "",
+    "type": "ShortCirquit\\LinkoScopeApi\\ComLinkoScope"
+  },
+  "org": {
+    "consumerKey": "",
+    "consumerSecret": "",
+    "blogUrl": "",
+    "type": "",
+    "adminToken": "",
+    "adminSecret": ""
+  }
+}
