@@ -18,6 +18,7 @@
 */
 
 use ShortCirquit\LinkoScopeApi\iLinkoScope;
+use Codeception\Scenario;
 
 class AcceptanceTester extends \Codeception\Actor
 {
@@ -27,9 +28,16 @@ class AcceptanceTester extends \Codeception\Actor
      * Define custom actions here
      */
 
+    public function __construct(Scenario $scenario, $type = null)
+    {
+        parent::__construct($scenario);
+        if ($type == 'com' || $type == 'org')
+            $this->configure($type);
+    }
+
     public function getConfig()
     {
-        $file = __DIR__ . '/../../config.json';
+        $file = dirname(dirname(__DIR__)) . '/config.json';
 
         return json_decode(file_get_contents($file));
     }
@@ -156,5 +164,17 @@ class AcceptanceTester extends \Codeception\Actor
             ]);
             $api->addLink($link);
         }
+    }
+
+    private function configure($type){
+        $output = dirname(dirname(dirname(__DIR__))) . '/runtime/config.json';
+        $input = dirname(dirname(__DIR__)) . '/config.json';
+        $cfg = json_decode(file_get_contents($input));
+        file_put_contents($output, json_encode($cfg->$type, JSON_PRETTY_PRINT));
+        new yii\web\Application(require(dirname(__DIR__) . '/config/acceptance.php'));
+    }
+
+    public function getAdminPass(){
+        return trim(file_get_contents(Yii::$app->runtimePath . '/adminPass.txt'));
     }
 }
