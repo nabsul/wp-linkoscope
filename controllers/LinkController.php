@@ -26,12 +26,15 @@ class LinkController extends Controller
                     [
                         'allow' => true,
                         'matchCallback' => function($r, $a){
-                            return !Yii::$app->user->isGuest;
+                            return !Yii::$app->user->isGuest && Yii::$app->user->id != 'admin';
                         },
                     ],
                 ],
                 'denyCallback' => function($r, InlineAction $a){
-                    Yii::$app->session->setFlash('info', 'You must be logged in to do that.');
+                    if (Yii::$app->user->isGuest)
+                        Yii::$app->session->setFlash('info', 'You must be logged in to do that.');
+                    else
+                        Yii::$app->session->setFlash('info', 'Please log out of the admin account and log in with a regular user account.');
                     $a->controller->redirect(['link/index']);
                 }
             ],
