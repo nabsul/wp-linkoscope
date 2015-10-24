@@ -7,6 +7,7 @@ use app\models\LinkForm;
 use ShortCirquit\LinkoScopeApi\GetLinksRequest;
 use ShortCirquit\LinkoScopeApi\Models\Comment;
 use ShortCirquit\LinkoScopeApi\Models\Link;
+use ShortCirquit\WordPressApi\WpApiException;
 use yii\data\ArrayDataProvider;
 use Yii;
 use yii\filters\AccessControl;
@@ -122,8 +123,23 @@ class LinkController extends Controller
                 'url' => $form->url,
                 'authorId' => Yii::$app->user->identity->getId(),
             ]);
-            Yii::$app->linko->getApi()->addLink($link);
-            Yii::$app->session->setFlash('info', 'Your link has been added.');
+
+            try
+            {
+                Yii::$app->linko->getApi()->addLink($link);
+                Yii::$app->session->setFlash('info', 'Your link has been added.');
+            }
+            catch (WpApiException $ex)
+            {
+                if ($ex->getCode() == 403)
+                {
+                    Yii::$app->session->setFlash('error', 'You do not have permission to add links.');
+                }
+                else
+                {
+                    Yii::$app->session->setFlash( 'error', 'unexpected error: ' . $ex->getMessage());
+                }
+            }
             return $this->redirect(['index']);
         }
 
