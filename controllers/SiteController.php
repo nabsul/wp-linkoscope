@@ -123,6 +123,13 @@ class SiteController extends Controller
         $cfg = Yii::$app->linko->config + ['token' => $auth['access_token']];
         $api = new ComLinkoScope($cfg);
         $account = $api->getAccount();
+        if ($account->blogId != Yii::$app->linko->config['blogId'])
+        {
+            Yii::$app->session->setFlash('error', 'The token issued was not for ' .
+                Yii::$app->linko->config['blogUrl'] .
+                '<br /> If you are not a member of that site, you must first join it.');
+            return $this->redirect(['link/index']);
+        }
 
         $u = new User([
             'id' => $account->id,
