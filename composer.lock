@@ -814,16 +814,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "5.0.7",
+            "version": "5.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "8beaaffcde39e3202917f81341e7cdfc44b275d8"
+                "reference": "97fb2503cf8caca9d768fde3cca2ab147b9e7030"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/8beaaffcde39e3202917f81341e7cdfc44b275d8",
-                "reference": "8beaaffcde39e3202917f81341e7cdfc44b275d8",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/97fb2503cf8caca9d768fde3cca2ab147b9e7030",
+                "reference": "97fb2503cf8caca9d768fde3cca2ab147b9e7030",
                 "shasum": ""
             },
             "require": {
@@ -884,7 +884,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-10-22 09:08:03"
+            "time": "2015-10-23 06:50:01"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -1361,12 +1361,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ShortCirquit/LinkoScopeApi.git",
-                "reference": "c000c4020b9fde3de87b4266e72ad9db331bd5a7"
+                "reference": "312371475f0e893bcef43bdbbe024b1a1e4cf703"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ShortCirquit/LinkoScopeApi/zipball/c000c4020b9fde3de87b4266e72ad9db331bd5a7",
-                "reference": "c000c4020b9fde3de87b4266e72ad9db331bd5a7",
+                "url": "https://api.github.com/repos/ShortCirquit/LinkoScopeApi/zipball/312371475f0e893bcef43bdbbe024b1a1e4cf703",
+                "reference": "312371475f0e893bcef43bdbbe024b1a1e4cf703",
                 "shasum": ""
             },
             "require": {
@@ -1397,7 +1397,7 @@
                 "wordpress.com",
                 "wp-api"
             ],
-            "time": "2015-10-23 04:14:27"
+            "time": "2015-10-24 22:56:40"
         },
         {
             "name": "shortcirquit/wordpress-api",
