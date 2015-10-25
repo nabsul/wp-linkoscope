@@ -9,12 +9,12 @@ use yii\db\ActiveRecord;
  * This is the model class for table "jobs".
  *
  * @property integer $id
- * @property string $date
- * @property string $started
- * @property string $completed
- * @property string $status
- * @property string $type
- * @property string $arguments
+ * @property string  $date
+ * @property string  $started
+ * @property string  $completed
+ * @property string  $status
+ * @property string  $type
+ * @property string  $arguments
  */
 class Job extends ActiveRecord
 {
@@ -34,7 +34,7 @@ class Job extends ActiveRecord
         return [
             [['date', 'started', 'completed'], 'safe'],
             [['arguments'], 'string'],
-            [['status', 'type'], 'string', 'max' => 255]
+            [['status', 'type'], 'string', 'max' => 255],
         ];
     }
 
@@ -44,12 +44,12 @@ class Job extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'date' => 'Date',
-            'started' => 'Started',
+            'id'        => 'ID',
+            'date'      => 'Date',
+            'started'   => 'Started',
             'completed' => 'Completed',
-            'status' => 'Status',
-            'type' => 'Type',
+            'status'    => 'Status',
+            'type'      => 'Type',
             'arguments' => 'Arguments',
         ];
     }

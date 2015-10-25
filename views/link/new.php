@@ -8,7 +8,7 @@ use app\models\LinkForm;
 ?>
 
 <?php $form = ActiveForm::begin() ?>
-<?= $form->field($linkForm,'url') ?>
-<?= $form->field($linkForm,'title') ?>
+<?= $form->field($linkForm, 'url') ?>
+<?= $form->field($linkForm, 'title') ?>
 <?= Html::submitButton('Submit') ?>
 <?php $form->end(); ?>

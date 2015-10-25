@@ -19,12 +19,15 @@ class LinkoScopeWorker extends Component
     public function Run()
     {
         $count = 0;
-        while($this->keepRunning())
+        while ($this->keepRunning())
         {
             $job = Job::find()->where('status IS NULL')->one();
-            if ($job === null){
+            if ($job === null)
+            {
                 if ($count % 10 == 0)
+                {
                     echo "sleeping at " . time() . "\n";
+                }
                 $count++;
                 sleep(1);
                 continue;
@@ -32,7 +35,9 @@ class LinkoScopeWorker extends Component
 
             echo "Got Job: job->id\n";
             if (!$this->assignJob($job))
+            {
                 continue;
+            }
 
             $this->runJob($job);
         }
@@ -46,6 +51,7 @@ class LinkoScopeWorker extends Component
     private function assignJob(Job $job)
     {
         $job->status = 'running';
+
         return $job->save();
     }
 
@@ -54,7 +60,8 @@ class LinkoScopeWorker extends Component
         echo "Running $job->id $job->type $job->arguments\n";
         try
         {
-            switch($job->type){
+            switch ($job->type)
+            {
                 case 'refresh_link':
                     $this->updateLink($job);
                     break;
@@ -98,7 +105,9 @@ class LinkoScopeWorker extends Component
         Yii::getLogger()->log("Job with ID $job->id failed: " . $msg, Logger::LEVEL_ERROR);
         $job->status = 'failed';
         if (!$job->save())
+        {
             Yii::getLogger()->log("Failed to save failure status in the job $job->id", Logger::LEVEL_ERROR);
+        }
         Yii::getLogger()->log($msg, Logger::LEVEL_ERROR);
     }
 

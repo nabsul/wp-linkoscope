@@ -29,10 +29,14 @@ class LinkoScope extends Component
     public function getApi()
     {
         if ($this->api === null)
+        {
             $this->readConfig();
+        }
 
         if ($this->api === null)
+        {
             throw new HttpException(500, 'The site is not configured');
+        }
 
         return $this->api;
     }
@@ -40,27 +44,36 @@ class LinkoScope extends Component
     /**
      * @return iLinkoScope
      */
-    public function getConsoleApi(){
+    public function getConsoleApi()
+    {
         $config = json_decode(file_get_contents($this->apiConfigFile), true);
         $config['token'] = $config['adminToken'];
         if (isset($config['adminSecret']))
+        {
             $config['tokenSecret'] = $config['adminSecret'];
+        }
         $api = new $config['type']($config);
+
         return $api;
     }
 
-    public function readConfig(){
+    public function readConfig()
+    {
         if (!file_exists($this->apiConfigFile))
+        {
             return null;
+        }
 
         $this->config = json_decode(file_get_contents($this->apiConfigFile), true);
 
         $cfg = $this->config;
-        if ($this->async){
+        if ($this->async)
+        {
             $cfg['handler'] = new AsyncApiHandler();
         }
 
-        if (isset(Yii::$app->user) && !Yii::$app->user->isGuest) {
+        if (isset(Yii::$app->user) && !Yii::$app->user->isGuest)
+        {
             /** @var User $id */
             $id = Yii::$app->user->identity;
             $cfg['token'] = $id->token;
@@ -70,6 +83,7 @@ class LinkoScope extends Component
 
         $className = $cfg['type'];
         $this->api = new $className($cfg);
+
         return $this->api;
     }
 

@@ -13,14 +13,16 @@ $this->title = 'Edit Link';
 <div class="site-login">
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?php $form = ActiveForm::begin([
-        'id' => 'new-link-form',
-        'options' => ['class' => 'form-horizontal'],
-        'fieldConfig' => [
-            'template' => "{label}\n<div class=\"col-lg-3\">{input}</div>\n<div class=\"col-lg-8\">{error}</div>",
-            'labelOptions' => ['class' => 'col-lg-1 control-label'],
-        ],
-    ]); ?>
+    <?php $form = ActiveForm::begin(
+        [
+            'id'          => 'new-link-form',
+            'options'     => ['class' => 'form-horizontal'],
+            'fieldConfig' => [
+                'template'     => "{label}\n<div class=\"col-lg-3\">{input}</div>\n<div class=\"col-lg-8\">{error}</div>",
+                'labelOptions' => ['class' => 'col-lg-1 control-label'],
+            ],
+        ]
+    ); ?>
 
     <?= $form->field($model, 'title') ?>
 

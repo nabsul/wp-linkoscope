@@ -8,15 +8,19 @@ use yii\widgets\DetailView;
 
 ?>
 
-<?= DetailView::widget([
-    'model' => $user,
-    'attributes' => [ 'id', 'name', 'username', 'url:url'],
-]); ?>
+<?= DetailView::widget(
+    [
+        'model'      => $user,
+        'attributes' => ['id', 'name', 'username', 'url:url'],
+    ]
+); ?>
 
 <h3>Posts by <?= $user->username ?>:</h3>
 
-<?= ListView::widget([
-    'dataProvider' => $data,
-    'itemView' => '_linkItem',
-    'options' => ['class' => 'striped'],
-]); ?>
+<?= ListView::widget(
+    [
+        'dataProvider' => $data,
+        'itemView'     => '_linkItem',
+        'options'      => ['class' => 'striped'],
+    ]
+); ?>

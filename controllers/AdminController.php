@@ -21,19 +21,21 @@ class AdminController extends Controller
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
-                'except' => ['login'],
-                'rules' => [
+                'class'        => AccessControl::className(),
+                'except'       => ['login'],
+                'rules'        => [
                     [
-                        'allow' => true,
-                        'matchCallback' => function($r, $a){
+                        'allow'         => true,
+                        'matchCallback' => function ($r, $a)
+                        {
                             return !Yii::$app->user->isGuest && Yii::$app->user->id == 'admin';
                         },
                     ],
                 ],
-                'denyCallback' => function($r, InlineAction $a){
+                'denyCallback' => function ($r, InlineAction $a)
+                {
                     $a->controller->redirect(['admin/login']);
-                }
+                },
             ],
         ];
     }
@@ -46,6 +48,7 @@ class AdminController extends Controller
     public function actionIndex()
     {
         Yii::$app->linko->readConfig();
+
         return $this->render('index');
     }
 
@@ -57,17 +60,19 @@ class AdminController extends Controller
     public function actionWpCom()
     {
         $form = new WpComConfigForm();
-        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
-            Yii::$app->linko->config =  [
-                'clientId' => $form->clientId,
+        if ($form->load(Yii::$app->request->post()) && $form->validate())
+        {
+            Yii::$app->linko->config = [
+                'clientId'     => $form->clientId,
                 'clientSecret' => $form->clientSecret,
-                'redirectUrl' => Url::to( ['site/login'], true ),
-                'type' => 'ShortCirquit\LinkoScopeApi\ComLinkoScope',
+                'redirectUrl'  => Url::to(['site/login'], true),
+                'type'         => 'ShortCirquit\LinkoScopeApi\ComLinkoScope',
             ];
             Yii::$app->linko->saveConfig();
 
             Yii::$app->session->set('login-com', 'admin/index');
-            return $this->redirect( ['site/login'] );
+
+            return $this->redirect(['site/login']);
         }
 
         return $this->render('wp-com', ['model' => $form]);
@@ -78,12 +83,13 @@ class AdminController extends Controller
         if ($oauth_token == null)
         {
             $form = new WpOrgConfigForm();
-            if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            if ($form->load(Yii::$app->request->post()) && $form->validate())
+            {
                 Yii::$app->linko->config = [
-                    'consumerKey' => $form->consumerKey,
+                    'consumerKey'    => $form->consumerKey,
                     'consumerSecret' => $form->consumerSecret,
-                    'blogUrl' => $form->blogUrl,
-                    'type' => 'ShortCirquit\LinkoScopeApi\OrgLinkoScope',
+                    'blogUrl'        => $form->blogUrl,
+                    'type'           => 'ShortCirquit\LinkoScopeApi\OrgLinkoScope',
                 ];
                 Yii::$app->linko->saveConfig();
                 Yii::$app->linko->readConfig();
@@ -91,9 +97,10 @@ class AdminController extends Controller
                 /** @var OrgLinkoScope $api */
                 $api = Yii::$app->linko->getApi();
 
-                $here = Url::to( '', true );
-                $redirect = $api->authorize( $here );
-                return $this->redirect( $redirect );
+                $here = Url::to('', true);
+                $redirect = $api->authorize($here);
+
+                return $this->redirect($redirect);
             }
 
             return $this->render('wp-org', ['model' => $form]);
@@ -111,7 +118,8 @@ class AdminController extends Controller
 
     public function actionLogin()
     {
-        if (!Yii::$app->user->isGuest) {
+        if (!Yii::$app->user->isGuest)
+        {
             return $this->goHome();
         }
 
@@ -121,11 +129,15 @@ class AdminController extends Controller
         }
 
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+        if ($model->load(Yii::$app->request->post()) && $model->login())
+        {
             return $this->redirect(['index']);
         }
-        return $this->render('login', [
+
+        return $this->render(
+            'login', [
             'model' => $model,
-        ]);
+        ]
+        );
     }
 }

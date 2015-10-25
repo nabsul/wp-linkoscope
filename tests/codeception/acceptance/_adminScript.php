@@ -18,7 +18,8 @@ $I->wantTo('see API configuration parameters');
 $I->see('Admin');
 $I->see('Current config');
 
-foreach ($adminParams as $k){
+foreach ($adminParams as $k)
+{
     $I->see("[$k]");
 }
 

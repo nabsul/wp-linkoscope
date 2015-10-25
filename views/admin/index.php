@@ -10,7 +10,7 @@ use yii\helpers\Html;
 
 <p>
     <?php if (isset(Yii::$app->linko->config)) : ?>
-        Current config: <br /> <?= nl2br(print_r(Yii::$app->linko->config, true)) ?>
+        Current config: <br/> <?= nl2br(print_r(Yii::$app->linko->config, true)) ?>
     <?php else: ?>
         Nothing configured. Select one of the options below to get started.
     <?php endif ?>

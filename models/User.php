@@ -8,6 +8,7 @@ use yii\base\Object;
 
 /**
  * Class User
+ *
  * @package app\models
  *
  * @param adminAccount User
@@ -104,30 +105,38 @@ class User extends Object implements IdentityInterface
     private static function getAdminAccount()
     {
         $file = Yii::$app->runtimePath . '/adminPass.txt';
-        if (!file_exists($file)){
+        if (!file_exists($file))
+        {
             return null;
         }
 
         $pass = trim(file_get_contents($file));
-        return new User([
-            'id' => 'admin',
-            'username' => 'admin',
-            'password' => $pass,
-        ]);
+
+        return new User(
+            [
+                'id'       => 'admin',
+                'username' => 'admin',
+                'password' => $pass,
+            ]
+        );
     }
 
     private static function getSessionAccount()
     {
         $session = Yii::$app->session;
         if (!$session->has('wp_rest_user'))
+        {
             return null;
+        }
 
-        return new User([
-            'id' => $session->get('wp_rest_id'),
-            'username' => $session->get('wp_rest_user'),
-            'token' => $session->get('wp_rest_token'),
-            'secret' => $session->get('wp_rest_secret'),
-        ]);
+        return new User(
+            [
+                'id'       => $session->get('wp_rest_id'),
+                'username' => $session->get('wp_rest_user'),
+                'token'    => $session->get('wp_rest_token'),
+                'secret'   => $session->get('wp_rest_secret'),
+            ]
+        );
     }
 
     public function saveSessionAccount()

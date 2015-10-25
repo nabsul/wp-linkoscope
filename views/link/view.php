@@ -12,33 +12,41 @@ use yii\widgets\ListView;
 
 <h1>Link Details </h1>
 
-<?= DetailView::widget([
-    'model' => $link,
-    'attributes' => [
-        'link' => ['label' => 'Link', 'format' => 'raw',
-                   'value' => "$link->title <br />" . Html::a($link->url, $link->url, ['target' => '_blank'])],
-        'datails' => [
-            'label' => 'Details',
-            'value' => "$link->authorName | " .
-                date('D d M Y', strtotime($link->date)) .
-                " | $link->comments comments | $link->votes votes"
+<?= DetailView::widget(
+    [
+        'model'      => $link,
+        'attributes' => [
+            'link'    => [
+                'label' => 'Link', 'format' => 'raw',
+                'value' => "$link->title <br />" . Html::a($link->url, $link->url, ['target' => '_blank']),
+            ],
+            'datails' => [
+                'label' => 'Details',
+                'value' => "$link->authorName | " .
+                    date('D d M Y', strtotime($link->date)) .
+                    " | $link->comments comments | $link->votes votes",
+            ],
         ],
-    ],
-]); ?>
+    ]
+); ?>
 
 <h2>Comments</h2>
 <?php if (!Yii::$app->user->isGuest) : ?>
-    <?php $form = ActiveForm::begin([
-        'id' => 'comment-form',
-        'options' => ['class' => 'form-horizontal'],
-    ]); ?>
+    <?php $form = ActiveForm::begin(
+        [
+            'id'      => 'comment-form',
+            'options' => ['class' => 'form-horizontal'],
+        ]
+    ); ?>
     <?= Html::activeTextInput($commentForm, 'comment', ['size' => 40]) ?>
     <?= Html::submitButton('Add Comment', ['class' => 'btn-xs btn-primary', 'name' => 'login-button']) ?>
     <?php ActiveForm::end(); ?>
 <?php endif; ?>
 
-<?= ListView::widget([
-    'dataProvider' => $comments,
-    'itemView' => '_commentItem',
-    'options' => ['class' => 'striped'],
-]); ?>
+<?= ListView::widget(
+    [
+        'dataProvider' => $comments,
+        'itemView'     => '_commentItem',
+        'options'      => ['class' => 'striped'],
+    ]
+); ?>
