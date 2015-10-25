@@ -23,7 +23,7 @@
     "consumerKey": "",
     "consumerSecret": "",
     "blogUrl": "",
-    "type": "",
+    "type": "ShortCirquit\\LinkoScopeApi\\OrgLinkoScope",
     "adminToken": "",
     "adminSecret": ""
   }

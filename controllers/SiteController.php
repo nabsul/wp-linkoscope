@@ -131,6 +131,13 @@ class SiteController extends Controller
             return $this->redirect(['link/index']);
         }
 
+        if (count(array_intersect($account->roles, ['administrator', 'editor'])) == 0)
+        {
+            Yii::$app->session->setFlash('error', 'You must be an editor or administrator to use this site ' .
+                '<br /> Please contact the site administrator to grant you access.');
+            return $this->redirect(['link/index']);
+        }
+
         $u = new User([
             'id' => $account->id,
             'username' => $account->username,
