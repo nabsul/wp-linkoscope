@@ -2,6 +2,7 @@
 use yii\helpers\Html;
 
 /* @var $model ShortCirquit\LinkoScopeApi\models\Comment */
+/* @var $index int */
 ?>
 
 <div>

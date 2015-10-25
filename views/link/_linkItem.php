@@ -2,6 +2,7 @@
 use yii\helpers\Html;
 
 /* @var $model ShortCirquit\LinkoScopeApi\models\Link */
+/* @var $index int */
 ?>
 
 <div>
@@ -25,7 +26,7 @@ use yii\helpers\Html;
                            (<?= parse_url($model->url, PHP_URL_HOST) ?>)
     </div>
     <?php if (!Yii::$app->user->isGuest) : ?>
-        <div style="top: 0px; float: right;">
+        <div style="top: 0; float: right;">
             <?= '' /* Html::a('<span class="glyphicon glyphicon-trash"></span>', ['delete', 'id' => $model->id,], ['title' => 'Delete']) */ ?>
         </div>
     <?php endif; ?>

@@ -2,7 +2,6 @@
 
 use yii\helpers\Html;
 use yii\widgets\ListView;
-use yii\widgets\ActiveForm;
 
 /** @var $this yii\web\View */
 /** @var $linkForm app\models\LinkForm */

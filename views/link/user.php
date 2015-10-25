@@ -4,7 +4,7 @@ use yii\widgets\ListView;
 use yii\widgets\DetailView;
 
 /** @var $this yii\web\View */
-/** @var $user ShortCirquit\LinkoScope\Models\UserProfile */
+/** @var $user ShortCirquit\LinkoScopeApi\Models\UserProfile */
 
 ?>
 

@@ -5,8 +5,10 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\widgets\ListView;
 
-/** var $this yii\web\View */
-/** var $link ShortCirquit\LinkoScopeApi\Models\Link */
+/* @var $this yii\web\View */
+/* @var $link ShortCirquit\LinkoScopeApi\Models\Link */
+/* @var $comments ShortCirquit\LinkoScopeApi\Models\Comment[] */
+/* @var $commentForm app\models\CommentForm */
 
 ?>
 
