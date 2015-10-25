@@ -5,7 +5,6 @@ namespace app\controllers;
 use app\models\User;
 use app\models\WpOrgConfigForm;
 use app\models\WpComConfigForm;
-use ShortCirquit\LinkoScopeApi\ComLinkoScope;
 use ShortCirquit\LinkoScopeApi\OrgLinkoScope;
 use yii\base\InlineAction;
 use yii\filters\AccessControl;
@@ -50,11 +49,6 @@ class AdminController extends Controller
         Yii::$app->linko->readConfig();
 
         return $this->render('index');
-    }
-
-    public function actionConfig()
-    {
-        return $this->render('config', ['config' => $this->getApi()->getConfig()]);
     }
 
     public function actionWpCom()
