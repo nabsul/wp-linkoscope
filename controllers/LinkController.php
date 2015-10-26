@@ -4,6 +4,8 @@ namespace app\controllers;
 
 use app\models\CommentForm;
 use app\models\LinkForm;
+use ShortCirquit\LinkoScopeApi\GetCommentsRequest;
+use ShortCirquit\LinkoScopeApi\GetCommentsResult;
 use ShortCirquit\LinkoScopeApi\GetLinksRequest;
 use ShortCirquit\LinkoScopeApi\Models\Comment;
 use ShortCirquit\LinkoScopeApi\Models\Link;
@@ -201,8 +203,12 @@ class LinkController extends Controller
         return $this->render('new', ['model' => $form]);
     }
 
-    public function actionView($id)
+    public function actionView($id, $page = null, $pageSize = null)
     {
+        $pageSize = $pageSize ?: Yii::$app->params['pageSize'];
+        $page = $page ?: 1;
+        $offset = ($page - 1) * $pageSize;
+
         /** @var iLinkoScope $api */
         $api = Yii::$app->linko->getApi();
 
@@ -229,12 +235,26 @@ class LinkController extends Controller
         }
 
         $linkObject = $api->getLink($id);
-        $comments = $api->getComments($id);
+        $req = new GetCommentsRequest();
+        $req->maxResults = $pageSize;
+        $req->offset = $offset;
+        $req->linkId = $id;
+        $comments = $api->getComments($req);
+        $data = new ArrayDataProvider(
+            [
+                'totalCount' => $comments->totalResults,
+                'models'     => $comments->comments,
+                'pagination' => [
+                    'totalCount'      => $comments->totalResults,
+                    'defaultPageSize' => $pageSize,
+                ],
+            ]
+        );
 
         return $this->render(
             'view', [
             'link'        => $linkObject,
-            'comments'    => new ArrayDataProvider(['allModels' => $comments]),
+            'comments'    => $data,
             'commentForm' => $form,
         ]
         );
