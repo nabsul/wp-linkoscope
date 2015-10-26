@@ -11,11 +11,11 @@ use yii\widgets\DetailView;
 <?= DetailView::widget(
     [
         'model'      => $user,
-        'attributes' => ['id', 'name', 'username', 'url:url'],
+        'attributes' => ['name', 'url:url'],
     ]
 ); ?>
 
-<h3>Posts by <?= $user->username ?>:</h3>
+<h3>Posts by <?= $user->name ?>:</h3>
 
 <?= ListView::widget(
     [
