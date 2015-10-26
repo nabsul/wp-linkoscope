@@ -415,16 +415,16 @@
         },
         {
             "name": "nategood/httpful",
-            "version": "0.2.19",
+            "version": "0.2.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nategood/httpful.git",
-                "reference": "bd73f89d34d8f879c54ac46eb94b0f7be1d00820"
+                "reference": "c1cd4d46a4b281229032cf39d4dd852f9887c0f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nategood/httpful/zipball/bd73f89d34d8f879c54ac46eb94b0f7be1d00820",
-                "reference": "bd73f89d34d8f879c54ac46eb94b0f7be1d00820",
+                "url": "https://api.github.com/repos/nategood/httpful/zipball/c1cd4d46a4b281229032cf39d4dd852f9887c0f6",
+                "reference": "c1cd4d46a4b281229032cf39d4dd852f9887c0f6",
                 "shasum": ""
             },
             "require": {
@@ -461,7 +461,7 @@
                 "rest",
                 "restful"
             ],
-            "time": "2015-03-08 15:22:23"
+            "time": "2015-10-26 16:11:30"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
@@ -1361,12 +1361,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ShortCirquit/LinkoScopeApi.git",
-                "reference": "a742ee020e2574694804a1ee9d7e994d8016ae21"
+                "reference": "a25f2233a67eeb916cddb6ff80ba3297e4597d13"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ShortCirquit/LinkoScopeApi/zipball/a742ee020e2574694804a1ee9d7e994d8016ae21",
-                "reference": "a742ee020e2574694804a1ee9d7e994d8016ae21",
+                "url": "https://api.github.com/repos/ShortCirquit/LinkoScopeApi/zipball/a25f2233a67eeb916cddb6ff80ba3297e4597d13",
+                "reference": "a25f2233a67eeb916cddb6ff80ba3297e4597d13",
                 "shasum": ""
             },
             "require": {
@@ -1397,7 +1397,7 @@
                 "wordpress.com",
                 "wp-api"
             ],
-            "time": "2015-10-26 14:41:30"
+            "time": "2015-10-26 18:47:12"
         },
         {
             "name": "shortcirquit/wordpress-api",
