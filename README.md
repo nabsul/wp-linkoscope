@@ -64,7 +64,7 @@ Note that:
 Users can only log into the site if:
 
 - They are members of the site (you can add new users by inviting them from the blog administration panel)
-- The have Author or Administrator privileges
+- The have Editor or Administrator privileges
 
 WP-API PLUGIN DETAILS
 -------------
@@ -80,3 +80,5 @@ Instructions are found here: http://v2.wp-api.org/guide/authentication/
  
 The LinkoScope plugin creates custom post and comment types which will not interfere with regular post types. 
 You therefore don't need to have a separate blog dedicated for LinkoScope.
+
+Members will need Author, Editor or Administrator privileges to post links to the site
