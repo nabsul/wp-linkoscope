@@ -25,7 +25,7 @@ use yii\widgets\ListView;
             'datails' => [
                 'label' => 'Details',
                 'value' => "$link->authorName | " .
-                    date('D d M Y', strtotime($link->date)) .
+                    date('D, d M Y H:i:s', strtotime($link->date)) .
                     " | $link->comments comments | $link->votes votes",
             ],
         ],
