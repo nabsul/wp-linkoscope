@@ -18,22 +18,15 @@ class LinkoScopeWorker extends Component
 
     public function Run()
     {
-        $count = 0;
         while ($this->keepRunning())
         {
             $job = Job::find()->where('status IS NULL')->one();
             if ($job === null)
             {
-                if ($count % 10 == 0)
-                {
-                    echo "sleeping at " . time() . "\n";
-                }
-                $count++;
                 sleep(1);
                 continue;
             }
 
-            echo "Got Job: job->id\n";
             if (!$this->assignJob($job))
             {
                 continue;
@@ -51,13 +44,14 @@ class LinkoScopeWorker extends Component
     private function assignJob(Job $job)
     {
         $job->status = 'running';
-
         return $job->save();
     }
 
     private function runJob(Job $job)
     {
-        echo "Running $job->id $job->type $job->arguments\n";
+        $msg = "Running $job->id $job->type $job->arguments";
+        Yii::getLogger()->log($msg, Logger::LEVEL_INFO);
+        echo "$msg\n";
         try
         {
             switch ($job->type)
@@ -75,11 +69,9 @@ class LinkoScopeWorker extends Component
         }
         catch (\Exception $e)
         {
-            echo "Job failed with exception: " . $e->getMessage() . "\n";
             $this->failJob($job, $e->getMessage());
         }
 
-        echo "done\n";
         $job->status = 'complete';
         $job->save();
     }
@@ -88,9 +80,7 @@ class LinkoScopeWorker extends Component
     {
         $api = $this->getLinkoScope()->getConsoleApi();
         $link = $api->getLink($job->args->id);
-        echo "Sore was $link->score \n";
-        $link = $api->updateLink($link);
-        echo "Sore is  $link->score \n";
+        $api->updateLink($link);
     }
 
     private function updateComment(Job $job)
@@ -102,13 +92,14 @@ class LinkoScopeWorker extends Component
 
     private function failJob(Job $job, $msg)
     {
-        Yii::getLogger()->log("Job with ID $job->id failed: " . $msg, Logger::LEVEL_ERROR);
+        $message = "Job with ID $job->id failed: $msg";
+        echo "$message\n";
+        Yii::getLogger()->log($message, Logger::LEVEL_ERROR);
         $job->status = 'failed';
         if (!$job->save())
         {
             Yii::getLogger()->log("Failed to save failure status in the job $job->id", Logger::LEVEL_ERROR);
         }
-        Yii::getLogger()->log($msg, Logger::LEVEL_ERROR);
     }
 
     /**
