@@ -1361,12 +1361,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ShortCirquit/LinkoScopeApi.git",
-                "reference": "1ca0633d5dfb6da2a06861f8277051ca22e89a20"
+                "reference": "5541baece1fe83cb98f9c9668c18fdba52832621"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ShortCirquit/LinkoScopeApi/zipball/1ca0633d5dfb6da2a06861f8277051ca22e89a20",
-                "reference": "1ca0633d5dfb6da2a06861f8277051ca22e89a20",
+                "url": "https://api.github.com/repos/ShortCirquit/LinkoScopeApi/zipball/5541baece1fe83cb98f9c9668c18fdba52832621",
+                "reference": "5541baece1fe83cb98f9c9668c18fdba52832621",
                 "shasum": ""
             },
             "require": {
@@ -1397,7 +1397,7 @@
                 "wordpress.com",
                 "wp-api"
             ],
-            "time": "2015-10-26 03:15:44"
+            "time": "2015-10-26 14:10:13"
         },
         {
             "name": "shortcirquit/wordpress-api",
