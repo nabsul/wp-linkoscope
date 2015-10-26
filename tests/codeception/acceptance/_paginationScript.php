@@ -1,5 +1,10 @@
 <?php
 
+use ShortCirquit\LinkoScopeApi\iLinkoScope;
+
+/* @var $api iLinkoScope */
+$api = Yii::$app->linko->getConsoleApi();
+
 /* @var $I AcceptanceTester */
 
 $I->setSiteData(17);
@@ -40,3 +45,11 @@ $I->seeInRow(1, 'Test Title #1');
 $I->dontSeeRow(2);
 $I->dontSeeRow(3);
 $I->dontSeeRow(4);
+
+$user = $api->getAccounts()[0];
+$I->amOnPage("/link/user?id={$user->id}&pageSize=1");
+$I->seeLink('1', "ul.pagination");
+$I->seeLink('2', "ul.pagination");
+$I->dontSeeRow(1);
+$I->click("a[data-page='1']");
+$I->dontSeeRow(1);
