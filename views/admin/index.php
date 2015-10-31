@@ -10,7 +10,34 @@ use yii\helpers\Html;
 
 <p>
     <?php if (isset(Yii::$app->linko->config)) : ?>
-        Current config: <br/> <?= nl2br(print_r(Yii::$app->linko->config, true)) ?>
+        <p>
+            Current config: <br/> <?= nl2br(print_r(Yii::$app->linko->config, true)) ?>
+        </p>
+
+        <p>
+        <?php
+        $tags = [];
+        foreach ([1 => 'tag1', 2 => 'tag2'] as $k => $v)
+            $tags[] = ['id' => $k, 'name' => $v];
+        ?>
+
+        <?= join(' ', array_map(function($t){
+            $trash = Html::tag('span', '', ['class' => 'glyphicon glyphicon-trash']);
+            $trash = Html::a($trash, ['delete-tag', 'id' => $t['id']],
+                [
+                    'data-method' => 'post',
+                    'data-confirm' => 'Are you sure you want to delete this tag?',
+                ]);
+            return Html::button($t['name'] . $trash, ['class' => 'btn']);
+        }, $tags))
+        ?>
+        </p>
+
+        <?php $form = \yii\widgets\ActiveForm::begin(); ?>
+            <?= $form->field($tagForm, 'name'); ?>
+            <?= Html::submitButton('Add', ['class' => 'btn btn-primary']); ?>
+        <?php $form->end(); ?>
+
     <?php else: ?>
         Nothing configured. Select one of the options below to get started.
     <?php endif ?>
