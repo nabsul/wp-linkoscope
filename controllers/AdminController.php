@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\TagForm;
 use app\models\User;
 use app\models\WpOrgConfigForm;
 use app\models\WpComConfigForm;
@@ -46,9 +47,12 @@ class AdminController extends Controller
 
     public function actionIndex()
     {
+        $form = new TagForm();
         Yii::$app->linko->readConfig();
 
-        return $this->render('index');
+        return $this->render('index',[
+            'tagForm' => $form
+        ]);
     }
 
     public function actionWpCom()
