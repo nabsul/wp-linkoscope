@@ -28,6 +28,13 @@ use yii\widgets\ListView;
                     date('D, d M Y H:i:s', strtotime($link->date)) .
                     " | $link->comments comments | $link->votes votes",
             ],
+            'tags' => [
+                'label' => 'Tags',
+                'format' => 'raw',
+                'value' => join(' ', array_map(function ($i){
+                    return Html::button($i, ['class' => 'btn btn-xs']);
+                },$link->tags)),
+            ],
         ],
     ]
 ); ?>

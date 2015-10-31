@@ -23,7 +23,11 @@ use yii\helpers\Html;
         <span class="main-link">
             [<?= Html::a($model->title, $model->url, ['target' => '_blank',]); ?>]
         </span>
-                           (<?= parse_url($model->url, PHP_URL_HOST) ?>)
+        (<?= parse_url($model->url, PHP_URL_HOST) ?>)
+        <?= join(' ', array_map(function ($i){
+            return Html::button($i, ['class' => 'btn btn-xs']);
+        },$model->tags)) ?>
+
     </div>
 </div>
 <div>
