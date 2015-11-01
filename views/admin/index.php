@@ -10,9 +10,12 @@ use yii\helpers\Html;
 
 <p>
     <?php if (isset(Yii::$app->linko->config)) : ?>
+    <h3>Current config</h3>
         <p>
-            Current config: <br/> <?= nl2br(print_r(Yii::$app->linko->config, true)) ?>
+            <?= nl2br(print_r(Yii::$app->linko->config, true)) ?>
         </p>
+
+    <h3>Tag Management</h3>
 
         <p>
         <?= join(' ', array_map(function($t){
@@ -36,6 +39,8 @@ use yii\helpers\Html;
         Nothing configured. Select one of the options below to get started.
     <?php endif ?>
 </p>
+
+<h3>New API Configuration</h3>
 
 <p>
     Click to (re)configure your REST API: <br/>
