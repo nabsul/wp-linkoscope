@@ -15,12 +15,6 @@ use yii\helpers\Html;
         </p>
 
         <p>
-        <?php
-        $tags = [];
-        foreach ([1 => 'tag1', 2 => 'tag2'] as $k => $v)
-            $tags[] = ['id' => $k, 'name' => $v];
-        ?>
-
         <?= join(' ', array_map(function($t){
             $trash = Html::tag('span', '', ['class' => 'glyphicon glyphicon-trash']);
             $trash = Html::a($trash, ['delete-tag', 'id' => $t['id']],

@@ -47,12 +47,45 @@ class AdminController extends Controller
 
     public function actionIndex()
     {
-        $form = new TagForm();
         Yii::$app->linko->readConfig();
 
+
+        /* @var \ShortCirquit\LinkoScopeApi\iLinkoScope $api */
+        $api = Yii::$app->linko->getConsoleApi();
+        $form = new TagForm();
+        if ($form->load(Yii::$app->request->post()) && $form->validate())
+        {
+            $api->addTag($form->name);
+            $form->name = '';
+        }
+
+        $tags = [];
+        foreach ($api->listTags() as $k => $v){
+            $tags[] = [
+                'id' => $k,
+                'name' => $v,
+            ];
+        }
+
+
         return $this->render('index',[
-            'tagForm' => $form
+            'tagForm' => $form,
+            'tags' => $tags,
         ]);
+    }
+
+    public function actionDeleteTag($id)
+    {
+        if (!Yii::$app->request->isPost){
+            Yii::$app->session->setFlash('error', 'Invalid data for delete.');
+            return $this->redirect(['index']);
+        }
+
+        /* @var \ShortCirquit\LinkoScopeApi\iLinkoScope $api */
+        $api = Yii::$app->linko->getConsoleApi();
+        $api->deleteTag($id);
+        Yii::$app->session->setFlash('info', 'Tag deleted.');
+        return $this->redirect(['index']);
     }
 
     public function actionWpCom()
