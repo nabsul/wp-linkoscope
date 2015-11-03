@@ -6,8 +6,27 @@ use yii\widgets\ListView;
 /** @var $this yii\web\View */
 /** @var $linkForm app\models\LinkForm */
 
+/* @var $api ShortCirquit\LinkoScopeApi\iLinkoScope */
+$api = Yii::$app->linko->getApi();
+$tags = $api->listTags();
+
 ?>
 <h3>Shared Links:</h3>
+
+<?php if ($tags != null && count($tags) > 0) : ?>
+
+    <p>
+    Tags:
+<?php
+    $baseUrl = [''] + Yii::$app->request->get();
+    unset($baseUrl['page']);
+
+    foreach ($tags as $id => $name){
+        echo Html::a(Html::button($name, ['class' => 'btn btn-primary']), $baseUrl + ['tag' => $id]);
+    }
+?>
+    </p>
+<?php endif; ?>
 
 <?php if (!Yii::$app->user->isGuest) : ?>
     <?= Html::beginForm(['link/new']) ?>
