@@ -24,9 +24,10 @@ use yii\helpers\Html;
             [<?= Html::a($model->title, $model->url, ['target' => '_blank',]); ?>]
         </span>
         (<?= parse_url($model->url, PHP_URL_HOST) ?>)
-        <?= join(' ', array_map(function ($i){
-            return Html::button($i, ['class' => 'btn btn-xs']);
-        },$model->tags)) ?>
+        <?php
+        foreach ($model->tags as $id => $name)
+                echo Html::a(Html::button($name, ['class' => 'btn btn-xs']), ['', 'tag' => $id]) . ' ';
+        ?>
 
     </div>
 </div>

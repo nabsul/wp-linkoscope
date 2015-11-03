@@ -53,7 +53,7 @@ class LinkController extends Controller
         ];
     }
 
-    public function actionIndex($page = null, $pageSize = null)
+    public function actionIndex($page = null, $pageSize = null, $tag = null)
     {
         $pageSize = $pageSize ?: Yii::$app->params['pageSize'];
         $page = $page ?: 1;
@@ -64,6 +64,7 @@ class LinkController extends Controller
         $req = new GetLinksRequest();
         $req->offset = $offset;
         $req->maxResults = $pageSize;
+        $req->tags = $tag == null ? null : [$tag];
         $result = Yii::$app->linko->getApi()->getLinks($req);
 
         $data = new ArrayDataProvider(
