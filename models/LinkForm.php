@@ -14,12 +14,13 @@ class LinkForm extends Model
 {
     public $title;
     public $url;
-    public $tags = [1 => 'tag1', 2 => 'tag2'];
+    public $tags = [];
 
     public function rules()
     {
         return [
             [['title', 'url'], 'required'],
+            [['tags'], 'safe'],
             ['url', 'url'],
         ];
 

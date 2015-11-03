@@ -5,13 +5,14 @@ use yii\helpers\Html;
 use app\models\LinkForm;
 
 /** @var $linkForm LinkForm */
+/** @var $tags Array */
 ?>
 
 <?php $form = ActiveForm::begin() ?>
 <?= $form->field($linkForm, 'url') ?>
 <?= $form->field($linkForm, 'title') ?>
 
-<?= $form->field($linkForm, 'tags')->checkboxList($linkForm->tags,[
+<?= $form->field($linkForm, 'tags')->checkboxList($tags,[
     'class' => 'btn-toolbar',
     'data-toggle' => 'buttons',
     'item' => function($index, $label, $name, $checked, $value){

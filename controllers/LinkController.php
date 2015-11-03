@@ -15,6 +15,7 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\base\InlineAction;
 use ShortCirquit\LinkoScopeApi\iLinkoScope;
+use yii\log\Logger;
 use yii\web\Controller;
 
 class LinkController extends Controller
@@ -123,10 +124,14 @@ class LinkController extends Controller
 
     public function actionNew()
     {
+        /** @var iLinkoScope $api */
+        $api = Yii::$app->linko->getApi();
+        $tags = $api->listTags();
+
         $form = new LinkForm();
         if (!$form->load(Yii::$app->request->post()))
         {
-            return $this->render('new', ['linkForm' => $form]);
+            return $this->render('new', ['linkForm' => $form, 'tags' => $tags]);
         }
 
         if ($form->title == '__AUTO__')
@@ -137,15 +142,21 @@ class LinkController extends Controller
                 $form->title = Yii::$app->crawler->readTitle($form->url);
             }
 
-            return $this->render('new', ['linkForm' => $form]);
+            return $this->render('new', ['linkForm' => $form, 'tags' => $tags]);
         }
 
         if ($form->validate())
         {
+            $tags = [];
+            foreach ($form->tags as $t){
+                $tags[$t] = '__anything__';
+            }
+
             $link = new Link(
                 [
                     'title'    => $form->title,
                     'url'      => $form->url,
+                    'tags'     => $tags,
                     'authorId' => Yii::$app->user->identity->getId(),
                 ]
             );
@@ -175,32 +186,7 @@ class LinkController extends Controller
             Yii::$app->session->setFlash('error', implode('<br />', $form->getFirstErrors()));
         }
 
-        return $this->render('new', ['linkForm' => $form]);
-    }
-
-    public function actionEdit($id)
-    {
-        $form = new LinkForm();
-        if ($form->load(Yii::$app->request->post()) && $form->validate())
-        {
-            $link = new Link(
-                [
-                    'title' => $form->title,
-                    'url'   => $form->url,
-                    'id'    => $id,
-                ]
-            );
-
-            Yii::$app->linko->getApi()->updateLink($link);
-
-            return $this->redirect(['view', 'id' => $id]);
-        }
-
-        $link = Yii::$app->linko->getApi()->getLink($id);
-        $form->url = $link->url;
-        $form->title = $link->title;
-
-        return $this->render('new', ['model' => $form]);
+        return $this->render('new', ['linkForm' => $form, 'tags' => $tags]);
     }
 
     public function actionView($id, $page = null, $pageSize = null)
