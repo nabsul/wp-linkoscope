@@ -86,7 +86,7 @@ class LinkController extends Controller
         );
     }
 
-    public function actionUser($id, $page = null, $pageSize = null)
+    public function actionUser($id, $page = null, $pageSize = null, $tag = null)
     {
         $pageSize = $pageSize ?: Yii::$app->params['pageSize'];
         $page = $page ?: 1;
@@ -101,6 +101,7 @@ class LinkController extends Controller
         $req->offset = $offset;
         $req->maxResults = $pageSize;
         $req->authorId = $id;
+        $req->tags = $tag == null ? null : [$tag];
         $result = $api->getLinks($req);
         $user = $api->getAccount($id);
 
