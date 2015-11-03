@@ -28,7 +28,7 @@ use yii\helpers\Html;
         $baseUrl = [''] + Yii::$app->request->get();
         unset($baseUrl['page']);
         foreach ($model->tags as $id => $name)
-                echo Html::a(Html::button($name, ['class' => 'btn btn-xs']),$baseUrl + ['tag' => $id]) . ' ';
+                echo Html::a(Html::button($name, ['class' => 'btn btn-xs']), ['tag' => $id] + $baseUrl) . ' ';
         ?>
 
     </div>

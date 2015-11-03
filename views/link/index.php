@@ -22,7 +22,7 @@ $tags = $api->listTags();
     unset($baseUrl['page']);
 
     foreach ($tags as $id => $name){
-        echo Html::a(Html::button($name, ['class' => 'btn btn-primary']), $baseUrl + ['tag' => $id]);
+        echo Html::a(Html::button($name, ['class' => 'btn btn-primary']), ['tag' => $id] + $baseUrl);
     }
 ?>
     </p>
