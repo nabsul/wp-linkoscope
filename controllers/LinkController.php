@@ -150,6 +150,7 @@ class LinkController extends Controller
         if ($form->validate())
         {
             $tags = [];
+            $form->tags = $form->tags ?: [];
             foreach ($form->tags as $t){
                 $tags[$t] = '__anything__';
             }
